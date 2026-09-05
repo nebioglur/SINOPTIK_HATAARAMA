@@ -65,6 +65,29 @@ def index():
     else:
         return "<h1>Henüz analiz sonucu oluşturulmadı.</h1><p>Arka plan görevi 7/24 çalışıyor. Sistem her saat başı 55 geçe (xx:55) güncel verileri çeker. Lütfen bekleyin.</p>", 404
 
+@app.route("/logs")
+def view_logs():
+    import glob
+    from flask import Response
+    # Log klasörünü bul
+    import config_manager
+    log_dir = config_manager.USER_DATA_DIR
+    log_files = glob.glob(os.path.join(log_dir, "**", "*.log"), recursive=True)
+    if not log_files:
+        return "Log dosyasi bulunamadi."
+    
+    # En yeni log dosyasını bul
+    latest_log = max(log_files, key=os.path.getmtime)
+    
+    try:
+        with open(latest_log, "r", encoding="utf-8") as f:
+            content = f.read()
+            # Son 100 satırı göster
+            lines = content.splitlines()[-100:]
+            return Response("<h1>Son Hata Kayitlari</h1><pre>" + "\n".join(lines) + "</pre>", mimetype='text/html')
+    except Exception as e:
+        return str(e)
+
 if __name__ == "__main__":
     print("HATA RAMA Web Sunucusu Başlatıldı - http://0.0.0.0:5000")
     app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
