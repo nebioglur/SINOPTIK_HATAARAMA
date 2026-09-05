@@ -171,7 +171,14 @@ def setup_logging(log_filename="kardelen_gunluk_log.txt", level=logging.INFO):
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
 
-    file_handler = RotatingFileHandler(log_file_path, maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
+    class SafeRotatingFileHandler(RotatingFileHandler):
+        def doRollover(self):
+            try:
+                super().doRollover()
+            except (PermissionError, OSError):
+                pass # Windows'ta dosya başka işlem tarafından kilitliyse rollover'ı atla
+
+    file_handler = SafeRotatingFileHandler(log_file_path, maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
     handlers = [file_handler]
     
     # Penceresiz (windowed) exe veya geçersiz stdout durumunda çökmeyi önlemek için
@@ -186,8 +193,11 @@ def setup_logging(log_filename="kardelen_gunluk_log.txt", level=logging.INFO):
             pass
 
     logging.basicConfig(level=level, format='%(asctime)s - %(levelname)s - [%(module)s:%(lineno)d] - %(message)s', handlers=handlers)
-    sys.stdout = LoggerStream(logging.info, "TERMINAL_Cikti: ")
-    sys.stderr = LoggerStream(logging.error, "TERMINAL_HATA: ")
+    
+    if os.environ.get("HEADLESS_MODE", "0") != "1":
+        sys.stdout = LoggerStream(logging.info, "TERMINAL_Cikti: ")
+        sys.stderr = LoggerStream(logging.error, "TERMINAL_HATA: ")
+    
     sys.excepthook = global_exception_handler
     threading.excepthook = thread_exception_handler
     
