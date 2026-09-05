@@ -6,3 +6,6 @@ webdriver-manager
 pandas
 requests
 gunicorn
+PyYAML
+lxml
+html5lib
