@@ -92,11 +92,13 @@ def otomatik_dongu(ist_kodu: int, baslangic_offset_gun: int, trigger_callback: C
             
     durum_callback(f"Oto Analiz AKTİF: Her saat :55 geçe ({ist_isim})")
     
+    ilk_calisma = True
     while _OTO_ANALIZ_CALISIYOR:
         now = datetime.datetime.now()
         
-        # Saat 55 geçe mi?
-        if now.minute == 55:
+        # Saat 55 geçe mi veya ilk çalışma mı?
+        if now.minute == 55 or ilk_calisma:
+            ilk_calisma = False
             durum_callback(f"Oto Analiz BAŞLADI: {now.strftime('%H:%M')} ({ist_isim})")
             
             # Bitiş: Bugün, Başlangıç: Dün (-1 gün)
