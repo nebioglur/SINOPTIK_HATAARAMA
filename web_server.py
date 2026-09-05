@@ -57,6 +57,8 @@ def baslat_arka_plan_gorevleri():
             daemon=True
         )
         t.start()
+        import time
+        time.sleep(2) # Ayni anda 15 Chrome acip sunucuyu cokertmemek icin beklet
 
 # Flask uygulamasi yuklendiginde arka plan islerini baslat
 baslat_arka_plan_gorevleri()
