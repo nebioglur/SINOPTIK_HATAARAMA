@@ -40,6 +40,7 @@ def baslat_arka_plan_gorevleri():
     app._bg_started = True
     
     print("WEB_SERVER_LOG: Arka plan otomatik analiz gorevleri baslatiliyor...")
+    canli_analiz._OTO_ANALIZ_CALISIYOR = True
     cfg = canli_analiz.get_config()
     istasyonlar = cfg.get_enabled_stations()
     if not istasyonlar:
