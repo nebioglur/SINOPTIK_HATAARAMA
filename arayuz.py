@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import subprocess
 def ensure_lxml():
     try:
@@ -3509,7 +3509,7 @@ if not console_mode:
     root.mainloop()
 else:
     print("Terminal modunda üalİŞtürülüyor. GUI devre d⚙ bırakıldı.")
-    aylik_rapor_olustur(run_async=False)
+    if __name__ == "__main__": aylik_rapor_olustur(run_async=False)
 
 # --- YENİ: LOG DOSYASINI OKUDAN ÖNCE HANDLER'LARI KAPAT VE FLUSH ET ---
 for handler in logging.root.handlers[:]:
@@ -3527,8 +3527,8 @@ else:
     print(f"{Colors.WARNING}Log dosyası bulunamadı: {log_dosyasi}{Colors.ENDC}")
 
 try:
-    input(f"\n{Colors.OKGREEN}Program tamamlandı. Ekranş kapatmak için ENTER tuşuna basın...{Colors.ENDC}")
+    pass # input removed for headless
 except KeyboardInterrupt:
     print("\nProgram kullanıcı tarafündan sonlandırıldı.")
 # Program başarıyla tamamlandı
-sys.exit(0)
+    pass # sys.exit removed for headless
