@@ -1,0 +1,31 @@
+# ============================================
+# MGM Monitor - Rapor Tanımları
+# ============================================
+# Her rapor türü için URL, form alanları ve parser bilgisi.
+# Yeni rapor eklemek için bu dosyaya yeni bir blok eklemeniz yeterli.
+
+reports:
+
+  sinoptik:
+    enabled: true
+    name: "Sinoptik"
+    type: "aspnet"
+    url: "http://kardelen.mgm.gov.tr/bultenler/Sinoptik/SinGoster.aspx"
+    station_query:
+      id: "ist"                 # URL query parametresi: ?ist=17244
+      name: "istIsim"           # URL query parametresi: &istIsim=KONYA+MEYDAN
+    button: "ctl00$cBody$btnYukle"
+    parser: "html"
+    table_index: 0              # Sayfadaki kaçıncı tablo parse edilecek
+
+  metar:
+    enabled: true
+    name: "METAR"
+    type: "aspnet"
+    url: "http://kardelen.mgm.gov.tr/bultenler/Metar/MetarDefter.aspx"
+    station_query:
+      id: "ist"
+      name: "istIsim"
+    button: "ctl00$cBody$btnYukle"
+    parser: "html"
+    table_index: 0

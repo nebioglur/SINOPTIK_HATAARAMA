@@ -1,0 +1,29 @@
+# ============================================
+# MGM Monitor - Analiz / Hata Kuralları
+# ============================================
+
+# --- Karşılaştırma ---
+compare:
+  only_new_errors: true         # Sadece yeni hataları göster (history ile karşılaştır)
+  history_folder: "history"
+  save_dataframe: true          # DataFrame olarak kaydet
+
+# --- Hata Kuralları ---
+# Her kural true/false ile açılıp kapanabilir
+rules:
+  missing_metar: true           # Eksik METAR kaydı
+  missing_synop: true           # Eksik Sinoptik kayıt
+  duplicate_record: true        # Tekrarlanan kayıt
+  invalid_date: true            # Geçersiz tarih
+  invalid_hour: true            # Geçersiz saat
+  parse_error: true             # Parse hatası
+  empty_row: true               # Boş satır
+  suspicious_value: true        # Şüpheli değer (ileride eklenecek)
+
+# --- Çıktı Formatları ---
+output:
+  json: true
+  csv: true
+  html: false
+  excel: false
+  folder: "reports"

@@ -1,0 +1,38 @@
+# ============================================
+# MGM Monitor - Tarih Ayarları
+# ============================================
+#
+# Desteklenen modlar:
+#
+#   today    → Sadece bugün
+#              start_offset ve end_offset kullanılır
+#
+#   rolling  → Son N gün
+#              last_days: 2 → bugünden 2 gün öncesi - bugün
+#
+#   custom   → Sabit tarih aralığı
+#              start: "2026-07-01"
+#              end: "2026-07-15"
+#
+# Örnekler:
+#   mode: today   → 15.07.2026 - 15.07.2026
+#   mode: rolling, last_days: 2 → 13.07.2026 - 15.07.2026
+#   mode: custom  → start/end alanlarındaki tarihler
+
+date:
+  mode: "rolling"               # today | rolling | custom
+  last_days: 2                  # rolling modunda son kaç gün
+  start_offset: -1              # today modunda başlangıç offset (gün)
+  end_offset: 0                 # today modunda bitiş offset (gün)
+  custom_start: ""              # custom modunda: "2026-07-01"
+  custom_end: ""                # custom modunda: "2026-07-15"
+  format: "%d.%m.%Y"            # Görüntüleme formatı
+
+# ASP.NET form kontrol isimleri
+controls:
+  start_day: "ctl00$cBody$ddBasGun"
+  start_month: "ctl00$cBody$ddBasAy"
+  start_year: "ctl00$cBody$ddBasYil"
+  end_day: "ctl00$cBody$ddBitisGun"
+  end_month: "ctl00$cBody$ddbitisAy"
+  end_year: "ctl00$cBody$ddbitisYil"

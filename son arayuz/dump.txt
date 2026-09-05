@@ -1,0 +1,150 @@
+1801:             df_metar_tekil.drop(columns=['is_speci'], inplace=True, errors='ignore')
+1802:             
+1803:             # YENİ: SİNOPTİK VE METAR SÜTUNLARINI BİRLEŞTİRME VE RAPORLAMA İÇİN GARANTİLEME
+1804:             # _sin ve _metar eklerinin çiftlenmesini önlemek için replace yapıyoruz
+1805:             df_sin.columns = [str(c) if str(c) in ['sayfa', 'gmt', 'RASATLAR'] else ("gmt_exact_sin" if c == "gmt_exact" else f"{str(c).replace('_sin', '')}_sin") for c in df_sin.columns]
+1806:             df_metar_tekil.columns = [str(c) if str(c) in ['sayfa', 'gmt', 'RASATLAR'] else ("gmt_exact_metar" if c == "gmt_exact" else f"{str(c).replace('_metar', '')}_metar") for c in df_metar_tekil.columns]
+1807:             
+1808:             # DEBUG: Merge öncesi sütunları göster
+1809:             print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
+1810:             print(f"{Colors.BOLD}MERGE ÖNCESI SÜTUNLar:{Colors.ENDC}")
+1811:             print(f"df_sin sütun sayısı: {len(df_sin.columns)}")
+1812:             print(f"df_sin ilk 10 sütun: {list(df_sin.columns)[:10]}")
+1813:             print(f"\ndf_metar_tekil sütun sayısı: {len(df_metar_tekil.columns)}")
+1814:             print(f"df_metar_tekil ilk 10 sütun: {list(df_metar_tekil.columns)[:10]}")
+1815:             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}")
+1816:             
+1817:             birlesik = pd.merge(df_sin, df_metar_tekil, on=["sayfa", "gmt"], how="left")
+1818:             
+1819:             # DEBUG: Merge sonrası sütunları göster
+1820:             print(f"\n{Colors.BOLD}MERGE SONRASI SÜTUNLar:{Colors.ENDC}")
+1821:             print(f"Birleşik sütun sayısı: {len(birlesik.columns)}")
+1822:             print(f"Birleşik ilk 20 sütun: {list(birlesik.columns)[:20]}")
+1823:             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
+1824:             
+1825:             # --- YENİ EKLENEN: PANDAS NaN DAVRANIŞLARINI GÜVENLİ HALE GETİRME ---
+1826:             # Metin (Object) sütunlarındaki NaN değerlerini boş stringe ("") çeviriyoruz.
+1827:             # Bu sayede validator ve analiz tarafında str(NaN) sonucu oluşan "nan" kelimesinin
+1828:             # sahte hadise eşleşmelerine (Örn: FG, N vb.) yol açmasını kesin olarak önlüyoruz.
+1829:             for col in birlesik.columns:
+1830:                 if birlesik[col].dtype == 'object' or birlesik[col].dtype.name == 'category':
+1831:                     birlesik[col] = birlesik[col].replace(['nan', 'NAN', 'NaN', 'None', 'NONE', '-', ' - '], "")
+1832:                     birlesik[col] = birlesik[col].fillna("")
+1833:             
+1834:             # Geçmiş METAR aramalarında 'nan' kelimesi oluşmasını önlemek için aynı işlemi df_metar'a da uygula
+1835:             for col in df_metar.columns:
+1836:                 if df_metar[col].dtype == 'object' or df_metar[col].dtype.name == 'category':
+1837:                     df_metar[col] = df_metar[col].replace(['nan', 'NAN', 'NaN', 'None', 'NONE', '-', ' - '], "")
+1838:                     df_metar[col] = df_metar[col].fillna("")
+1839:             # ------------------------------------------------------------------
+1840: 
+1841:             
+1842: 
+1843: # --- YENİ EKLENEN: HIZLI METAR CACHE SİSTEMİ ---
+1844:             metar_cache = {}
+1845:             df_metar_records = df_metar.to_dict('records')
+1846:             for m_row in df_metar_records:
+1847:                 m_tarih = str(m_row.get("sayfa", ""))
+1848:                 m_saat = float(m_row.get("gmt")) if pd.notna(m_row.get("gmt")) else -1
+1849:                 m_exact = m_row.get("gmt_exact")
+1850:                 if m_tarih and m_tarih.lower() != 'nan' and m_saat >= 0:
+1851:                     try:
+1852:                         mg, ma, my = map(int, m_tarih.split('.'))
+1853:                         if pd.notna(m_exact):
+1854:                             exact_str = str(m_exact).replace('.0', '').zfill(4)
+1855:                             e_h, e_m = int(exact_str[:2]), int(exact_str[2:])
+1856:                             if e_h == 23 and int(m_saat) == 0:
+1857:                                 m_dt = datetime.datetime(my, ma, mg) - datetime.timedelta(days=1)
+1858:                                 m_dt = m_dt.replace(hour=e_h, minute=e_m)
+1859:                             else:
+1860:                                 m_dt = datetime.datetime(my, ma, mg, e_h, e_m)
+1861:                         else:
+1862:                             m_dt = datetime.datetime(my, ma, mg, int(m_saat))
+1863:                         m_row['_m_dt'] = m_dt
+1864:                         d_key = m_dt.date()
+1865:                         if d_key not in metar_cache:
+1866:                             metar_cache[d_key] = []
+1867:                         metar_cache[d_key].append(m_row)
+1868:                     except: pass
+1869:             
+1870:             dt_hedef_list = []
+1871:             for row in birlesik.itertuples():
+1872:                 try:
+1873:                     gmt_s = float(getattr(row, "gmt", 0))
+1874:                     dt_s_str = str(getattr(row, "sayfa", ""))
+1875:                     g, a, y = map(int, dt_s_str.split('.'))
+1876:                     dt_hedef = datetime.datetime(y, a, g, int(gmt_s))
+1877:                 except:
+1878:                     dt_hedef = None
+1879:                 dt_hedef_list.append(dt_hedef)
+1880:             birlesik['_dt_hedef'] = dt_hedef_list
+1881: 
+1882:             hesaplanan_ww_list = []
+1883:             for i, row in enumerate(birlesik.itertuples()):
+1884:                 dt_hedef = dt_hedef_list[i]
+1885:                 if dt_hedef is None:
+1886:                     hesaplanan_ww_list.append(float('nan'))
+1887:                     continue
+1888:                 
+1889:                 try:
+1890:                     gmt_s = float(getattr(row, "gmt", 0))
+1891:                     lb = 6 if gmt_s in [0.0, 6.0, 12.0, 18.0] else 3
+1892:                     dt_bas = dt_hedef - datetime.timedelta(hours=lb)
+1893:                     
+1894:                     d_keys = list(set([dt_bas.date(), dt_hedef.date()]))
+1895:                     relevant_metars = []
+1896:                     for dk in d_keys: relevant_metars.extend(metar_cache.get(dk, []))
+1897:                     
+1898:                     hadiseler = []
+1899:                     latest_prev_m_row = None
+1900:                     latest_prev_m_dt = None
+1901:                     
+1902:                     for m_row in relevant_metars:
+1903:                         m_dt = m_row['_m_dt']
+1904:                         if m_dt <= dt_bas:
+1905:                             if latest_prev_m_dt is None or m_dt > latest_prev_m_dt:
+1906:                                 if dt_bas - m_dt <= datetime.timedelta(hours=1, minutes=15):
+1907:                                     latest_prev_m_dt = m_dt
+1908:                                     latest_prev_m_row = m_row
+1909:                         
+1910:                         if dt_bas < m_dt <= dt_hedef:
+1911:                             if pd.notna(m_row.get("ww")): hadiseler.append(str(m_row["ww"]))
+1912:                             if pd.notna(m_row.get("ww2")): hadiseler.append(str(m_row["ww2"]))
+1913:                             if pd.notna(m_row.get("ww3")): hadiseler.append(str(m_row["ww3"]))
+1914:                     
+1915:                     if latest_prev_m_row is not None:
+1916:                         if pd.notna(latest_prev_m_row.get("ww")): hadiseler.append(str(latest_prev_m_row["ww"]))
+1917:                         if pd.notna(latest_prev_m_row.get("ww2")): hadiseler.append(str(latest_prev_m_row["ww2"]))
+1918:                         if pd.notna(latest_prev_m_row.get("ww3")): hadiseler.append(str(latest_prev_m_row["ww3"]))
+1919:                         
+1920:                     hesaplanan_ww_list.append(get_ww_logic(hadiseler))
+1921:                 except:
+1922:                     hesaplanan_ww_list.append(float('nan'))
+1923:             
+1924:             birlesik["ww_hesaplanan"] = hesaplanan_ww_list
+1925:             # ----------------------------------------------------------------
+1926: 
+1927:             # 2. Hata Analizi
+1928:             beklenen_sutunlar = [
+1929:                 'p_sin', 'ff_sin', 'n_sin', 'p_metar', 'ff_metar', 'n_metar', 
+1930:                 't_sin', 't_metar', 'td_sin', 'td_metar', 'p0_sin', 'p0_metar', 
+1931:                 'dd_sin', 'dd_metar', 'vv_sin', 'vv_metar', 'w1_sin', 'w2_sin', 
+1932:                 'ww_sin', 'ww_metar', 'rrr_sin', 'tr_sin', 'tx_sin', 'tn_sin', 
+1933:                 'tg_sin', 'a_sin', 'ppp_sin'
+1934:             ]
+1935:             for b in beklenen_sutunlar:
+1936:                 if b not in birlesik.columns: birlesik[b] = float('nan')
+1937:                 else: birlesik[b] = pd.to_numeric(birlesik[b], errors='coerce')
+1938:                     
+1939:             if iptal_istendi: raise InterruptedError("İşlem kullanıcı tarafından iptal edildi.")
+1940:             update_overall_progress(75, "Hata denetimi başlatılıyor...")
+1941:             
+1942:             def progress_cb(completed, total, pct, remaining):
+1943:                 overall_pct = int(75 + (pct * 0.25))
+1944:                 if console_mode:
+1945:                     print(f"\rAnaliz ediliyor: {completed}/{total} (%{overall_pct})", end="", flush=True)
+1946:                     if pct >= 100: print()
+1947:                 else:
+1948:                     def update_widgets():
+1949:                         if btn_run:
+1950:                             btn_run.config(text=f"ANALİZ EDİLİYOR... %{overall_pct}")

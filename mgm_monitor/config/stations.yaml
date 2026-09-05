@@ -1,0 +1,131 @@
+# ============================================
+# MGM Monitor - İstasyon Listesi
+# ============================================
+# Yeni istasyon eklemek için listeye yeni bir blok ekleyin.
+# enabled: false ile geçici olarak devre dışı bırakabilirsiniz.
+
+stations:
+
+  - id: 17020
+    name: "ADANA"
+    enabled: true
+
+  - id: 17022
+    name: "ADANA/ŞAKIRPAŞA"
+    enabled: true
+
+  - id: 17024
+    name: "KARATAŞ"
+    enabled: true
+
+  - id: 17130
+    name: "ANKARA"
+    enabled: true
+
+  - id: 17128
+    name: "ANKARA/ESENBOĞA"
+    enabled: true
+
+  - id: 17135
+    name: "ANKARA/ETİMESGUT"
+    enabled: true
+
+  - id: 17244
+    name: "KONYA MEYDAN"
+    enabled: true
+
+  - id: 17246
+    name: "KONYA"
+    enabled: true
+
+  - id: 17260
+    name: "KAYSERİ"
+    enabled: true
+
+  - id: 17261
+    name: "KAYSERİ/ERKİLET"
+    enabled: true
+
+  - id: 17195
+    name: "ESKİŞEHİR"
+    enabled: true
+
+  - id: 17120
+    name: "İSTANBUL/GÖZTEPE"
+    enabled: true
+
+  - id: 17060
+    name: "İSTANBUL/ATATÜRK"
+    enabled: true
+
+  - id: 17062
+    name: "İSTANBUL/SABİHA GÖKÇEN"
+    enabled: true
+
+  - id: 17220
+    name: "İZMİR"
+    enabled: true
+
+  - id: 17218
+    name: "İZMİR/A.MENDERES"
+    enabled: true
+
+  - id: 17160
+    name: "SAMSUN"
+    enabled: true
+
+  - id: 17300
+    name: "ANTALYA"
+    enabled: true
+
+  - id: 17080
+    name: "TRABZON"
+    enabled: true
+
+  - id: 17270
+    name: "DİYARBAKIR"
+    enabled: true
+
+  - id: 17098
+    name: "ERZURUM"
+    enabled: true
+
+  - id: 17180
+    name: "SİVAS"
+    enabled: true
+
+  - id: 17372
+    name: "GAZİANTEP"
+    enabled: true
+
+  - id: 17340
+    name: "MERSİN"
+    enabled: true
+
+  - id: 17240
+    name: "AFYON"
+    enabled: true
+
+  - id: 17150
+    name: "ÇANKIRI"
+    enabled: true
+
+  - id: 17140
+    name: "KIRŞEHİR"
+    enabled: true
+
+  - id: 17250
+    name: "NİĞDE"
+    enabled: true
+
+  - id: 17255
+    name: "NEVŞEHİR"
+    enabled: true
+
+  - id: 17265
+    name: "YOZGAT"
+    enabled: true
+
+  - id: 17196
+    name: "KÜTAHYA"
+    enabled: true

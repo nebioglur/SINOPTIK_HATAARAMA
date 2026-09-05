@@ -1,0 +1,25 @@
+971:                 continue
+972:             if filter_type == "Tüm METAR/SPECI Rasatları" and met_msg == "-":
+973:                 continue
+974: 
+975:             hazirlanan_veriler.append((
+976:                 "☐",
+977:                 safe_tree_str(row.get("Tarih")),
+978:                 safe_tree_str(row.get("Saat (GMT)")),
+979:                 safe_tree_str(row.get("SİNOPTİK - Saat")),
+980:                 safe_tree_str(row.get("METAR - Saat")),
+981:                 hata_kodu,
+982:                 safe_tree_str(row.get("AÇIKLAMA")),
+983:                 sin_msg,
+984:                 met_msg,
+985:                 " 👁️ İNCELE "
+986:             ))
+987:                         
+988:         if not hazirlanan_veriler:
+989:             tree.insert("", tk.END, values=("☐", "-", "-", "-", "-", "BİLGİ", "Gösterilecek kayıt bulunamadı.", "-", "-"))
+990:             return
+991: 
+992:         def chunk_insert(index=0, chunk_size=100):
+993:             for i in range(index, min(index + chunk_size, len(hazirlanan_veriler))):
+994:                 tree.insert("", tk.END, values=hazirlanan_veriler[i])
+995:                         

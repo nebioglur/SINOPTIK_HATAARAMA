@@ -1,0 +1,60 @@
+1:             sag_tik_menu.add_separator()
+2:                         
+3:             if sinoptik_idx != -1:
+4:                 def detay_cozumle_sinoptik():
+5:                     goster_sinoptik_cozumleyici(str(degerler[sinoptik_idx]).strip(), detay_pop)
+6:                 sag_tik_menu.add_command(label="SİNOPTİK Şifresini Çözümle", command=detay_cozumle_sinoptik)
+7:                             
+8:             if metar_idx != -1:
+9:                 def detay_cozumle_metar():
+10:                     goster_metar_cozumleyici(str(degerler[metar_idx]).strip(), detay_pop)
+11:                 sag_tik_menu.add_command(label="METAR Şifresini Çözümle", command=detay_cozumle_metar)
+12: 
+13:         text_alan.bind("<Button-3>", lambda e: sag_tik_menu.tk_popup(e.x_root, e.y_root))
+14: 
+15:     # --- 1. SEKME: HATALI RASATLAR ---
+16:     tree_frame = tk.Frame(notebook, bg="white")
+17:     notebook.add(tree_frame, text="📊 Rasatlar (Hatalı / Tüm)")
+18:                 
+19:     # FİLTRELEME ALANI
+20:     filter_frame = tk.Frame(tree_frame, bg="white")
+21:     filter_frame.pack(fill="x", padx=5, pady=5)
+22:                 
+23:     btn_sil = tk.Button(filter_frame, text="🗑️ Seçili Olanları Gizle/Sil", command=lambda: secilenleri_sil(tree), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+24:     btn_sil.pack(side="right", padx=5)
+25: 
+26:     btn_kopyala = tk.Button(filter_frame, text="📋 Seçilileri Kopyala", command=lambda: secilileri_panoya_kopyala(tree, cols), bg="#008CBA", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+27:     btn_kopyala.pack(side="right", padx=5)
+28: 
+29:     tk.Label(filter_frame, text="🔍 Gösterim Filtresi:", bg="white", font=("Segoe UI", 11, "bold"), fg="#343A40").pack(side="left", padx=5)
+30:     filtre_combo = ttk.Combobox(filter_frame, values=["Hatalı Rasatlar (Tümü)", "Tüm Kayıtlar (Hatalı + Doğru)", "Tüm METAR/SPECI Rasatları", "Tüm SİNOPTİK Rasatları", "Sadece Çapraz Kontrol Hataları", "Sadece WMO / Standart Hatalar", "Veri Yok / Eksik Hataları", "Sadece 7. Grup (Halihazır/Geçmiş Hava) Hataları", "Sadece 8. Grup (Bulut) Hataları"], state="readonly", width=45, font=("Segoe UI", 11))
+31:     filtre_combo.set("Hatalı Rasatlar (Tümü)")
+32:     filtre_combo.pack(side="left", padx=5)
+33:                 
+34:     cols = ("Seç", "Tarih", "Saat", "SİNOPTİK Saat", "METAR Saat", "Hata Kodu", "Açıklama", "SİNOPTİK Şifresi", "METAR Şifresi")
+35:     tree = ttk.Treeview(tree_frame, columns=cols, show="headings", style="Treeview")
+36:                 
+37:     tree.heading("Seç", text="☐")
+38:     tree.heading("Tarih", text="Tarih")
+39:     tree.heading("Saat", text="Saat")
+40:     tree.heading("SİNOPTİK Saat", text="SİNOPTİK Saat")
+41:     tree.heading("METAR Saat", text="METAR Saat")
+42:     tree.heading("Hata Kodu", text="Hata Kodu")
+43:     tree.heading("Açıklama", text="Açıklama")
+44:     tree.heading("SİNOPTİK Şifresi", text="SİNOPTİK Şifresi")
+45:     tree.heading("METAR Şifresi", text="METAR Şifresi")
+46:                 
+47:     tree.column("Seç", width=40, anchor="center")
+48:     tree.column("Tarih", width=90, anchor="center")
+49:     tree.column("Saat", width=50, anchor="center")
+50:     tree.column("SİNOPTİK Saat", width=100, anchor="center")
+51:     tree.column("METAR Saat", width=100, anchor="center")
+52:     tree.column("Hata Kodu", width=120, anchor="center")
+53:     tree.column("Açıklama", width=350, anchor="w")
+54:     tree.column("SİNOPTİK Şifresi", width=250, anchor="w")
+55:     tree.column("METAR Şifresi", width=250, anchor="w")
+56:                 
+57:     yscroll = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
+58:     yscroll.pack(side="right", fill="y")
+59:     xscroll = ttk.Scrollbar(tree_frame, orient="horizontal", command=tree.xview)
+60:     xscroll.pack(side="bottom", fill="x")

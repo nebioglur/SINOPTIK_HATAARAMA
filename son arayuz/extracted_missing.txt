@@ -1,0 +1,632 @@
+            hedef_klasor = r"C:\Users\nebio\Desktop\check"
+            if not os.path.exists(hedef_klasor):
+                error_msg = f"Hata: Hedef klasör bulunamadı:\n{hedef_klasor}"
+                print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
+                safe_showerror("Hata", error_msg)
+                return
+
+            tum_dosyalar = glob.glob(os.path.join(hedef_klasor, "*"))
+            sin_dosyalari = []
+            metar_dosyalari = []
+
+            for f in tum_dosyalar:
+                if not os.path.isfile(f): continue # Klasörleri (Örn: Arsiv) atla
+                f_name = os.path.basename(f).upper()
+                if f_name.startswith("~$"): continue # Excel'in gizli geçici dosyalarını atla
+                if f_name.startswith("TEMP_"): continue # Önceki işlemlerden kalan geçici dosyaları atla
+
+                # İsmin neresinde olursa olsun SIN/SİN veya METAR içeriyorsa kabul et
+                if ("SIN" in f_name or "SİN" in f_name) and "DENETIM" not in f_name and f.lower().endswith(('.xls', '.xlsx', '.txt', '.csv', '.htm', '.html')):
+                    sin_dosyalari.append(f)
+                elif ("METAR" in f_name) and "DENETIM" not in f_name and f.lower().endswith(('.xls', '.xlsx', '.txt', '.csv', '.htm', '.html')):
+                    metar_dosyalari.append(f)
+
+            if not sin_dosyalari or not metar_dosyalari:
+                bulunan_isimler = [os.path.basename(x) for x in tum_dosyalar if os.path.isfile(x) and not os.path.basename(x).startswith("~$")]
+                bulunan_str = "\n".join(bulunan_isimler[:10]) # Çok uzunsa listeyi kısalt
+                if len(bulunan_isimler) > 10: bulunan_str += "\n... (ve daha fazlası)"
+                if not bulunan_isimler: bulunan_str = "Klasör tamamen boş!"
+
+                if not sin_dosyalari:
+                    error_msg = f"SİNOPTİK dosyası bulunamadı!\n\nKlasörde isminde 'SIN' veya 'SİN' geçen bir dosya bulunamadı.\n\nKlasördeki Mevcut Dosyalar:\n{bulunan_str}"
+                    print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
+                    safe_showerror("Hata", error_msg)
+                    return
+                if not metar_dosyalari:
+                    error_msg = f"METAR dosyası bulunamadı!\n\nKlasörde isminde 'METAR' geçen bir dosya bulunamadı.\n\nKlasördeki Mevcut Dosyalar:\n{bulunan_str}"
+                    print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
+                    safe_showerror("Hata", error_msg)
+                    return
+
+            sin_yolu = sin_dosyalari[0]
+            metar_yolu = metar_dosyalari[0]
+
+            # --- OTOMATİK SÜTUN DÜZELTİCİ ENTEGRASYONU ---
+            if not console_mode:
+                root.after(0, lambda: lbl_status.config(text="Dosyalar düzeltiliyor..."))
+
+            print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
+
+            yedek_klasoru = os.path.join(hedef_klasor, "orijinal_yedekler")
+            if not os.path.exists(yedek_klasoru):
+                os.makedirs(yedek_klasoru)
+
+            print(f"{Colors.OKBLUE}Orijinal dosyalar '{yedek_klasoru}' klasörüne yedekleniyor...{Colors.ENDC}")
+            for dosya in (sin_dosyalari + metar_dosyalari):
+                try:
+                    shutil.copy2(dosya, yedek_klasoru)
+                except Exception as e:
+                    print(f"{Colors.FAIL}Yedekleme Hatası ({os.path.basename(dosya)}): {e}{Colors.ENDC}")
+                    traceback.print_exc()
+
+            print(f"{Colors.OKCYAN}SÜTUN DÜZELTİCİ OTOMATİK OLARAK ÇALIŞTIRILIYOR...{Colors.ENDC}")
+            for dosya in (sin_dosyalari + metar_dosyalari):
+                if hasattr(sutun_duzeltici, "sessiz_duzelt"):
+                    try:
+                        sutun_duzeltici.sessiz_duzelt(dosya)
+                    except Exception as e:
+                        print(f"{Colors.FAIL}Hata: {os.path.basename(dosya)} düzeltilemedi - {e}{Colors.ENDC}")
+                        traceback.print_exc()
+                else:
+                    print(f"{Colors.WARNING}Uyarı: 'sessiz_duzelt' fonksiyonu bulunamadığı için {os.path.basename(dosya)} düzeltilmedi.{Colors.ENDC}")
+            print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
+
+            # --- Ana İşlem ---
+            if not console_mode:
+                root.after(0, lambda: lbl_status.config(text="Veriler okunuyor..."))
+
+            import concurrent.futures
+            
+            # 1. Veri Okuma (Threading ile Paralel İşlem - Performans Artışı)
+            print(f"\n{Colors.OKCYAN}Veriler paralel (eşzamanlı) olarak okunuyor, lütfen bekleyin...{Colors.ENDC}")
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                future_sin = executor.submit(dm1.dosya_oku_akilli, sin_yolu)
+                future_metar = executor.submit(dm1.dosya_oku_akilli, metar_yolu)
+                
+                df_sin = future_sin.result()
+                df_metar = future_metar.result()
+
+            # Terminal ekranının taşmasını önlemek için sadece ilk 15 satırı göster
+            pd.set_option('display.max_rows', 15)
+            pd.set_option('display.max_columns', None)
+            pd.set_option('display.width', 1000)
+
+            # Okunan verilerin boyutlarını ve ilk satırlarını konsola yazdır
+            print(f"\n{Colors.HEADER}{'='*50}{Colors.ENDC}")
+            print(f"{Colors.BOLD}>>> SİNOPTİK VERİSİ OKUNDU <<<{Colors.ENDC}")
+            print(f"Boyut: {len(df_sin)} Satır, {len(df_sin.columns)} Sütun")
+            print(df_sin)
+            print(f"\n{Colors.BOLD}>>> METAR VERİSİ OKUNDU <<<{Colors.ENDC}")
+            print(f"Boyut: {len(df_metar)} Satır, {len(df_metar.columns)} Sütun")
+            print(df_metar)
+            print(f"{Colors.HEADER}{'='*50}{Colors.ENDC}\n")
+
+            # Diğer işlemlerde performansı etkilememesi için ayarları sıfırla
+            pd.reset_option('display.max_rows')
+            pd.reset_option('display.max_columns')
+
+            # --- YIL VE AY TESPİTİ ---
+            yil, ay = None, None
+            
+            # 1. Adım: Orijinal dosyanın içinden (J1, K1 vb. hücrelerden) kesin tarihi bul (Kullanıcı İsteği)
+            for yol in [sin_yolu, metar_yolu]:
+                try:
+                    # Sadece ilk 10 satırı okuyarak hücrelerde tarih/ay ara
+                    raw = pd.read_excel(yol, sheet_name=0, header=None, nrows=10)
+                    for r in range(len(raw)):
+                        for c in range(len(raw.columns)):
+                            val = str(raw.iloc[r, c]).strip().upper()
+                            # GG.AA.YYYY veya GG/AA/YYYY
+                            m1 = re.search(r'\b\d{2}[\./-](\d{2})[\./-](\d{4})\b', val)
+                            if m1: yil, ay = int(m1.group(2)), int(m1.group(1)); break
+                            
+                            # YYYY-AA-GG
+                            m2 = re.search(r'\b(\d{4})[\./-](\d{2})[\./-]\d{2}\b', val)
+                            if m2: yil, ay = int(m2.group(1)), int(m2.group(2)); break
+                        if yil and ay: break
+                except: pass
+                if yil and ay: break
+
+            # 2. Adım: Dosya isimlerinden (örneğin 2026_01 veya 01_2026) tespit etmeye çalış
+            if not yil or not ay:
+                for yol in [sin_yolu, metar_yolu]:
+                    yol_str = os.path.basename(yol).upper()
+                    m1 = re.search(r'\b(20[0-2]\d)[_-](0[1-9]|1[0-2])\b', yol_str) # Örn: 2023_05
+                    if m1: yil, ay = int(m1.group(1)), int(m1.group(2)); break
+                    
+                    m2 = re.search(r'\b(0[1-9]|1[0-2])[_-](20[0-2]\d)\b', yol_str) # Örn: 05-2023
+                    if m2: ay, yil = int(m2.group(1)), int(m2.group(2)); break
+                    
+                    aylar_sz = {"OCAK":1, "SUBAT":2, "ŞUBAT":2, "MART":3, "NISAN":4, "NİSAN":4, "MAYIS":5, "HAZIRAN":6, "HAZİRAN":6, "TEMMUZ":7, "AGUSTOS":8, "AĞUSTOS":8, "EYLUL":9, "EYLÜL":9, "EKIM":10, "EKİM":10, "KASIM":11, "ARALIK":12}
+                    y_match = re.search(r'\b(20[0-2]\d)\b', yol_str)
+                    if y_match:
+                        for ay_isim, ay_no in aylar_sz.items():
+                            if ay_isim in yol_str: yil, ay = int(y_match.group(1)), ay_no; break
+                    if yil and ay: break
+
+            # 3. Adım: Dosya isminden bulunamazsa veri içinden (GG.AA.YYYY) en çok tekrar eden tarihi bul
+            if not yil or not ay:
+                olasi_tarihler = []
+                hedef_sutunlar = ['sayfa', 'tarih', 'kayit', 'kayıt', 'date', 'zaman']
+                
+                for df in [df_metar, df_sin]:
+                    for col in df.columns:
+                        if not any(hs in str(col).lower() for hs in hedef_sutunlar):
+                            continue
+                            
+                        # GG.AA.YYYY, GG/AA/YYYY, GG-AA-YYYY formatı
+                        sample = df[col].astype(str).str.extract(r'\b\d{2}[\./-](\d{2})[\./-](\d{4})\b').dropna()
+                        if not sample.empty:
+                            for _, r in sample.iterrows():
+                                if 1 <= int(r[0]) <= 12 and 2000 <= int(r[1]) <= 2050:
+                                    olasi_tarihler.append((int(r[1]), int(r[0])))
+                            
+                        # YYYY.AA.GG, YYYY-AA-GG, YYYY/AA/GG formatı
+                        sample_rev = df[col].astype(str).str.extract(r'\b(\d{4})[\./-](\d{2})[\./-]\d{2}\b').dropna()
+                        if not sample_rev.empty:
+                            for _, r in sample_rev.iterrows():
+                                if 1 <= int(r[1]) <= 12 and 2000 <= int(r[0]) <= 2050:
+                                    olasi_tarihler.append((int(r[0]), int(r[1])))
+                
+                if olasi_tarihler:
+                    from collections import Counter
+                    en_cok_gecen = Counter(olasi_tarihler).most_common(1)[0][0]
+                    yil, ay = en_cok_gecen[0], en_cok_gecen[1]
+
+            # 4. Adım: Hiçbir şekilde bulunamazsa varsayılan olarak geçerli tarihten bir önceki ayı al
+            if not yil or not ay:
+                simdi = datetime.datetime.now()
+                yil = simdi.year if simdi.month > 1 else simdi.year - 1
+                ay = simdi.month - 1 if simdi.month > 1 else 12
+
+            print(f"\n{Colors.OKGREEN}>>> KULLANILACAK RAPOR DÖNEMİ: {ay:02d}/{yil} <<<{Colors.ENDC}")
+            
+            if not console_mode and btn_run is not None:
+                try:
+                    root.after(0, lambda: btn_run.config(text=f"İşleniyor... ({ay:02d}/{yil})"))
+                    root.after(0, lambda: lbl_status.config(text=f"Dönem: {ay:02d}/{yil} - Veriler işleniyor..."))
+                except Exception:
+                    pass
+
+            # dm1.tarih_olustur_helper fonksiyonu kullanılarak 1, 2, 3 gibi günlerin
+            # kaybolması ve sheet2, sheet4 gibi isimlerin doğru ayrıştırılması sağlanır.
+
+            # Okuma Raporu
+            okuma_raporu = ""
+            try:
+                if not df_sin.empty and "sayfa" in df_sin.columns:
+                    sheets = sorted(df_sin["sayfa"].unique().astype(str), key=lambda x: int(''.join(filter(str.isdigit, x))) if any(c.isdigit() for c in x) else 0)
+                    mapped = []
+                    for s in sheets:
+                        t = dm1.tarih_olustur_helper(s, yil, ay)
+                        if t: mapped.append(f"[{s}] -> {t}")
+                    okuma_raporu = "SİNOPTİK SAYFA - TARİH EŞLEŞMELERİ:\n" + "-"*40 + "\n" + ("\n".join(mapped) if mapped else "⚠️ Eşleşme yok")
+            except: pass
+
+            # GMT Kontrolü (Sütun İsimlendirme - Temizlikten Önce Yapılmalı)
+            if "gmt" not in df_sin.columns:
+                # 1. Adım: Birleşik Tarih-Saat (Datetime) sütunu varsa saati oradan ayıkla
+                gmt_extracted = False
+                for col in list(df_sin.columns):
+                    col_str = str(col).lower()
+                    if col_str in ["kayıt", "kayit", "kayıt zamanı", "kayit zamani", "tarih", "date", "sayfa"]:
+                        try:
+                            # Sütunun gerçekten bir saat barındırıp barındırmadığını test et
+                            ornek = pd.to_datetime(df_sin[col].dropna().astype(str), errors='coerce')
+                            if not ornek.isna().all():
+                                if len(ornek.dt.hour.unique()) > 1 or (ornek.dt.hour > 0).any():
+                                    df_sin["gmt"] = ornek.dt.hour
+                                    gmt_extracted = True
+                                    break
+                        except: pass
+
+                # 2. Adım: Akıllı GMT Sütunu Bulma (Eğer datetime'dan çıkarılamadıysa)
+                gmt_col_found = None
+                if not gmt_extracted:
+                    for col in df_sin.columns:
+                        try:
+                            vals = df_sin[col].dropna().unique()
+                            target_hours = {0, 3, 6, 9, 12, 15, 18, 21, '00', '03', '06', '09', '12', '15', '18', '21'}
+                            match_count = sum(1 for v in vals if v in target_hours)
+                            
+                            # Sayısal Aralık Kontrolü (0-23 arası mı?) - İstasyon No (17xxx) karışmasını önler
+                            is_valid_range = False
+                            try:
+                                nums = pd.to_numeric(vals, errors='coerce')
+                                nums = nums[~pd.isna(nums)]
+                                if len(nums) > 0 and nums.min() >= 0 and nums.max() <= 23:
+                                    is_valid_range = True
+                            except: pass
+    
+                            if match_count >= 2 or (is_valid_range and len(vals) >= 2):
+                                gmt_col_found = col; break
+                        except: pass
+                
+                if gmt_col_found: 
+                    df_sin.rename(columns={gmt_col_found: "gmt"}, inplace=True)
+                elif not gmt_extracted:
+                    # Fallback: Bilinen sütunları atla, ilk uygun sütunu GMT yap
+                    known_cols = ['istasyon_no', 'sayfa', 'tarih', 'personel', 'rasatci']
+                    for col in df_sin.columns:
+                        if str(col).lower() not in known_cols:
+                            df_sin.rename(columns={col: "gmt"}, inplace=True)
+                            break
+            if "gmt" not in df_metar.columns:
+                gmt_found = False
+                
+                # Önce METAR için Datetime saat ayıklama dene
+                for col in list(df_metar.columns):
+                    col_str = str(col).lower()
+                    if col_str in ["kayıt", "kayit", "kayıt zamanı", "kayit zamani", "tarih", "date", "sayfa"]:
+                        try:
+                            ornek = pd.to_datetime(df_metar[col].dropna().astype(str), errors='coerce')
+                            if not ornek.isna().all() and (len(ornek.dt.hour.unique()) > 1 or (ornek.dt.hour > 0).any()):
+                                df_metar["gmt"] = ornek.dt.hour
+                                gmt_found = True
+                                break
+                        except: pass
+
+                if not gmt_found and "sayfa" in df_metar.columns:
+                    extracted = df_metar["sayfa"].astype(str).str.extract(r'(\d{2}:\d{2}Z?)')[0]
+                    if not extracted.isna().all():
+                        df_metar["gmt"] = extracted
+                        df_metar["sayfa"] = df_metar["sayfa"].astype(str).str.split().str[0]
+                        gmt_found = True
+                        
+                if not gmt_found and len(df_metar.columns) > 0:
+                    # Rastgele ilk sütunu almak yerine, gerçekten saat formatına (13:50 veya 1350Z) benzeyen bir sütun bul
+                    for col in df_metar.columns:
+                        if col == 'sayfa': continue
+                        sample = df_metar[col].dropna().astype(str).head(20)
+                        if sample.str.contains(r'\d{2}:\d{2}').any() or sample.str.match(r'^\d{3,4}Z?$', flags=re.IGNORECASE).any():
+                            df_metar.rename(columns={col: "gmt"}, inplace=True); break
+                            
+                # YENİ EKLENEN GÜVENLİK: Hala GMT bulunamadıysa çökmemesi için boş oluştur
+                if "gmt" not in df_metar.columns:
+                    df_metar["gmt"] = "00:00"
+
+            # Veri Temizliği ve Hazırlığı
+            for i, df in enumerate([df_sin, df_metar]):
+                is_metar = (i == 1) # 1. indeks METAR
+                
+                # METAR Bülteninden Görüş ve Hadise Ayıklama
+                if is_metar:
+                    # Eğer "bulten" sütunu yanlışlıkla "M" veya "S" gibi tip harflerini aldıysa düzelt
+                    if "bulten" in df.columns:
+                        bulten_sample = df["bulten"].dropna().astype(str)
+                        if not bulten_sample.empty and bulten_sample.map(len).max() < 10:
+                            df.rename(columns={"bulten": "mesaj_tipi"}, inplace=True)
+
+                    if "bulten" not in df.columns:
+                        # Gerçek bülten sütununu bul (İçeriği en uzun olan metin sütunu)
+                        best_col = None
+                        max_len = 0
+                        for c in df.columns:
+                            if c not in ["sayfa", "gmt", "tarih", "saat"]:
+                                sample = df[c].replace(['nan', 'NAN', 'NaN', 'None', 'NONE'], pd.NA).dropna().astype(str)
+                                if not sample.empty:
+                                    avg_len = sample.map(len).mean()
+                                    if avg_len > max_len:
+                                        max_len = avg_len
+                                        best_col = c
+                        if best_col and max_len > 15:
+                            df.rename(columns={best_col: "bulten"}, inplace=True)
+                                
+                    if "bulten" in df.columns:
+                        def extract_vis(b):
+                            m = re.search(r"\s(\d{4})\s", str(b))
+                            return float(m.group(1)) if m else None
+                        if "vv" not in df.columns:
+                            df["vv"] = df["bulten"].apply(extract_vis)
+                        if "ww" not in df.columns:
+                            df["ww"] = df["bulten"]
+
+                # Güvenlik Kontrolü: sayfa (Gün/Tarih) sütunu yoksa oluştur
+                if "sayfa" not in df.columns:
+                    for col in df.columns:
+                        if col not in ["gmt", "bulten", "tarih", "saat"]:
+                            df.rename(columns={col: "sayfa"}, inplace=True); break
+                    if "sayfa" not in df.columns: df["sayfa"] = "1"
+
+                # GÜVENLİK: Excel sayfa ismi yerine, gerçekten bir Tarih/Kayıt sütunu varsa daima onu kullan
+                for col in list(df.columns):
+                    col_str = str(col).lower()
+                    if col_str in ["kayıt", "kayit", "kayıt zamanı", "kayit zamani", "tarih", "date"]:
+                        df["sayfa"] = df[col]
+                        break
+
+                # Önce Tarih Formatını Düzenle (Tarih kaydırma için gerekli)
+                df["sayfa"] = df["sayfa"].astype(str)
+                df["sayfa"] = df["sayfa"].apply(lambda x: dm1.tarih_olustur_helper(x, yil, ay))
+                
+                # KESİN ÇÖZÜM: Dosyadan gelen yıl/ay ile kullanıcının girdiği yıl/ay uyuşmazsa 
+                # SİNOPTİK verisi şablonla eşleşemez ve tamamen BOŞ çıkar.
+                # Bu yüzden tüm tarihleri kullanıcının arayüzde girdiği YIL ve AYA zorluyoruz!
+                def yili_ayi_zorla(tarih_str):
+                    if pd.isna(tarih_str): return tarih_str
+                    try:
+                        dt = pd.to_datetime(tarih_str, format='%d.%m.%Y', errors='coerce')
+                        if pd.notna(dt):
+                            _, max_gun = calendar.monthrange(yil, ay)
+                            safe_day = min(dt.day, max_gun)
+                            return pd.Timestamp(year=yil, month=ay, day=safe_day).strftime('%d.%m.%Y')
+                    except: pass
+                    return tarih_str
+                    
+                df["sayfa"] = df["sayfa"].apply(yili_ayi_zorla)
+                df.dropna(subset=["sayfa"], inplace=True)
+
+                if "gmt" in df.columns:
+                    # Saat Temizliği ve Ayrıştırma
+                    df["gmt_raw"] = df["gmt"].astype(str).str.upper().str.replace('Z', '').str.strip()
+                    
+                    if is_metar:
+                        # METAR için en yakın Sinoptik saatini bul (0050 -> 00, 2350 -> 00 ertesi gün)
+                        def match_time(row):
+                            val = str(row["gmt_raw"]).strip()
+                            if val.endswith('.0'): val = val[:-2]
+                            date_val = row["sayfa"]
+                            h, m = 0, 0
+                            try:
+                                time_match = re.search(r'(\d{1,2}):(\d{2})', val)
+                                if time_match: h, m = int(time_match.group(1)), int(time_match.group(2))
+                                else:
+                                    if ' ' in val:
+                                        last_part = val.split()[-1]
+                                        if last_part.isdigit() or re.match(r'\d{3,4}Z?', last_part):
+                                            val = last_part
+                                        
+                                    val = re.sub(r'[^0-9]', '', val)
+                                    if len(val) >= 4: h, m = int(val[-4:-2]), int(val[-2:])
+                                    elif len(val) == 3: h, m = int(val[:1]), int(val[1:])
+                                    elif val.isdigit() and len(val) <= 2: h, m = int(val), 0
+                                    else: return None, None, None
+                            except: return None, None, None
+
+                            orig_h, orig_m = h, m
+
+                            # Dakika 40'tan büyükse bir sonraki saate yuvarla (Örn: 23:50 -> 24:00)
+                            if m >= 40:
+                                h += 1
+                                
+                            if h >= 24:
+                                h = 0
+                                try:
+                                    dt = pd.to_datetime(date_val, format="%d.%m.%Y") + datetime.timedelta(days=1)
+                                    date_val = dt.strftime("%d.%m.%Y")
+                                except: pass
+                            
+                            exact_gmt = f"{orig_h:02d}{orig_m:02d}"
+                            return float(h), date_val, exact_gmt
+
+                        if not df.empty:
+                            res = df.apply(match_time, axis=1, result_type='expand')
+                            if isinstance(res, pd.DataFrame) and 0 in res.columns and 1 in res.columns:
+                                df["gmt"] = res[0]
+                                df["sayfa"] = res[1]
+                                df["gmt_exact"] = res[2] if 2 in res.columns else float('nan')
+                    else:
+                        # Sinoptik
+                        def fix_sinoptik_time(row):
+                            v = str(row["gmt_raw"]).strip()
+                            date_val = row["sayfa"]
+                            if not v or v.upper() == 'NAN' or v.upper() == 'NONE':
+                                return float('nan'), date_val, float('nan')
+
+                            h = None
+                            m = 0
+                            time_match = re.search(r'\b(\d{1,2}):(\d{2})', v)
+                            if time_match:
+                                h = int(time_match.group(1))
+                                m = int(time_match.group(2))
+                            else:
+                                if ' ' in v:
+                                    last_part = v.split()[-1]
+                                    if last_part.isdigit() or re.match(r'\d{3,4}Z?', last_part):
+                                        v = last_part
+                                
+                                match = re.match(r'^\d+', v)
+                                if match:
+                                    ext = match.group(0)
+                                    if len(ext) == 6: h = int(ext[2:4])
+                                    elif len(ext) == 5: h = int(ext[2:4])
+                                    elif len(ext) >= 3: h = int(ext[:2]); m = int(ext[2:4]) if len(ext)>=4 else 0
+                                    else: h = int(ext)
+                                else:
+                                    try: h = int(float(v))
+                                    except: return float('nan'), date_val, float('nan')
+
+                            if h is not None:
+                                orig_h = h
+                                orig_m = m
+                                if h >= 24:
+                                    h = 0
+                                    try:
+                                        dt = pd.to_datetime(date_val, format="%d.%m.%Y") + datetime.timedelta(days=1)
+                                        date_val = dt.strftime("%d.%m.%Y")
+                                    except: pass
+                                exact_gmt = f"{orig_h:02d}{orig_m:02d}"
+                                return float(h), date_val, exact_gmt
+                            return float('nan'), date_val, float('nan')
+
+                        if not df.empty:
+                            res = df.apply(fix_sinoptik_time, axis=1, result_type='expand')
+                            if isinstance(res, pd.DataFrame) and 0 in res.columns and 1 in res.columns:
+                                df["gmt"] = res[0]
+                                df["sayfa"] = res[1]
+                                df["gmt_exact"] = res[2] if 2 in res.columns else float('nan')
+
+                    df.dropna(subset=["gmt"], inplace=True)
+                
+                numeric_cols = ['ir', 'ix', 'rrr', 'ww', 'w1', 'w2', 't', 'td', 'n', 'nh', 'cl', 'cm', 'ch', 'dd', 'ff', 'vv', 'a', 'ppp', 'tx', 'tn', 'tg', 'p', 'p0', 'e', 'h', 'tr', 'g924', 'g910', 'g911', 'g931', 'g932', 'g960', 'rh']
+                for col in numeric_cols:
+                    # Eğer zorunlu bir meteorolojik sütun veride hiç yoksa çökmeyi önlemek için boş olarak ekle
+                    if col not in df.columns:
+                        df[col] = float('nan')
+
+                    if col in df.columns:
+                        if df[col].dtype == 'object':
+                            # 1. Görünmez karakterleri (non-breaking space vb.) ve boşlukları temizle
+                            df[col] = df[col].astype(str).str.replace(r'[\xa0\u200b]', '', regex=True).str.strip()
+                            # 2. Virgülü noktaya çevir
+                            df[col] = df[col].str.replace(',', '.', regex=False)
+                            # 3. 'nan' metinlerini gerçek NaN'a dönüştür
+                            df[col] = df[col].replace(['nan', 'NAN', 'None', 'NONE', '', '-', ' - '], float('nan'))
+                        
+                        if is_metar and col in ['ww', 'ww2', 'ww3']:
+                            pass # METAR'da halihazır hava metin (RA, BR vb.) olabilir, sayısal değere zorlama
+                        else:
+                            if df[col].dtype == 'object':
+                                # 4. Hücreye yanlışlıkla "15 C" veya "1012 hPa" gibi metin girilmişse sadece sayıyı kurtar
+                                mask = df[col].notna()
+                                df.loc[mask, col] = df.loc[mask, col].astype(str).str.extract(r'([+-]?\d+\.?\d*)', expand=False)
+                                
+                            df[col] = pd.to_numeric(df[col], errors="coerce")
+
+            # Eşleşme sorunlarını (Veri Yok hatasını) önlemek için tarih formatlarını (%d.%m.%Y) ve saat tiplerini (float) GARANTİYE alıyoruz
+            df_sin["sayfa"] = pd.to_datetime(df_sin["sayfa"], format='%d.%m.%Y', errors='coerce').dt.strftime('%d.%m.%Y')
+            df_sin["gmt"] = pd.to_numeric(df_sin["gmt"], errors='coerce').astype(float)
+            
+            df_metar["sayfa"] = pd.to_datetime(df_metar["sayfa"], format='%d.%m.%Y', errors='coerce').dt.strftime('%d.%m.%Y')
+            df_metar["gmt"] = pd.to_numeric(df_metar["gmt"], errors='coerce').astype(float)
+
+            # Gruplama esnasında first() metodunun boş stringleri alıp asıl metni ezmemesi için boş hücreleri gerçek NaN yap
+            df_metar.replace(r'^\s*-\s*$', pd.NA, regex=True, inplace=True)
+            df_metar.replace(r'^\s*$', pd.NA, regex=True, inplace=True)
+            df_sin.replace(r'^\s*-\s*$', pd.NA, regex=True, inplace=True)
+            df_sin.replace(r'^\s*$', pd.NA, regex=True, inplace=True)
+
+            if '_raw_line' in df_sin.columns:
+                df_sin['_raw_line'] = df_sin['_raw_line'].apply(lambda x: float('nan') if pd.isna(x) or str(x).strip().lower() in ['', 'nan', 'none'] else str(x).strip())
+
+            if '_raw_line' in df_metar.columns:
+                df_metar['_raw_line'] = df_metar['_raw_line'].apply(lambda x: float('nan') if pd.isna(x) or str(x).strip().lower() in ['', 'nan', 'none'] else str(x).strip())
+                if 'bulten' in df_metar.columns:
+                    df_metar['bulten'] = df_metar['bulten'].replace(['nan', 'NAN', 'NaN', 'None', 'NONE'], float('nan'))
+                    df_metar['bulten'] = df_metar['bulten'].fillna(df_metar['_raw_line'])
+                else:
+                    df_metar['bulten'] = df_metar['_raw_line']
+
+            if df_sin.empty:
+                raise ValueError("Sinoptik verileri işlendikten sonra boş kaldı! Tarih veya Saat sütunları okunamamış olabilir.\nLütfen Excel sayfa isimlerinin (1, 2, 3...) veya tarih formatının doğru olduğundan emin olun.")
+
+            # Rasatlar Sütunu
+            if not df_sin.empty:
+                def raw_rasat_olustur(row):
+                    if 'bulten' in row and pd.notna(row['bulten']) and str(row['bulten']).strip().lower() not in ["", "nan", "none"]:
+                        return str(row['bulten'])
+                    if '_raw_line' in row and pd.notna(row['_raw_line']) and str(row['_raw_line']).strip().lower() not in ["", "nan", "none"]:
+                        return str(row['_raw_line'])
+
+                    items = []
+                    exclude = ['sayfa', 'gmt', 'tarih', 'istasyon_no', 'personel', 'g924', 'hadise_kayit', 'gmt_raw', '_raw_line', 'bulten']
+                    for col in df_sin.columns:
+                        if col not in exclude:
+                            val = row.get(col)
+                            if pd.notna(val):
+                                val_str = str(val).strip()
+                                if val_str:
+                                    col_name = str(col).upper()
+                                    if "UNNAMED" in col_name: items.append(val_str)
+                                    else: items.append(f"{col_name}:{val_str}")
+                    return " ".join(items)
+                df_sin["RASATLAR"] = df_sin.apply(raw_rasat_olustur, axis=1)
+
+            # Sadece geçerli Sinoptik saatlerini filtrele ve tekrarları temizle
+            df_sin = df_sin[df_sin["gmt"].isin([0.0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0])]
+            df_sin = df_sin.drop_duplicates(subset=["sayfa", "gmt"])
+
+            sinoptik_sayisi = len(df_sin)
+            metar_sayisi = len(df_metar)
+            
+            # SPECI ve METAR ayrımı
+            speci_sayisi = 0
+            metar_normal_sayisi = metar_sayisi
+            
+            speci_mask = pd.Series(False, index=df_metar.index)
+            if "mesaj_tipi" in df_metar.columns:
+                speci_mask = speci_mask | df_metar["mesaj_tipi"].astype(str).str.contains(r'\b(SPECI|SP|S)\b', case=False, na=False)
+            
+            b_col_m = "bulten" if "bulten" in df_metar.columns else "_raw_line"
+            if b_col_m in df_metar.columns:
+                speci_mask = speci_mask | df_metar[b_col_m].astype(str).str.contains(r'\bSPECI\b', case=False, na=False)
+                
+            # YENİ: Dakikası 50, 20 veya 00 olmayan rasatları da SPECI (Özel Rasat) kabul et
+            if 'gmt_exact' in df_metar.columns:
+                gmt_exact_str = df_metar['gmt_exact'].astype(str)
+                dakika_mask = ~gmt_exact_str.str.endswith(('50', '20', '00', 'nan', 'NAN', 'None'))
+                speci_mask = speci_mask | dakika_mask
+                
+            speci_sayisi = int(speci_mask.sum())
+            metar_normal_sayisi = metar_sayisi - speci_sayisi
+
+            # Şablon ve Birleştirme
+            _, son_gun = calendar.monthrange(yil, ay)
+            sablon_data = []
+            for d in range(1, son_gun + 1):
+                t_str = pd.Timestamp(year=yil, month=ay, day=d).strftime('%d.%m.%Y')
+                for h in range(24): # 23:50'ler ertesi gün 0'a devredeceği için şablon tekrar standart 24 saate (0-23) döndürüldü
+                    sablon_data.append({"sayfa": t_str, "gmt": float(h)})
+            df_sablon = pd.DataFrame(sablon_data)
+
+            # --- KESİN ÇÖZÜM (REINDEXING HATASI İÇİN): SÜTUNLARI VE İNDEKSLERİ TEMİZLE ---
+            for df_temp in [df_sin, df_metar]:
+                df_temp.reset_index(drop=True, inplace=True) # İndeks çakışmalarını önler
+                if any(df_temp.columns.duplicated()):
+                    cols = pd.Series(df_temp.columns)
+                    for dup in cols[cols.duplicated()].unique():
+                        dup_indices = cols[cols == dup].index.tolist()
+                        for idx_num, idx in enumerate(dup_indices):
+                            if idx_num != 0:
+                                cols[idx] = f"{dup}_{idx_num}"
+                    df_temp.columns = cols
+            # ----------------------------------------------------------------------------
+
+            df_sin = pd.merge(df_sablon, df_sin, on=["sayfa", "gmt"], how="left")
+            
+            # KESİN ÇÖZÜM: METAR verisindeki saat tekrarlarını (Ham mesajlar ve Meteorolojik veriler ayrı satırlardadır) ezmeden birleştir
+            df_metar['is_speci'] = speci_mask
+            df_metar = df_metar.sort_values(by=['sayfa', 'gmt', 'is_speci'], ascending=[True, True, True]) # Rutin METAR'lar (False) üstte olsun
+            df_metar_tekil = df_metar.groupby(["sayfa", "gmt"], as_index=False).first()
+            df_metar.drop(columns=['is_speci'], inplace=True, errors='ignore')
+            df_metar_tekil.drop(columns=['is_speci'], inplace=True, errors='ignore')
+            
+            # YENİ: SİNOPTİK VE METAR SÜTUNLARINI BİRLEŞTİRME VE RAPORLAMA İÇİN GARANTİLEME
+            # _sin ve _metar eklerinin çiftlenmesini önlemek için replace yapıyoruz
+            df_sin.columns = [str(c) if str(c) in ['sayfa', 'gmt', 'RASATLAR'] else ("gmt_exact_sin" if c == "gmt_exact" else f"{str(c).replace('_sin', '')}_sin") for c in df_sin.columns]
+            df_metar_tekil.columns = [str(c) if str(c) in ['sayfa', 'gmt', 'RASATLAR'] else ("gmt_exact_metar" if c == "gmt_exact" else f"{str(c).replace('_metar', '')}_metar") for c in df_metar_tekil.columns]
+            
+            # DEBUG: Merge öncesi sütunları göster
+            print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
+            print(f"{Colors.BOLD}MERGE ÖNCESI SÜTUNLar:{Colors.ENDC}")
+            print(f"df_sin sütun sayısı: {len(df_sin.columns)}")
+            print(f"df_sin ilk 10 sütun: {list(df_sin.columns)[:10]}")
+            print(f"\ndf_metar_tekil sütun sayısı: {len(df_metar_tekil.columns)}")
+            print(f"df_metar_tekil ilk 10 sütun: {list(df_metar_tekil.columns)[:10]}")
+            print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}")
+            
+            birlesik = pd.merge(df_sin, df_metar_tekil, on=["sayfa", "gmt"], how="left")
+            
+            # DEBUG: Merge sonrası sütunları göster
+            print(f"\n{Colors.BOLD}MERGE SONRASI SÜTUNLar:{Colors.ENDC}")
+            print(f"Birleşik sütun sayısı: {len(birlesik.columns)}")
+            print(f"Birleşik ilk 20 sütun: {list(birlesik.columns)[:20]}")
+            print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
+            
+            # --- YENİ EKLENEN: PANDAS NaN DAVRANIŞLARINI GÜVENLİ HALE GETİRME ---
+            # Metin (Object) sütunlarındaki NaN değerlerini boş stringe ("") çeviriyoruz.
+            # Bu sayede validator ve analiz tarafında str(NaN) sonucu oluşan "nan" kelimesinin
+            # sahte hadise eşleşmelerine (Örn: FG, N vb.) yol açmasını kesin olarak önlüyoruz.
+            for col in birlesik.columns:
+                if birlesik[col].dtype == 'object' or birlesik[col].dtype.name == 'category':
+                    birlesik[col] = birlesik[col].replace(['nan', 'NAN', 'NaN', 'None', 'NONE', '-', ' - '], "")
+                    birlesik[col] = birlesik[col].fillna("")
+            
+            # Geçmiş METAR aramalarında 'nan' kelimesi oluşmasını önlemek için aynı işlemi df_metar'a da uygula
+            for col in df_metar.columns:
+                if df_metar[col].dtype == 'object' or df_metar[col].dtype.name == 'category':
+                    df_metar[col] = df_metar[col].replace(['nan', 'NAN', 'NaN', 'None', 'NONE', '-', ' - '], "")
+                    df_metar[col] = df_metar[col].fillna("")
+            # ------------------------------------------------------------------
+
+            

@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	KARDELEN
+</title><meta http-equiv="content-type" content="text/html; charset=utf-8" /><link href="../../App_Themes/Default/menu.css" rel="stylesheet" type="text/css" /><link href="../../App_Themes/Default/Default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <form method="post" action="./SinGoster.aspx?ist=17244&amp;istIsim=KONYA+MEYDAN" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+
+<script type="text/javascript">
+//<![CDATA[
+var __cultureInfo = {"name":"tr-TR","numberFormat":{"CurrencyDecimalDigits":2,"CurrencyDecimalSeparator":",","IsReadOnly":true,"CurrencyGroupSizes":[3],"NumberGroupSizes":[3],"PercentGroupSizes":[3],"CurrencyGroupSeparator":".","CurrencySymbol":"₺","NaNSymbol":"NaN","CurrencyNegativePattern":1,"NumberNegativePattern":1,"PercentPositivePattern":2,"PercentNegativePattern":2,"NegativeInfinitySymbol":"-∞","NegativeSign":"-","NumberDecimalDigits":2,"NumberDecimalSeparator":",","NumberGroupSeparator":".","CurrencyPositivePattern":0,"PositiveInfinitySymbol":"∞","PositiveSign":"+","PercentDecimalDigits":2,"PercentDecimalSeparator":",","PercentGroupSeparator":".","PercentSymbol":"%","PerMilleSymbol":"‰","NativeDigits":["0","1","2","3","4","5","6","7","8","9"],"DigitSubstitution":1},"dateTimeFormat":{"AMDesignator":"ÖÖ","Calendar":{"MinSupportedDateTime":"\/Date(-62135596800000)\/","MaxSupportedDateTime":"\/Date(253402289999999)\/","AlgorithmType":1,"CalendarType":1,"Eras":[1],"TwoDigitYearMax":2049,"IsReadOnly":true},"DateSeparator":".","FirstDayOfWeek":1,"CalendarWeekRule":0,"FullDateTimePattern":"d MMMM yyyy dddd HH:mm:ss","LongDatePattern":"d MMMM yyyy dddd","LongTimePattern":"HH:mm:ss","MonthDayPattern":"d MMMM","PMDesignator":"ÖS","RFC1123Pattern":"ddd, dd MMM yyyy HH\u0027:\u0027mm\u0027:\u0027ss \u0027GMT\u0027","ShortDatePattern":"d.MM.yyyy","ShortTimePattern":"HH:mm","SortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss","TimeSeparator":":","UniversalSortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd HH\u0027:\u0027mm\u0027:\u0027ss\u0027Z\u0027","YearMonthPattern":"MMMM yyyy","AbbreviatedDayNames":["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"],"ShortestDayNames":["Pa","Pt","Sa","Ça","Pe","Cu","Ct"],"DayNames":["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"],"AbbreviatedMonthNames":["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara",""],"MonthNames":["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık",""],"IsReadOnly":true,"NativeCalendarName":"Miladi Takvim","AbbreviatedMonthGenitiveNames":["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara",""],"MonthGenitiveNames":["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık",""]},"eras":[1,"MS",null,0]};//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=NJmAwtEo3Ipnlaxl6CMhvnRnIoZ3aVJed-P-vpd-LtE0ooCt0knuOiG8fXot0QLZtzUanZNK-Guq03ftylKs5P0qcdtC4Xayp9Sq7H5q6jsxJDs7aCNLcxZi3J1vGf-hbThAKFOfWFBpgBT0bGkMr4NsUPDR-oLmPa8GPn6HNiU1&amp;t=7a0cc936" type="text/javascript"></script>
+<script src="/Reserved.ReportViewerWebControl.axd?OpType=Resource&amp;Version=10.0.40219.329&amp;Name=ViewerScript" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=Xz2vUBiw-iW_eTyhK3lS4VuI0ntDSiJVlGQOJ0yCjKmFxw2HHPWGiLSq5xRqftmldk26sM3D4H_xE4Y-_rlwwUFV1oNv-L6Dr5RRm7JEjrkqlGMcp6hCwnbzSXSYl6CygBHPGPjCVfF24ViKiPOJtEcGpOBcEHVuOgFqt1b6FLw1&amp;t=7a0cc936" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="76491B3B" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="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" />
+    
+    <div id="govde">
+        <div id="ustTaraf">
+            <div id="ustSol" style="float: left;">
+                <img src="../../imgGenel/KardelenIcon_64x64t.gif" alt="" />
+                <img src="../../imgGenel/yazi.png" alt="" />
+            </div>
+            <div id="ustSag" style="float: right; padding-top: 45px">
+                <h1 style="margin-bottom: 0; padding-bottom: 0;">
+                    <span id="lblIstIndex">17244 KONYA MEYDAN -> Sinoptik Bültenler</span></h1>
+            </div>
+            <div style="clear: both; height: 1px;">
+            </div>
+        </div>
+        <div id="menu">
+            <ul id="menukk">
+                <li>
+                    <a id="mnAnaSayfa" href="../../Default.aspx">Ana Sayfa</a></li>
+                <li>
+                    <a id="mnBultenler" class="current" href="../../BultenGenel/Default.aspx">Bültenler</a></li>
+                
+                <li>
+                    <a id="mnHakkinda" href="../../Hakkinda/Default.aspx">Hakkında</a></li>
+                <li>
+                    <a id="mnYardim" href="../../Yardim/Default.aspx">Yardım</a></li>
+            </ul>
+        </div>
+        
+        <div id="siteSayfa">
+            
+    
+<div id="mnAlt">
+    <ul>
+        <li>
+            <a id="cBody_bultenBaslik1_mnGunluk" href="../GnkLog/LogGoster.aspx?ist=17244&amp;istIsim=KONYA MEYDAN">Günlük (Log)</a></li>
+        <li>
+            <a id="cBody_bultenBaslik1_mnSinop" class="currentAlt" href="SinGoster.aspx?ist=17244&amp;istIsim=KONYA MEYDAN"> &nbsp;Sinoptik &nbsp;</a></li>
+        <li>
+            <a id="cBody_bultenBaslik1_mnMetar" href="../Metar/MetarDefter.aspx?ist=17244&amp;istIsim=KONYA MEYDAN">  &nbsp;&nbsp;Metar &nbsp; &nbsp;</a></li>
+        <li>
+            <a id="cBody_bultenBaslik1_mnGnKlima" href="../Klima/GunlukKlimaRpr.aspx?ist=17244&amp;istIsim=KONYA MEYDAN">Günlük Klima</a></li>
+        <li>
+            <a id="cBody_bultenBaslik1_mnFevk" href="../Klima/FevkTekliste.aspx?ist=17244&amp;istIsim=KONYA MEYDAN">Fevk-Hasar &nbsp;</a></li>
+
+    </ul>
+    <div style="clear: both">
+    </div>
+</div>
+
+    <div id="staG" style="margin-top: 2px; height: 100%;">
+        <fieldset style="width: 310px; float: left; height: 50px; text-align: right; padding-right: 5px;">
+            <legend>
+                <img src="../../imgGenel/i_Takvim.gif" alt="" style="vertical-align: middle;" />&nbsp;Geçmiş
+                Aylar&nbsp;</legend>Tarih:
+            <select name="ctl00$cBody$ddArAy" id="cBody_ddArAy">
+	<option value="1">Ocak</option>
+	<option value="2">Şubat</option>
+	<option value="3">Mart</option>
+	<option value="4">Nisan</option>
+	<option value="5">Mayıs</option>
+	<option value="6">Haziran</option>
+	<option value="7">Temmuz</option>
+	<option value="8">Ağustos</option>
+	<option value="9">Eyl&#252;l</option>
+	<option value="10">Ekim</option>
+	<option value="11">Kasım</option>
+	<option value="12">Aralık</option>
+
+</select>
+            <select name="ctl00$cBody$ddArYil" id="cBody_ddArYil">
+	<option value="2024">2024</option>
+	<option value="2025">2025</option>
+	<option value="2026">2026</option>
+
+</select>
+            &nbsp;<input type="submit" name="ctl00$cBody$btnGoster" value="Goster" id="cBody_btnGoster" />
+        </fieldset>
+        <fieldset style="width: 535px; float: right; height: 50px; text-align: right; padding-right: 2px;">
+            <legend>
+                <img src="../../imgGenel/i_Goz.gif" alt="" style="vertical-align: middle;" />
+                &nbsp;Güncel Veri&nbsp; </legend>
+            <label>
+                Başlangıç:
+                <select name="ctl00$cBody$ddBasGun" id="cBody_ddBasGun">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12">12</option>
+	<option value="13">13</option>
+	<option value="14">14</option>
+	<option value="15">15</option>
+	<option value="16">16</option>
+	<option value="17">17</option>
+	<option value="18">18</option>
+	<option value="19">19</option>
+	<option value="20">20</option>
+	<option value="21">21</option>
+	<option value="22">22</option>
+	<option value="23">23</option>
+	<option value="24">24</option>
+	<option value="25">25</option>
+	<option value="26">26</option>
+	<option value="27">27</option>
+	<option value="28">28</option>
+	<option value="29">29</option>
+	<option value="30">30</option>
+	<option value="31">31</option>
+
+</select>
+                <select name="ctl00$cBody$ddBasAy" id="cBody_ddBasAy">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12">12</option>
+
+</select>
+                <select name="ctl00$cBody$ddBasYil" id="cBody_ddBasYil">
+	<option value="2024">2024</option>
+	<option value="2025">2025</option>
+	<option value="2026">2026</option>
+
+</select>
+            </label>
+            &nbsp;
+            <label>
+                Bitiş:
+                <select name="ctl00$cBody$ddBitisGun" id="cBody_ddBitisGun">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12">12</option>
+	<option value="13">13</option>
+	<option value="14">14</option>
+	<option value="15">15</option>
+	<option value="16">16</option>
+	<option value="17">17</option>
+	<option value="18">18</option>
+	<option value="19">19</option>
+	<option value="20">20</option>
+	<option value="21">21</option>
+	<option value="22">22</option>
+	<option value="23">23</option>
+	<option value="24">24</option>
+	<option value="25">25</option>
+	<option value="26">26</option>
+	<option value="27">27</option>
+	<option value="28">28</option>
+	<option value="29">29</option>
+	<option value="30">30</option>
+	<option value="31">31</option>
+
+</select>
+                <select name="ctl00$cBody$ddbitisAy" id="cBody_ddbitisAy">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12">12</option>
+
+</select>
+                <select name="ctl00$cBody$ddbitisYil" id="cBody_ddbitisYil">
+	<option value="2024">2024</option>
+	<option value="2025">2025</option>
+	<option value="2026">2026</option>
+
+</select>
+            </label>
+            &nbsp;<input type="submit" name="ctl00$cBody$btnYukle" value="Yükle" id="cBody_btnYukle" />
+        </fieldset>
+        <fieldset style="clear: both; display: block; margin-bottom: 5px; margin-top: 5px;
+            height: 30px; padding-top: 5px; vertical-align: middle">
+            <span id="cBody_rdList" style="display:inline-block;"><font color="#006600"><input id="cBody_rdList_0" type="radio" name="ctl00$cBody$rdList" value="tum" checked="checked" /><label for="cBody_rdList_0">Tumu  </label><input id="cBody_rdList_1" type="radio" name="ctl00$cBody$rdList" value="rst" /><label for="cBody_rdList_1"> Rasatlar </label><input id="cBody_rdList_2" type="radio" name="ctl00$cBody$rdList" value="prm" /><label for="cBody_rdList_2"> Prm </label><input id="cBody_rdList_3" type="radio" name="ctl00$cBody$rdList" value="grHds" /><label for="cBody_rdList_3">  Hadise </label><input id="cBody_rdList_4" type="radio" name="ctl00$cBody$rdList" value="grOrt" /><label for="cBody_rdList_4">  Mak.Ruz </label><input id="cBody_rdList_5" type="radio" name="ctl00$cBody$rdList" value="grMak" /><label for="cBody_rdList_5">  06-18 Gmt </label><input id="cBody_rdList_6" type="radio" name="ctl00$cBody$rdList" value="grGr1" /><label for="cBody_rdList_6"> GrfGünlük </label><input id="cBody_rdList_7" type="radio" name="ctl00$cBody$rdList" value="grGr2" /><label for="cBody_rdList_7"> GrfSıcaklık </label><input id="cBody_rdList_8" type="radio" name="ctl00$cBody$rdList" value="grGrMkaMin" /><label for="cBody_rdList_8"> GrfMakMin </label><input id="cBody_rdList_9" type="radio" name="ctl00$cBody$rdList" value="grGrYagis" /><label for="cBody_rdList_9"> GrfYağış </label><input id="cBody_rdList_10" type="radio" name="ctl00$cBody$rdList" value="grRstDokum" /><label for="cBody_rdList_10"> Rst.Dökümü </label></font></span>
+        </fieldset>
+        <div style="">
+            <span style="float: left;">
+                <span id="cBody_lblGoster"><b><font color="#003366"></font></b></span></span>
+            <span style="float: right">
+                <span id="cBody_lblHata"><b><font color="#9C413A"></font></b></span></span>
+        </div>
+    </div>
+    <div id="rapor" style="clear: both; margin-bottom: 50px;">
+        <noscript>
+	&nbsp;Your browser does not support scripts or has been configured not to allow scripts.
+</noscript><span id="ctl00_cBody_rpw_ReportViewer"><div id="ctl00_cBody_rpw" onclick="if ($get(&#39;ctl00_cBody_rpw_ctl04&#39;) != null &amp;&amp; $get(&#39;ctl00_cBody_rpw_ctl04&#39;).control != null) $get(&#39;ctl00_cBody_rpw_ctl04&#39;).control.HideActiveDropDown();" onactivate="if ($get(&#39;ctl00_cBody_rpw_ctl04&#39;) != null &amp;&amp; $get(&#39;ctl00_cBody_rpw_ctl04&#39;).control != null) $get(&#39;ctl00_cBody_rpw_ctl04&#39;).control.HideActiveDropDown();">
+	<div id="ctl00_cBody_rpw_HttpHandlerMissingErrorMessage" style="padding:10px;display:none;overflow:auto;font-size:.85em;">
+		<h2>
+			Report Viewer Configuration Error
+		</h2><p>The Report Viewer Web Control HTTP Handler has not been registered in the application&#39;s web.config file.  Add &lt;add verb=&quot;*&quot; path=&quot;Reserved.ReportViewerWebControl.axd&quot; type = &quot;Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a&quot; /&gt; to the system.web/httpHandlers section of the web.config file, or add &lt;add name=&quot;ReportViewerWebControlHandler&quot; preCondition=&quot;integratedMode&quot; verb=&quot;*&quot; path=&quot;Reserved.ReportViewerWebControl.axd&quot; type=&quot;Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a&quot; /&gt; to the system.webServer/handlers section for Internet Information Services 7 or later.</p>
+	</div><span id="ctl00_cBody_rpw_ctl03"><input type="hidden" name="ctl00$cBody$rpw$ctl03$ctl00" id="ctl00_cBody_rpw_ctl03_ctl00" /><input type="hidden" name="ctl00$cBody$rpw$ctl03$ctl01" id="ctl00_cBody_rpw_ctl03_ctl01" /></span><input type="hidden" name="ctl00$cBody$rpw$ctl10" id="ctl00_cBody_rpw_ctl10" /><input type="hidden" name="ctl00$cBody$rpw$ctl11" id="ctl00_cBody_rpw_ctl11" /><div id="ctl00_cBody_rpw_AsyncWait" style="opacity:0.7;position:absolute;display:none;filter:alpha(opacity=70);">
+
+	</div><div id="ctl00_cBody_rpw_AsyncWait_Wait" style="display:none;position:absolute;">
+		<table height="100%">
+			<tr>
+				<td width="32px" height="32px"><img src="/Reserved.ReportViewerWebControl.axd?OpType=Resource&amp;Version=10.0.40219.329&amp;Name=Microsoft.Reporting.WebForms.Icons.SpinningWheel.gif" height="32" width="32" /></td><td valign="middle" align="center"><span><font face="Verdana" size="4">Loading...</font></span><div>
+					<a href="javascript:$get(&#39;ctl00_cBody_rpw_AsyncWait&#39;).control._cancelCurrentPostback();" style="color:#3366CC;"><font face="Verdana" size="1">Cancel</font></a>
+				</div></td>
+			</tr>
+		</table>
+	</div><input type="hidden" name="ctl00$cBody$rpw$AsyncWait$HiddenCancelField" id="ctl00_cBody_rpw_AsyncWait_HiddenCancelField" value="False" /><table cellpadding="0" cellspacing="0" id="ctl00_cBody_rpw_fixedTable" width="100%" height="100%">
+		<tr>
+			<td width="145" style="display:none;"></td><td width="6" style="display:none;"></td><td width="100%"></td>
+		</tr><tr id="ParametersRowctl00_cBody_rpw" style="display:none;">
+			<td colspan="3"></td>
+		</tr><tr style="display:none;">
+			<td colspan="3" align="center" bgcolor="#ECE9D8"><font size="1"><div id="ctl00_cBody_rpw_ToggleParam">
+				<input type="image" name="ctl00$cBody$rpw$ToggleParam$img" id="ctl00_cBody_rpw_ToggleParam_img" title="Show / Hide Parameters" src="/Reserved.ReportViewerWebControl.axd?OpType=Resource&amp;Version=10.0.40219.329&amp;Name=Microsoft.Reporting.WebForms.Icons.SplitterHorizCollapse.png" alt="Show / Hide Parameters" align="middle" onclick="void(0);" style="cursor:pointer;" /><input type="hidden" name="ctl00$cBody$rpw$ToggleParam$store" id="ctl00_cBody_rpw_ToggleParam_store" /><input type="hidden" name="ctl00$cBody$rpw$ToggleParam$collapse" id="ctl00_cBody_rpw_ToggleParam_collapse" value="false" />
+			</div></font></td>
+		</tr><tr style="display:none;">
+
+		</tr><tr>
+			<td valign="top" width="145" height="100%" style="display:none;"><div>
+				<span id="ctl00_cBody_rpw_DocMap"><div id="ctl00_cBody_rpw_ctl08" style="display:none;">
+					<input type="hidden" name="ctl00$cBody$rpw$ctl08$ClientClickedId" id="ctl00_cBody_rpw_ctl08_ClientClickedId" />
+				</div></span>
+			</div></td><td width="4" height="100%" valign="middle" bgcolor="#ECE9D8" style="display:none;"><div id="ctl00_cBody_rpw_ctl07">
+				<input type="image" name="ctl00$cBody$rpw$ctl07$img" id="ctl00_cBody_rpw_ctl07_img" title="Show / Hide Document Map" src="/Reserved.ReportViewerWebControl.axd?OpType=Resource&amp;Version=10.0.40219.329&amp;Name=Microsoft.Reporting.WebForms.Icons.SplitterVertCollapse.png" alt="Show / Hide Document Map" align="top" onclick="void(0);" style="cursor:pointer;" /><input type="hidden" name="ctl00$cBody$rpw$ctl07$store" id="ctl00_cBody_rpw_ctl07_store" /><input type="hidden" name="ctl00$cBody$rpw$ctl07$collapse" id="ctl00_cBody_rpw_ctl07_collapse" value="false" />
+			</div></td><td height="100%" valign="top"><div id="ctl00_cBody_rpw_ctl09" style="overflow:auto;position:relative;">
+				<div id="VisibleReportContentctl00_cBody_rpw_ctl09" style="display:none;">
+
+				</div><div id="ctl00_cBody_rpw_ctl09_ReportArea">
+					<div NewContentType="Microsoft.Reporting.WebFormsClient.ReportAreaContent.None" ForNonReportContentArea="false" id="ctl00_cBody_rpw_ctl09_VisibilityState" style="visibility:none;">
+						<input type="hidden" name="ctl00$cBody$rpw$ctl09$VisibilityState$ctl00" value="None" />
+					</div><input type="hidden" name="ctl00$cBody$rpw$ctl09$ScrollPosition" id="ctl00_cBody_rpw_ctl09_ScrollPosition" /><span id="ctl00_cBody_rpw_ctl09_Reserved_AsyncLoadTarget"></span><div id="ctl00_cBody_rpw_ctl09_ReportControl" style="display:none;">
+						<span></span><input type="hidden" name="ctl00$cBody$rpw$ctl09$ReportControl$ctl02" /><input type="hidden" name="ctl00$cBody$rpw$ctl09$ReportControl$ctl03" /><input type="hidden" name="ctl00$cBody$rpw$ctl09$ReportControl$ctl04" id="ctl00_cBody_rpw_ctl09_ReportControl_ctl04" value="100" />
+					</div><div id="ctl00_cBody_rpw_ctl09_NonReportContent">
+
+					</div>
+				</div>
+			</div></td>
+		</tr>
+	</table>
+</div></span>
+    </div>
+
+        </div>
+        <div id="anaFooter" style="margin-top: 5px">
+            <div id="footerSol" style="float: left; padding: 20px 0 0 10px">
+                KardelenGrup &copy; 2008</div>
+            <div id="footerSag" style="float: right;">
+                <img src="../../imgGenel/kardelen60.gif" alt="" /></div>
+            <div style="clear: both">
+            </div>
+        </div>
+    </div>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.add_init(function() {
+    
+if (typeof Microsoft == 'undefined' ||
+    typeof Microsoft.Reporting == 'undefined' ||
+    typeof Microsoft.Reporting.WebFormsClient == 'undefined' ||
+    typeof Microsoft.Reporting.WebFormsClient.ReportViewer == 'undefined')
+    Sys.UI.DomElement.setVisible($get('ctl00_cBody_rpw_HttpHandlerMissingErrorMessage'), true);
+    $create(Microsoft.Reporting.WebFormsClient.ReportViewer, {"_internalViewerId":"ctl00_cBody_rpw_ctl03","id":"ctl00_cBody_rpw"}, null, null);
+});
+Sys.Application.add_init(function() {
+    $create(Microsoft.Reporting.WebFormsClient._InternalReportViewer, {"ActionParamId":"ctl00_cBody_rpw_ctl03_ctl01","ActionTypeId":"ctl00_cBody_rpw_ctl03_ctl00","BaseHeight":"600px","BaseWidth":"100%","BrowserModeId":"ctl00_cBody_rpw_ctl11","DirectionCacheId":"ctl00_cBody_rpw_ctl10","DocMapAreaId":"ctl00_cBody_rpw_ctl08","DocMapHeaderOverflowDivId":"ctl00_cBody_rpw_ctl08DocMapHeaderOverflowDiv","DocMapSplitterId":"ctl00_cBody_rpw_ctl07","FixedTableId":"ctl00_cBody_rpw_fixedTable","HasSizingRow":true,"PostBackToClientScript":function(){__doPostBack('ctl00$cBody$rpw$ctl03','');},"PromptAreaRowId":"ParametersRowctl00_cBody_rpw","PromptSplitterId":"ctl00_cBody_rpw_ToggleParam","ReportAreaId":"ctl00_cBody_rpw_ctl09","ReportViewerId":"ctl00_cBody_rpw","UnableToLoadPrintMessage":"Unable to load client print control."}, null, null, $get("ctl00_cBody_rpw_ctl03"));
+    $create(Microsoft.Reporting.WebFormsClient._SessionKeepAlive, {"KeepAliveBody":null,"KeepAliveIntervalSeconds":1140,"KeepAliveUrl":"/Reserved.ReportViewerWebControl.axd?OpType=SessionKeepAlive\u0026ControlID=a980d1e6f93c45109baee8f4c1595050\u0026Mode=true","id":"ctl00_cBody_rpw_SessionKeepAlive"}, null, null);
+});
+Sys.Application.add_init(function() {
+    $create(Microsoft.Reporting.WebFormsClient._AsyncWaitControl, {"ClientCanceledId":"ctl00_cBody_rpw_AsyncWait_HiddenCancelField","DisplayDelay":1000,"FixedTableId":"ctl00_cBody_rpw_fixedTable","ReportViewerId":"ctl00_cBody_rpw","SkipTimer":false,"TriggerIds":["ctl00_cBody_rpw"],"WaitControlId":"ctl00_cBody_rpw_AsyncWait_Wait"}, null, null, $get("ctl00_cBody_rpw_AsyncWait"));
+});
+Sys.Application.add_init(function() {
+    $create(Microsoft.Reporting.WebFormsClient._Splitter, {"HoverColor":"#DDEEF7","ImageCollapse":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterHorizCollapse.png","ImageCollapseHover":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterHorizCollapseHover.png","ImageExpand":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterHorizExpand.png","ImageExpandHover":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterHorizExpandHover.png","ImageId":"ctl00_cBody_rpw_ToggleParam_img","IsCollapsable":true,"NormalColor":"#ECE9D8","Resizable":false,"StoreCollapseField":"ctl00_cBody_rpw_ToggleParam_collapse","StorePositionField":"ctl00_cBody_rpw_ToggleParam_store","Vertical":false}, null, null, $get("ctl00_cBody_rpw_ToggleParam"));
+});
+Sys.Application.add_init(function() {
+    $create(Microsoft.Reporting.WebFormsClient._Splitter, {"HoverColor":"#DDEEF7","ImageCollapse":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterVertCollapse.png","ImageCollapseHover":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterVertCollapseHover.png","ImageExpand":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterVertExpand.png","ImageExpandHover":"/Reserved.ReportViewerWebControl.axd?OpType=Resource\u0026Version=10.0.40219.329\u0026Name=Microsoft.Reporting.WebForms.Icons.SplitterVertExpandHover.png","ImageId":"ctl00_cBody_rpw_ctl07_img","IsCollapsable":true,"NormalColor":"#ECE9D8","Resizable":true,"StoreCollapseField":"ctl00_cBody_rpw_ctl07_collapse","StorePositionField":"ctl00_cBody_rpw_ctl07_store","Vertical":true}, null, null, $get("ctl00_cBody_rpw_ctl07"));
+});
+Sys.Application.add_init(function() {
+    $create(Microsoft.Reporting.WebFormsClient._ReportArea, {"NonReportContentId":"ctl00_cBody_rpw_ctl09_NonReportContent","ReportAreaVisibilityStateId":"ctl00_cBody_rpw_ctl09_VisibilityState","ReportControlId":"ctl00_cBody_rpw_ctl09_ReportControl","ScrollPositionId":"ctl00_cBody_rpw_ctl09_ScrollPosition","VisibleReportContentContainerId":"VisibleReportContentctl00_cBody_rpw_ctl09"}, null, null, $get("ctl00_cBody_rpw_ctl09"));
+});
+Sys.Application.add_init(function() {
+    $create(Microsoft.Reporting.WebFormsClient._ReportPage, {"HiddenZoomLevelId":"ctl00_cBody_rpw_ctl09_ReportControl_ctl04","StyleElementId":"ctl00_cBody_rpw_ctl09_ReportControl_styles"}, null, null, $get("ctl00_cBody_rpw_ctl09_ReportControl"));
+});
+//]]>
+</script>
+</form>
+</body>
+</html>

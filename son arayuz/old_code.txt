@@ -1,0 +1,3 @@
+302:     def islem_yurut():
+396:                 df_metar = future_metar.result()
+898:             df_metar = df_metar.sort_values(by=['sayfa', 'gmt', 'is_speci'], ascending=[True, True, True]) # Rutin METAR'lar (False) üstte olsun

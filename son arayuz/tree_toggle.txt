@@ -1,0 +1,40 @@
+411:     # --- SEÇİM (CHECKBOX) VE SİLME FONKSİYONLARI ---
+412:     def tree_toggle_checkbox(event, tv):
+413:         region = tv.identify("region", event.x, event.y)
+414:         if region == "heading":
+415:             col = tv.identify_column(event.x)
+416:             if col == "#1":
+417:                 current = tv.heading(col)["text"]
+418:                 new_val = "☑" if current == "☐" else "☐"
+419:                 tv.heading(col, text=new_val)
+420:                 for item in tv.get_children():
+421:                     vals = list(tv.item(item, "values"))
+422:                     vals[0] = new_val
+423:                     tv.item(item, values=vals)
+424:                 return "break"
+425:         elif region == "cell":
+426:             col = tv.identify_column(event.x)
+427:             if col == "#1":
+428:                 item = tv.identify_row(event.y)
+429:                 if item:
+430:                     vals = list(tv.item(item, "values"))
+431:                     vals[0] = "☑" if vals[0] == "☐" else "☐"
+432:                     tv.item(item, values=vals)
+433:                     return "break"
+434:             else:
+435:                 item = tv.identify_row(event.y)
+436:                 if item:
+437:                     vals = list(tv.item(item, "values"))
+438:                     if len(vals) > 9 and "DETAY" in str(vals[9]):
+439:                         if tv == tree: satir_detay_goster(event, tv, "Rasat Hata Detayı")
+440:                         return "break"
+441: 
+442:     def to_csv_value(v):
+443:         s = str(v)
+444:         if ';' in s or '"' in s or '\n' in s:
+445:             return '"' + s.replace('"', '""') + '"'
+446:         return s
+447: 
+448:     def secilenleri_sil(tv):
+449:         silinecekler = [item for item in tv.get_children() if tv.item(item, "values")[0] == "☑"]
+450:         if not silinecekler:

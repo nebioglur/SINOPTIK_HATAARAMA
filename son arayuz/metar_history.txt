@@ -1,0 +1,3 @@
+1356:                     if dt_hedef and "İLGİLİ METAR GEÇMİŞİ:" not in mevcut_bulten and bulten_col_m:
+1378:                                     m_list.append((m_dt, f"[{z_saat}] {m_raw}"))
+1382:                             ek_metar_bilgisi = "İLGİLİ METAR GEÇMİŞİ:\n" + "\n".join([x[1] for x in m_list])

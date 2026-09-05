@@ -1,0 +1,50 @@
+1:         finally:
+2:             menu.grab_release()
+3: 
+4:     # --- YENİ: Çift tıklama ile detay okuma fonksiyonu ---
+5:     def satir_detay_goster(event, tree_widget, pencere_baslik):
+6:         secili = tree_widget.selection()
+7:         if not secili: return
+8:                     
+9:         degerler = tree_widget.item(secili[0], "values")
+10:         kolonlar = tree_widget["columns"]
+11:                     
+12:         detay_pop = tk.Toplevel(pencere)
+13:         detay_pop.title(pencere_baslik)
+14:         detay_pop.geometry("600x450")
+15:         detay_pop.geometry("750x550")
+16:         detay_pop.configure(bg="#F8F9FA")
+17:                     
+18:         f_txt_d = tk.Frame(detay_pop, bg="white")
+19:         f_txt_d.pack(expand=True, fill="both", padx=15, pady=15)
+20:         v_scroll_d = tk.Scrollbar(f_txt_d, orient="vertical")
+21:         v_scroll_d.pack(side="right", fill="y")
+22:                     
+23:         text_alan = tk.Text(f_txt_d, wrap="word", font=("Segoe UI", 11), bg="white", yscrollcommand=v_scroll_d.set)
+24:         text_alan.pack(expand=True, fill="both")
+25:         v_scroll_d.config(command=text_alan.yview)
+26:                     
+27:         detay_metni = ""
+28:         for col, val in zip(kolonlar, degerler):
+29:             if str(col).upper() == "SEÇ": continue
+30:             detay_metni += f"■ {str(col).upper()}:\n{val}\n\n"
+31:                         
+32:         text_alan.insert("1.0", detay_metni.strip())
+33:         text_alan.config(state=tk.DISABLED) # Sadece okunabilir yapar
+34: 
+35:         # --- Sağ Tık Menüsü (Detay Penceresi İçin) ---
+36:         sag_tik_menu = tk.Menu(text_alan, tearoff=0)
+37:                     
+38:         def kopyala():
+39:             try:
+40:                 secili_metin = text_alan.selection_get()
+41:                 detay_pop.clipboard_clear()
+42:                 detay_pop.clipboard_append(secili_metin)
+43:             except tk.TclError:
+44:                 pass
+45:                             
+46:         def tumunu_kopyala():
+47:             tum_metin = text_alan.get("1.0", tk.END).strip()
+48:             detay_pop.clipboard_clear()
+49:             detay_pop.clipboard_append(tum_metin)
+50: 

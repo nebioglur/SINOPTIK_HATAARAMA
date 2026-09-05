@@ -1,0 +1,239 @@
+"""
+==============================================================================
+OTOMATIK VERILER SAAT EŞLEŞTİRME SISTEMI - GÜNCELLEME DOKÜMANTASYONU
+==============================================================================
+
+Tarih: 15 Mayıs 2026
+Sürüm: 2.0 (Saat Eşleştirme Özelliği)
+
+==============================================================================
+PROBLEM TANIMI
+==============================================================================
+
+Meteorolojik sistemde METAR (saatlik gözlemler) ve SİNOPTİK (3-saatlik gözlemler) 
+rasatlarından rüzgar, basınç ve sıcaklık veriler OTOMATİK OLARAK çekilmektedir.
+
+Bu veriler aynı gözlem zamanına ait olması gerekse de, bazı durumlarda 
+gece yarısı geçişinde saat farklılıkları ortaya çıkabilir:
+
+ÖRNEK: 
+  - 23:50 METAR (23.05.2026 23:50 UTC)
+  - 00:00 SİNOPTİK (24.05.2026 00:00 UTC)
+  - Gerçek fark: 10 dakika (otomatik veriler için kabul edilir)
+
+ÖNCEKI DURUM:
+  Sistem bu iki saati doğrudan karşılaştırarak hata vermekteydi.
+  Oysa veriler aynı gözlem dönemine ait olduğu için HATA OLMAMASI GEREKMEKTEDIR.
+
+==============================================================================
+ÇÖZÜM: SAAT EŞLEŞTİRME SİSTEMİ
+==============================================================================
+
+YENI FİLOSOFİ:
+"Rüzgar, basınç, sıcaklık gibi otomatik çekilen veriler için,
+ saatler 15 dakika tolerans içinde ise eşleşmiş sayılır."
+
+UYGULAMALAR:
+1. saat_eslestirme.py modülü oluşturuldu
+2. WeatherLogValidator sınıfı güncellenildi
+3. Tüm otomatik veri kontrolleri (temperature, pressure, wind, etc.) 
+   saat eşleştirmesi yapıyor
+
+==============================================================================
+TEKNIKKÎ DETAYLAR
+==============================================================================
+
+1. SaatEslestirici SINIFI (saat_eslestirme.py)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   • Farklı saat formatlarını normalize eder:
+     - Standart 0-23 aralığı
+     - "14:30" string formatı
+     - 1430 kodlaması (24'lü saat formatı)
+
+   • Gün sınırını aşan zamanları yönetir:
+     23:50 → 00:30 arası fark = 40 dakika (gerçek fark, gün sınırı kullanılır)
+
+   • İki seviye tolerans:
+     a) otomat_veri_mi=True: 15 dakika tolerans (rüzgar, basınç, sıcaklık)
+     b) otomat_veri_mi=False: 60 dakika tolerans (gözlemsel veriler)
+
+2. WeatherLogValidator GÜNCELLEMELER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   __init__ metoduna yeni parametreler eklendi:
+   • metar_gmt: METAR gözleminin GMT saati
+   • sinoptik_gmt: SİNOPTİK gözleminin GMT saati
+
+   Otomatik veri kontrol metodları güncellenildi:
+   ✓ check_temperature()
+   ✓ check_dewpoint()
+   ✓ check_humidity()
+   ✓ check_pressure()
+   ✓ check_pressure_reduction()
+   ✓ check_wind_speed()
+   ✓ check_wind_unit()
+   ✓ check_wind_dir()
+
+   HER BİR METOD ŞU MANTIK UYGULUYOR:
+   ```
+   if metar_gmt ve sinoptik_gmt verilmişse:
+       if saatler_eşleşmiyorsa:
+           return (kontrol yapma, hata verme)
+   
+   if metar_gmt yoksa:  # eski uyumluluk
+       eski_kurallı_kontrol_yap()
+   ```
+
+3. Denetim Merkezleri Entegrasyon
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   arayuz.py satırı ~778:
+   WeatherLogValidator çağrısında GMT saatleri iletiliyorlar:
+   
+   ```python
+   val_instance = validator.WeatherLogValidator(
+       sin_dict, 
+       met_dict,
+       metar_gmt=row.get('gmt'),
+       sinoptik_gmt=row.get('gmt')
+   )
+   ```
+
+==============================================================================
+HATA DENETIM MANTASI
+==============================================================================
+
+DURUM 1: Saatler Eşleşiyorsa (0-15 dakika fark)
+────────────────────────────────────────────────
+Veriler KARŞILAŞTIRILIR ve standart kurallara göre kontrol edilir.
+
+Örnek 1: 12:00 METAR vs 12:00 SİNOPTİK
+  → Sıcaklık 25°C vs 26°C (fark > 1.2°C)
+  → ✗ HATA: "Sıcaklık Uyumsuzluğu (SAATLER EŞLEŞTİ)"
+
+Örnek 2: 12:00 METAR vs 11:50 SİNOPTİK (10 dakika fark)
+  → Sıcaklık 25°C vs 26°C (fark > 1.2°C)  
+  → ✗ HATA: "Sıcaklık Uyumsuzluğu (SAATLER EŞLEŞTİ)"
+
+DURUM 2: Saatler Eşleşmiyorsa (15+ dakika fark)
+────────────────────────────────────────────────
+Veriler KARŞILAŞTIRILMAZ - HATA VERİLMEZ.
+
+Mantık: "Bu iki rasat aynı dönemden değil, kontrol yapma"
+
+Örnek 3: 03:00 METAR vs 00:00 SİNOPTİK (3 saat fark)
+  → Sıcaklık 25°C vs 30°C
+  → ✓ HATA YOK (saatler eşleşmediği için)
+
+Örnek 4: 00:30 METAR vs 23:50 SİNOPTİK (40 dakika > 15dk)
+  → Saatler eşleşmediği için kontrol yapılmaz
+  → ✓ HATA YOK
+
+Örnek 5: 23:50 METAR vs 00:00 SİNOPTİK (10 dakika, gün sınırı)
+  → Gerçek fark 10 dakika (tolerans içinde)
+  → Saatler eşleştiği sayılır
+  → Veriler karşılaştırılır
+
+DURUM 3: Saat Bilgisi Yoksa (Geriye Uyumluluk)
+────────────────────────────────────
+GMT saatleri iletilmezse, eski kurallar uygulanır.
+
+==============================================================================
+YAZILIM İYİLEŞTİRMELERİ
+==============================================================================
+
+Dosya 1: saat_eslestirme.py (YENİ)
+──────────────────────────────────
+• SaatEslestirici sınıfı
+• Saat normalizasyon fonksiyonları
+• Gün sınırı yönetimi
+• Test senaryoları
+
+Dosya 2: validator.py (GÜNCELLEME)
+──────────────────────────────────
+• import saat_eslestirme eklendi
+• __init__ parametreleri genişletildi (metar_gmt, sinoptik_gmt)
+• 8 otomatik veri kontrol metodu güncellendi
+• run_all_checks() metodunda kontroller aktif hale getirildi
+• Hata mesajlarına saat fark bilgisi eklendi
+
+Dosya 3: arayuz.py (ENTEGRASYON)
+───────────────────────────────
+• WeatherLogValidator çağrısı güncellendi
+• GMT saatleri parametresi olarak iletiliyor
+
+==============================================================================
+TEST SENARYOLARI
+==============================================================================
+
+Saat eşleştirme modülü test etmek için:
+```bash
+python saat_eslestirme.py
+```
+
+Çıktı:
+├─ Gece yarısı geçişi (00:00 vs 23:50) → ✓ UYUM
+├─ Ara rasat ile ana rasat (03:00 vs 00:00) → ✗ UYUMSUZ
+├─ Tam eşleşme (12:00 vs 12:00) → ✓ UYUM
+├─ Yaklaşık eşleşme (12:00 vs 11:30) → ✓ UYUM
+└─ Geniş fark (06:00 vs 03:00) → ✗ UYUMSUZ
+
+==============================================================================
+HATA PAYININ TANIMI
+==============================================================================
+
+%HATA PAYI TOLERANSI:
+• Otomatik veriler için: ±15 dakika
+• Gözlemsel veriler için: ±60 dakika
+
+Bu tolerans, gece yarısı geçişleri ve sistemdeki küçük zaman farkları
+nedeniyle oluşan yanlış pozitif hataları ortadan kaldırır.
+
+SONUÇ:
+Artık 23:50 METAR ve 00:00 SİNOPTİK için basınç, sıcaklık ve rüzgar 
+verilerini karşılaştırırken HATA VERİLMEZCE devam edecektir.
+
+==============================================================================
+DETEKSİYON MEKANİZMASI: DİKKAT NOKTASI
+==============================================================================
+
+Sistem şu senaryolarda yine HATA rapor EDECEK:
+
+1. Gerçek Veri Hataları (örn: gece yarısı geçişine ait olmayan farklar)
+   → Saatler eşleşiyorsa kontrol yapılır
+
+2. Birim Hataları (örn: METAR 10kt ama SİN 10 m/s yazıldı)
+   → Saatler eşleşiyorsa bilir
+
+3. Gözlemsel Veri Uyumsuzlukları
+   → Kendi toleransları (60 dakika) ile kontrol edilir
+
+Bu da "denetim mekanizması" rolünü yerine getirir - %hata payı olabilir 
+ancak GERÇEK HATALAR yakalar.
+
+==============================================================================
+İleTİŞİM NOTLARI
+==============================================================================
+
+Saat eşleştirmesi başarılı olduğunda, hata mesajlarına şu eklenir:
+  "[SAATLER EŞLEŞTİ] - Fark: XY dakika"
+
+Bu, operatöre saatler eşleştiği için kontrol yapıldığını gösterir.
+
+==============================================================================
+TEKRAR ÖZETİ
+==============================================================================
+
+✓ Rüzgar, basınç, sıcaklık = OTOMATİK ÇEKILEN veriler
+✓ Bu veriler aynı dönemde gözlenir ancak farklı saatlerde raporlanabilir
+✓ 15 dakika tolerans altında ise → HATA VERİLMEZ (aynı dönem)
+✓ 15 dakika tolerans üzerinde ise → HATA VERİLMEZ (farklı dönem, kontrol yapılmaz)
+✓ 15 dakika tolerans içinde ve değerler farklıysa → HATA (gerçek uyumsuzluk)
+
+Sistem artık akıllı, esnek ve hata payı taşıyan bir yapıya sahiptir.
+"""
+
+# Bir örnek hata mesajı görmek için:
+if __name__ == "__main__":
+    print(__doc__)

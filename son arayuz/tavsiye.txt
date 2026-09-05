@@ -1,0 +1,14 @@
+763: tavsiye = None
+775: tavsiye = f'7wwW1W2="7{hedef_ww}{m7.group(2)}" OLMALI'
+779: if tavsiye:
+780: detay_metni += f"■ TAVSİYE:\n{tavsiye}\n\n"
+854: cols = ("Seç", "Tarih", "Saat", "SİNOPTİK Saat", "METAR Saat", "Hata Kodu", "Açıklama", "Hatalı Kod", "Tavsiye Kod", "SİNOPTİK Şifresi", "METAR Şifresi", "Aksiyon")
+855: tree = ttk.Treeview(tree_frame, columns=cols, show="headings", style="Treeview", displaycolumns=("Seç", "Tarih", "SİNOPTİK Saat", "METAR Saat", "Hata Kodu", "Hatalı Kod", "Tavsiye Kod", "Aksiyon"))
+865: tree.heading("Tavsiye Kod", text="Tavsiye Kod")
+878: tree.column("Tavsiye Kod", width=100, anchor="center")
+979: hatali_kod = "-"
+980: tavsiye_kod = "-"
+991: hatali_kod = m7.group(1)
+992: tavsiye_kod = "7" + hedef_ww + hatali_kod[3:]
+1003: hatali_kod,
+1004: tavsiye_kod,

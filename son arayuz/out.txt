@@ -1,0 +1,50 @@
+1:                                     
+2:                                     try:
+3:                                         yeni_mi = max(os.path.getmtime(tam_yol), os.path.getctime(tam_yol)) >= baslangic_z
+4:                                     except Exception:
+5:                                         yeni_mi = False
+6:                                         
+7:                                     if yeni_mi and f.lower().endswith(('.xls', '.xlsx', '.csv', '.html')):
+8:                                         f_upper = f.upper()
+9:                                         if "SIN" in f_upper or "SİN" in f_upper: sin_yeni = True
+10:                                         elif "METAR" in f_upper: met_yeni = True
+11:                                         
+12:                                 if sin_yeni and met_yeni:
+13:                                     time.sleep(1.5)
+14:                                     def sor_ve_baslat():
+15:                                         btn_indir.config(state="normal", text="📥 DOSYALARI İNDİR")
+16:                     if btn_cancel: btn_cancel.config(state=tk.DISABLED)
+17:                                         lbl_status.config(text="Hazır")
+18:                                         cevap = messagebox.askyesno("İndirme Tamamlandı", "SİNOPTİK ve METAR dosyaları başarıyla indirildi!\n\nRaporlama işlemi hemen başlatılsın mı?", parent=root)
+19:                                         if cevap:
+20:                                             sadece_en_yeni_dosyalari_tut()
+21:                                             aylik_rapor_olustur(run_async=True)
+22:                                     safe_after(0, sor_ve_baslat)
+23:                                     return
+24:                         except Exception: pass
+25:                         time.sleep(2)
+26:                         
+27:                     def reset_ui():
+28:                         btn_indir.config(state="normal", text="📥 DOSYALARI İNDİR")
+29:                     if btn_cancel: btn_cancel.config(state=tk.DISABLED)
+30:                         lbl_status.config(text="Hazır")
+31:                         if not iptal_istendi:
+32:                             messagebox.showwarning("Zaman Aşımı / Bilgi", "İndirme otomatik algılanamadı veya zaman aşımına uğradı.\nDosyalar indiğinden eminseniz rapor oluşturmayı manuel başlatabilirsiniz.", parent=root)
+33:                     safe_after(0, reset_ui)
+34:                 
+35:                 threading.Thread(target=oto_tasima_ve_bekle, daemon=True).start()
+36:                     
+37:             except Exception as e:
+38:                 # Capture 'e' in closure by using default argument
+39:                 def show_err(err_msg=str(e)):
+40:                     messagebox.showerror("Hata", f"İşlem sırasında hata oluştu:\n{err_msg}")
+41:                     btn_indir.config(state="normal", text="📥 DOSYALARI İNDİR")
+42:                     if btn_cancel: btn_cancel.config(state=tk.DISABLED)
+43:                     safe_after(0, show_err)
+44: 
+45:         # Selenium başlatma işlemini arka planda (ayrı thread) çalıştır
+46:         threading.Thread(target=arkaplanda_tarayici_ac, daemon=True).start()
+47: 
+48:     btn_indir = tk.Button(main_frame, text="📥 DOSYALARI İNDİR", command=dosyalari_indir_ac, font=("Segoe UI", 10, "bold"), bg="#673AB7", fg="white", activebackground="#512DA8", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+49:     btn_indir.pack(fill="x", pady=(0, 8))
+50: 

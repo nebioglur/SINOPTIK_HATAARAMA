@@ -1,0 +1,30 @@
+1:                             d_keys.append((dt_hedef - datetime.timedelta(days=1)).date())
+2:                         
+3:                         relevant_metars = []
+4:                         for dk in d_keys: relevant_metars.extend(metar_cache.get(dk, []))
+5:                         
+6:                         m_list = []
+7:                         for m_row in relevant_metars:
+8:                             m_dt = m_row['_m_dt']
+9:                             gecerli = (dt_bas - datetime.timedelta(minutes=10)) <= m_dt <= dt_hedef
+10:                             if gecerli:
+11:                                 m_raw = str(m_row.get(bulten_col_m, "")).strip()
+12:                                 if m_raw and m_raw.replace('"', '').replace("'", "").strip().lower() not in ['nan', 'none', '<na>', '-', '']:
+13:                                     if m_dt <= dt_bas:
+14:                                         m_raw = re.sub(r'RE[A-Z]{2,}', '', m_raw)
+15:                                         m_raw = re.sub(r'\s+', ' ', m_raw).strip()
+16:                                     z_match = re.search(r'\d{2}(\d{4}Z?)', m_raw)
+17:                                     z_saat = z_match.group(1) if z_match else f"{int(m_row.get('gmt', 0)):02d}00Z"
+18:                                     m_list.append((m_dt, f"[{z_saat}] {m_raw}"))
+19:                         
+20:                         if m_list:
+21:                             m_list.sort(key=lambda x: x[0], reverse=True)
+22:                             ek_metar_bilgisi = "İLGİLİ METAR GEÇMİŞİ:\n" + "\n".join([x[1] for x in m_list])
+23:                             if not mevcut_bulten:
+24:                                 m_reg = re.match(r'^\[.*?\]\s*(.*)', m_list[0][1])
+25:                                 if m_reg: mevcut_bulten = m_reg.group(1)
+26:                             if mevcut_bulten:
+27:                                 if ek_metar_bilgisi not in mevcut_bulten:
+28:                                     bulten_list[i] = mevcut_bulten + "\n\n" + ek_metar_bilgisi
+29:                                 else: bulten_list[i] = mevcut_bulten
+30:                             else: bulten_list[i] = ek_metar_bilgisi

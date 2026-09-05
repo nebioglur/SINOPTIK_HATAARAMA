@@ -1,0 +1,25 @@
+1:                     is_8_grup = True
+2:                 if not is_8_grup:
+3:                     continue
+4:                             
+5:             sin_msg = safe_tree_str(row.get("SİNOPTİK - Şifreli Mesaj"))
+6:             met_msg = safe_tree_str(row.get("METAR - Şifreli Mesaj"))
+7:                         
+8:             if filter_type == "Tüm SİNOPTİK Rasatları" and sin_msg == "-":
+9:                 continue
+10:             if filter_type == "Tüm METAR/SPECI Rasatları" and met_msg == "-":
+11:                 continue
+12: 
+13:             hazirlanan_veriler.append((
+14:                 "☐",
+15:                 safe_tree_str(row.get("Tarih")),
+16:                 safe_tree_str(row.get("Saat (GMT)")),
+17:                 safe_tree_str(row.get("SİNOPTİK - Saat")),
+18:                 safe_tree_str(row.get("METAR - Saat")),
+19:                 hata_kodu,
+20:                 safe_tree_str(row.get("AÇIKLAMA")),
+21:                 sin_msg,
+22:                 met_msg
+23:             ))
+24:                         
+25:         if not hazirlanan_veriler:

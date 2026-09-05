@@ -1,0 +1,31 @@
+# ============================================
+# MGM Monitor - Bildirim Ayarları
+# ============================================
+
+# --- Telegram ---
+telegram:
+  enabled: false
+  token: ""
+  chat_id: ""
+  parse_mode: "HTML"            # HTML | Markdown
+
+# --- E-Posta ---
+mail:
+  enabled: false
+  smtp: ""
+  port: 587
+  use_tls: true
+  username: ""
+  password: ""
+  from: ""
+  receivers: []
+
+# --- Masaüstü Bildirimi ---
+desktop:
+  enabled: true
+  duration: 10                  # Bildirim süresi (saniye)
+
+# --- Ses ---
+sound:
+  enabled: true
+  file: "assets/alert.mp3"     # Uyarı ses dosyası

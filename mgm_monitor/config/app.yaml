@@ -1,0 +1,40 @@
+# ============================================
+# MGM Monitor - Genel Uygulama Ayarları
+# ============================================
+
+app:
+  name: "MGM Monitor"
+  version: "1.0.0"
+  description: "Meteoroloji Genel Müdürlüğü Otomatik Rapor Takip Sistemi"
+
+# --- Zamanlayıcı ---
+scheduler:
+  enabled: true
+  minute: 50                    # Her saat başı kaçıncı dakikada çalışsın
+  timezone: "Europe/Istanbul"
+
+# --- HTTP Bağlantı ---
+http:
+  timeout: 30                   # Saniye
+  retries: 3                    # Başarısız isteklerde tekrar sayısı
+  retry_delay: 5                # Tekrar denemeler arası bekleme (saniye)
+  verify_ssl: false             # SSL doğrulama (MGM sertifika sorunu olabilir)
+  user_agent: "MGM Monitor/1.0"
+
+# --- Loglama ---
+logging:
+  level: "INFO"                 # DEBUG | INFO | WARNING | ERROR | CRITICAL
+  file: "logs/monitor.log"
+  max_size_mb: 10               # Log dosyası max boyut
+  backup_count: 5               # Eski log dosyası sayısı
+  keep_days: 30                 # Kaç gün saklanacak
+
+# --- Geçmiş Kayıtlar ---
+history:
+  folder: "history"
+  format: "json"                # json | csv
+
+# --- Önbellek ---
+cache:
+  enabled: false
+  ttl_minutes: 60

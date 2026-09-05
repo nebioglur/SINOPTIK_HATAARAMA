@@ -1,0 +1,3 @@
+412:     def tree_toggle_checkbox(event, tv):
+854:     tree.bind("<Button-1>", lambda e: tree_toggle_checkbox(e, tree))
+1005:     tree_k.bind("<Button-1>", lambda e: tree_toggle_checkbox(e, tree_k))

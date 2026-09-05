@@ -1,0 +1,37 @@
+def satir_detay_goster(event, tree_widget, pencere_baslik):
+        item = tree_widget.identify_row(event.y)
+        if not item:
+            secili = tree_widget.selection()
+            if not secili: return
+            item = secili[0]
+                    
+        degerler = tree_widget.item(item, "values")
+        kolonlar = tree_widget["columns"]
+                    
+        detay_pop = tk.Toplevel(pencere)
+        detay_pop.title(pencere_baslik)
+        detay_pop.geometry("600x450")
+        detay_pop.geometry("750x550")
+        detay_pop.configure(bg="#F8F9FA")
+                    
+        f_txt_d = tk.Frame(detay_pop, bg="white")
+        f_txt_d.pack(expand=True, fill="both", padx=15, pady=15)
+        v_scroll_d = tk.Scrollbar(f_txt_d, orient="vertical")
+        v_scroll_d.pack(side="right", fill="y")
+                    
+        text_alan = tk.Text(f_txt_d, wrap="word", font=("Segoe UI", 11), bg="white", yscrollcommand=v_scroll_d.set)
+        text_alan.pack(expand=True, fill="both")
+        v_scroll_d.config(command=text_alan.yview)
+                    
+        detay_metni = ""
+        for col, val in zip(kolonlar, degerler):
+            if str(col).upper() == "SEÇ": continue
+            detay_metni += f"■ {str(col).upper()}:\n{val}\n\n"
+                        
+        text_alan.insert("1.0", detay_metni.strip())
+        text_alan.config(state=tk.DISABLED) # Sadece okunabilir yapar
+
+        # --- Sağ Tık Menüsü (Detay Penceresi İçin) ---
+        sag_tik_menu = tk.Menu(text_alan, tearoff=0)
+                    
+        def 

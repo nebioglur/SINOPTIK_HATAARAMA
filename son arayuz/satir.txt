@@ -1,0 +1,1 @@
+725:     def satir_detay_goster(event, tree_widget, pencere_baslik):

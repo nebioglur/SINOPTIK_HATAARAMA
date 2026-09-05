@@ -1,0 +1,45 @@
+2716:         
+2717:         txt_log.configure(yscrollcommand=v_scroll.set, xscrollcommand=h_scroll.set)
+2718:         txt_log.pack(expand=True, fill="both", padx=10, pady=(0, 10))
+2719:         
+2720:         def load_logs(filter_text=None):
+2721:             txt_log.config(state="normal")
+2722:             txt_log.delete("1.0", tk.END)
+2723:             try:
+2724:                 with open(log_dosyasi, "r", encoding="utf-8") as f:
+2725:                     lines = f.readlines()
+2726:                     if filter_text:
+2727:                         lines = [l for l in lines if filter_text in l]
+2728:                     txt_log.insert(tk.END, "".join(lines))
+2729:             except Exception as e:
+2730:                 txt_log.insert(tk.END, f"Log dosyası okunamadı: {e}")
+2731:             txt_log.see(tk.END)
+2732:             txt_log.config(state="disabled")
+2733: 
+2734:         tk.Button(top_frame, text="Tüm Logları Göster", command=lambda: load_logs(), bg="#0066CC", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+2735:         tk.Button(top_frame, text="🔍 Sütun Eşleşmeleri", command=lambda: load_logs("Eşleşen Sütunlar"), bg="#107C41", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+2736:         tk.Button(top_frame, text="Hataları Filtrele", command=lambda: load_logs("ERROR"), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+2737:         
+2738:         load_logs()
+2739: 
+2740:     btn_loglar = tk.Button(main_frame, text="SİSTEM LOGLARINI GÖSTER", command=loglari_goster, font=("Segoe UI", 10, "bold"), bg="#607D8B", fg="white", activebackground="#455A64", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+2741:     btn_loglar.pack(fill="x", pady=(0, 8))
+2742: 
+2743:     def log_dosyasini_ac():
+2744:         try:
+2745:             if os.path.exists(log_dosyasi):
+2746:                 os.startfile(log_dosyasi) # Windows'un varsayılan uygulamasıyla (Örn: Not Defteri) açar
+2747:             else:
+2748:                 messagebox.showwarning("Bulunamadı", "Log dosyası henüz oluşturulmamış.", parent=root)
+2749:         except Exception as e:
+2750:             messagebox.showerror("Hata", f"Log dosyası açılamadı:\n{e}", parent=root)
+2751:             
+2752:     btn_log_dosyasi = tk.Button(main_frame, text="📝 LOG DOSYASINI AÇ (NOT DEFTERİ)", command=log_dosyasini_ac, font=("Segoe UI", 10, "bold"), bg="#546E7A", fg="white", activebackground="#37474F", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+2753:     btn_log_dosyasi.pack(fill="x", pady=(0, 8))
+2754: 
+2755:     def manuel_temizlik_yap():
+2756:         clear_pycache_on_startup()
+2757:         cleanup_old_temp_files()
+2758:         
+2759:         temizlenen_arsiv = 0
+2760:         cevap = messagebox.askyesno("Arşiv Temizliği", "Sistemin önbellek ve logları temizlenecek.\n\nAyrıca 'check\\Arsiv' klasöründeki TÜM geçmiş Excel raporları da kalıcı olarak silinsin mi?", parent=root)

@@ -1,0 +1,30 @@
+1:     # --- SEÇİM (CHECKBOX) VE SİLME FONKSİYONLARI ---
+2:     def tree_toggle_checkbox(event, tv):
+3:         region = tv.identify("region", event.x, event.y)
+4:         if region == "heading":
+5:             col = tv.identify_column(event.x)
+6:             if col == "#1":
+7:                 current = tv.heading(col)["text"]
+8:                 new_val = "☑" if current == "☐" else "☐"
+9:                 tv.heading(col, text=new_val)
+10:                 for item in tv.get_children():
+11:                     vals = list(tv.item(item, "values"))
+12:                     vals[0] = new_val
+13:                     tv.item(item, values=vals)
+14:                 return "break"
+15:         elif region == "cell":
+16:             col = tv.identify_column(event.x)
+17:             if col == "#1":
+18:                 item = tv.identify_row(event.y)
+19:                 if item:
+20:                     vals = list(tv.item(item, "values"))
+21:                     vals[0] = "☑" if vals[0] == "☐" else "☐"
+22:                     tv.item(item, values=vals)
+23:                     return "break"
+24: 
+25:     def to_csv_value(v):
+26:         s = str(v)
+27:         if ';' in s or '"' in s or '\n' in s:
+28:             return '"' + s.replace('"', '""') + '"'
+29:         return s
+30: 

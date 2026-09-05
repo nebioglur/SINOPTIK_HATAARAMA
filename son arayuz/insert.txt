@@ -1,0 +1,4 @@
+871:             tree.insert("", tk.END, values=("-", "-", "-", "-", "BİLGİ", "Gösterilecek kayıt bulunamadı.", "-", "-"))
+956:             tree.insert("", tk.END, values=("☐", "-", "-", "-", "-", "BİLGİ", "Gösterilecek kayıt bulunamadı.", "-", "-"))
+961:                 tree.insert("", tk.END, values=hazirlanan_veriler[i])
+1899:                     tree.insert("", tk.END, values=(kod, acik))
