@@ -34,13 +34,12 @@ def oto_trigger(df_sin, df_metar, yil, ay, ist_isim, custom_title):
 
 def baslat_arka_plan_gorevleri():
     """Gunicorn altinda birden cok kez tetiklenmemesi icin kontrol ekleyerek gorevleri baslatir."""
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not os.environ.get("FLASK_RUN_FROM_CLI"):
-        # Eger background task onceden baslamissa tekrar baslatma
-        if getattr(app, '_bg_started', False):
-            return
-        app._bg_started = True
-        
-        print("WEB_SERVER_LOG: Arka plan otomatik analiz gorevleri baslatiliyor...")
+    # Eger background task onceden baslamissa tekrar baslatma
+    if getattr(app, '_bg_started', False):
+        return
+    app._bg_started = True
+    
+    print("WEB_SERVER_LOG: Arka plan otomatik analiz gorevleri baslatiliyor...")
         cfg = canli_analiz.get_config()
         istasyonlar = cfg.get_enabled_stations()
         if not istasyonlar:
@@ -72,24 +71,29 @@ def index():
 def view_logs():
     import glob
     from flask import Response
-    # Log klasörünü bul
     import config_manager
     log_dir = config_manager.USER_DATA_DIR
     log_files = glob.glob(os.path.join(log_dir, "**", "*.log"), recursive=True)
     if not log_files:
         return "Log dosyasi bulunamadi."
-    
-    # En yeni log dosyasını bul
     latest_log = max(log_files, key=os.path.getmtime)
-    
     try:
         with open(latest_log, "r", encoding="utf-8") as f:
             content = f.read()
-            # Son 100 satırı göster
             lines = content.splitlines()[-100:]
             return Response("<h1>Son Hata Kayitlari</h1><pre>" + "\n".join(lines) + "</pre>", mimetype='text/html')
     except Exception as e:
         return str(e)
+
+@app.route("/start")
+def force_start():
+    print("WEB_SERVER_LOG: /start endpoint tetiklendi!")
+    try:
+        baslat_arka_plan_gorevleri()
+        return "Gorevler baslatildi! Lutfen /logs veya anasayfaya donun."
+    except Exception as e:
+        print(f"WEB_SERVER_LOG: /start HATA: {e}")
+        return f"Hata: {e}"
 
 if __name__ == "__main__":
     print("HATA RAMA Web Sunucusu Başlatıldı - http://0.0.0.0:5000")
