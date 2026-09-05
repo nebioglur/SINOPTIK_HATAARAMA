@@ -47,18 +47,24 @@ def baslat_arka_plan_gorevleri():
         print("WEB_SERVER_LOG: UYARI - stations.yaml icinde aktif istasyon bulunamadi! Varsayilan (17244) kullaniliyor.")
         istasyonlar = [{'id': 17244, 'name': 'KONYA MEYDAN'}]
     
-    for s in istasyonlar:
+    for idx, s in enumerate(istasyonlar):
         ist_kodu = int(s.get('id', 17244))
         ist_isim = s.get('name', str(ist_kodu))
         print(f"WEB_SERVER_LOG: Arka plan gorevi baslatildi: {ist_isim} ({ist_kodu})")
+        
+        # Her istasyonun ayni anda Chrome acmamasini saglamak icin
+        # gecikmeyi (stagger) thread icine tasiyoruz.
+        def delayed_start(kodu, isim, delay):
+            import time
+            time.sleep(delay)
+            canli_analiz.otomatik_dongu(kodu, 1, oto_trigger, lambda msg: print(f"WEB_SERVER_LOG: [{isim}] {msg}"))
+
         t = threading.Thread(
-            target=canli_analiz.otomatik_dongu,
-            args=(ist_kodu, 1, oto_trigger, lambda msg: print(f"WEB_SERVER_LOG: [{ist_isim}] {msg}")),
+            target=delayed_start,
+            args=(ist_kodu, ist_isim, idx * 3),
             daemon=True
         )
         t.start()
-        import time
-        time.sleep(2) # Ayni anda 15 Chrome acip sunucuyu cokertmemek icin beklet
 
 # Flask uygulamasi yuklendiginde arka plan islerini baslat
 baslat_arka_plan_gorevleri()
