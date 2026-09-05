@@ -40,22 +40,22 @@ def baslat_arka_plan_gorevleri():
     app._bg_started = True
     
     print("WEB_SERVER_LOG: Arka plan otomatik analiz gorevleri baslatiliyor...")
-        cfg = canli_analiz.get_config()
-        istasyonlar = cfg.get_enabled_stations()
-        if not istasyonlar:
-            print("WEB_SERVER_LOG: UYARI - stations.yaml icinde aktif istasyon bulunamadi! Varsayilan (17244) kullaniliyor.")
-            istasyonlar = [{'id': 17244, 'name': 'KONYA MEYDAN'}]
-        
-        for s in istasyonlar:
-            ist_kodu = int(s.get('id', 17244))
-            ist_isim = s.get('name', str(ist_kodu))
-            print(f"WEB_SERVER_LOG: Arka plan gorevi baslatildi: {ist_isim} ({ist_kodu})")
-            t = threading.Thread(
-                target=canli_analiz.otomatik_dongu,
-                args=(ist_kodu, 1, oto_trigger, lambda msg: print(f"WEB_SERVER_LOG: [{ist_isim}] {msg}")),
-                daemon=True
-            )
-            t.start()
+    cfg = canli_analiz.get_config()
+    istasyonlar = cfg.get_enabled_stations()
+    if not istasyonlar:
+        print("WEB_SERVER_LOG: UYARI - stations.yaml icinde aktif istasyon bulunamadi! Varsayilan (17244) kullaniliyor.")
+        istasyonlar = [{'id': 17244, 'name': 'KONYA MEYDAN'}]
+    
+    for s in istasyonlar:
+        ist_kodu = int(s.get('id', 17244))
+        ist_isim = s.get('name', str(ist_kodu))
+        print(f"WEB_SERVER_LOG: Arka plan gorevi baslatildi: {ist_isim} ({ist_kodu})")
+        t = threading.Thread(
+            target=canli_analiz.otomatik_dongu,
+            args=(ist_kodu, 1, oto_trigger, lambda msg: print(f"WEB_SERVER_LOG: [{ist_isim}] {msg}")),
+            daemon=True
+        )
+        t.start()
 
 # Flask uygulamasi yuklendiginde arka plan islerini baslat
 baslat_arka_plan_gorevleri()
