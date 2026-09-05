@@ -1,16 +1,17 @@
-﻿import sys
+﻿# -*- coding: utf-8 -*-
+import sys
 import subprocess
 def ensure_lxml():
     try:
         import lxml
         import html5lib
     except ImportError:
-        print("HTML AyrİŞtürma motorları (lxml, html5lib) eksik. Otomatik yükleniyor...")
+        print("HTML AyrÄ°ÅtÃ¼rma motorlarÄ± (lxml, html5lib) eksik. Otomatik yÃ¼kleniyor...")
         try:
             subprocess.check_call([sys.executable, "-m", "pip", "install", "lxml", "html5lib"])
-            print("Yükleme baçarülü!")
+            print("YÃ¼kleme baÃ§arÃ¼lÃ¼!")
         except Exception as e:
-            print(f"Yükleme hatası: {e}")
+            print(f"YÃ¼kleme hatasÄ±: {e}")
 ensure_lxml()
 
 import tkinter as tk
@@ -28,8 +29,8 @@ import json
 import shutil
 import time
 
-# --- MODÜL YOLU DÜZELTMESİ ---
-# Bu script bir alt klasörde ise, ana dizini Python path'ine ekle
+# --- MODÃœL YOLU DÃœZELTMESÄ° ---
+# Bu script bir alt klasÃ¶rde ise, ana dizini Python path'ine ekle
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(CURRENT_DIR)
 if PARENT_DIR not in sys.path:
@@ -44,11 +45,11 @@ try:
 except ImportError:
     DateEntry = None
 
-# --- HEDEF KLASÖRÜ DİNAMİK OLARAK BELüRLE (DİŞER PC'LER üüN) ---
+# --- HEDEF KLASÃ–RÃœ DÄ°NAMÄ°K OLARAK BELÃ¼RLE (DÄ°ÅER PC'LER Ã¼Ã¼N) ---
 HEDEF_KLASOR = os.path.join(os.path.expanduser("~"), "Desktop", "check")
 ARSIV_KLASORU = os.path.join(HEDEF_KLASOR, "Arsiv")
 
-# Eüer klasörler mevcut değilse otomatik olarak oluştur
+# EÃ¼er klasÃ¶rler mevcut deÄŸilse otomatik olarak oluÅŸtur
 try:
     if not os.path.exists(HEDEF_KLASOR):
         os.makedirs(HEDEF_KLASOR)
@@ -59,14 +60,14 @@ except Exception:
 # -----------------------------------------------------------------
 
 # --- BAD CRC-32 (BOZUK EXCEL) BYPASS HACK ---
-# Bazı kurumsal sistemlerin ürettiçi Excel dosyalarının iş yapısında (docProps/core.xml vb.) CRC hataları olabilir.
-# Python'un zipfile kütüphanesinin bu durumda İŞkmesini engellemek için CRC kontrolünş esnetiyoruz.
+# BazÄ± kurumsal sistemlerin Ã¼rettiÃ§i Excel dosyalarÄ±nÄ±n iÅŸ yapÄ±sÄ±nda (docProps/core.xml vb.) CRC hatalarÄ± olabilir.
+# Python'un zipfile kÃ¼tÃ¼phanesinin bu durumda Ä°Åkmesini engellemek iÃ§in CRC kontrolÃ¼nÅŸ esnetiyoruz.
 try:
     if hasattr(zipfile, 'ZipExtFile') and hasattr(zipfile.ZipExtFile, '_update_crc'):
         if not getattr(zipfile.ZipExtFile, '_crc_patched', False):
             _orig_update_crc = zipfile.ZipExtFile._update_crc
             def _patched_update_crc(self, newdata):
-                self._expected_crc = None  # Zorla CRC kontrolünş kapat (BadZipFile hatasınş önler)
+                self._expected_crc = None  # Zorla CRC kontrolÃ¼nÅŸ kapat (BadZipFile hatasÄ±nÅŸ Ã¶nler)
                 return _orig_update_crc(self, newdata)
             zipfile.ZipExtFile._update_crc = _patched_update_crc
             zipfile.ZipExtFile._crc_patched = True
@@ -74,7 +75,7 @@ except Exception:
     pass
 # --------------------------------------------
 
-# --- RENKLİ KONSOL ÇIKTISI üüN ---
+# --- RENKLÄ° KONSOL Ã‡IKTISI Ã¼Ã¼N ---
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -102,10 +103,10 @@ except ImportError:
     MetarDecoder = None
 # ----------------------------------
 
-# --- DOSYA ONARIM SİSTEMş (JOKER / GENEL İŞZüM) ---
+# --- DOSYA ONARIM SÄ°STEMÅŸ (JOKER / GENEL Ä°ÅZÃ¼M) ---
 def repair_duplicate_blocks():
     if getattr(sys, 'frozen', False):
-        return # EXE olarak üalüürken .py dosyaları yoktur, bu adımı atla.
+        return # EXE olarak Ã¼alÃ¼Ã¼rken .py dosyalarÄ± yoktur, bu adÄ±mÄ± atla.
     # Kontrol edilecek dosyalar ve aranan anahtar kelimeler
     files_to_check = [
         ('validator.py', 'class WeatherLogValidator'),
@@ -126,21 +127,21 @@ def repair_duplicate_blocks():
                 with open(file_path, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
                 
-                # Marker'ün (sünüf/fonksiyon tanımı) geütiçi satırları bul
+                # Marker'Ã¼n (sÃ¼nÃ¼f/fonksiyon tanÄ±mÄ±) geÃ¼tiÃ§i satÄ±rlarÄ± bul
                 defs = [i for i, line in enumerate(lines) if marker in line and not line.strip().startswith('#')]
                 
                 if len(defs) > 1:
-                    # Onarımdan ünce bozuk dosyanün yedeğini al (.bak uzantülü)
+                    # OnarÄ±mdan Ã¼nce bozuk dosyanÃ¼n yedeÄŸini al (.bak uzantÃ¼lÃ¼)
                     backup_path = os.path.join(base_dir, f"{file_name}.bak")
                     shutil.copy2(file_path, backup_path)
                     
-                    # İkinci kopyadan sonrasını tamamen silerek dosyayı onar
+                    # Ä°kinci kopyadan sonrasÄ±nÄ± tamamen silerek dosyayÄ± onar
                     with open(file_path, 'w', encoding='utf-8') as f:
                         f.writelines(lines[:defs[1]])
                     repaired_any = True
         
         if repaired_any:
-            # Eüer herhangi bir dosya onarıldıysa önbelleği zorla temizle
+            # EÃ¼er herhangi bir dosya onarÄ±ldÄ±ysa Ã¶nbelleÄŸi zorla temizle
             cache_dir = os.path.join(base_dir, '__pycache__')
             if os.path.exists(cache_dir):
                 shutil.rmtree(cache_dir, ignore_errors=True)
@@ -148,11 +149,11 @@ def repair_duplicate_blocks():
 repair_duplicate_blocks()
 # -------------------------------------------------
 
-# --- üNBELLEK TEMİZLEME SİSTEMş ---
+# --- Ã¼NBELLEK TEMÄ°ZLEME SÄ°STEMÅŸ ---
 def clear_pycache_on_startup():
-    """Program her baüladışında eski .pyc Önbellek dosyalarını otomatik temizler."""
+    """Program her baÃ¼ladÄ±ÅŸÄ±nda eski .pyc Ã–nbellek dosyalarÄ±nÄ± otomatik temizler."""
     if getattr(sys, 'frozen', False):
-        return # EXE olarak üalüürken pycache temizliçine gerek yoktur.
+        return # EXE olarak Ã¼alÃ¼Ã¼rken pycache temizliÃ§ine gerek yoktur.
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         cache_dir = os.path.join(base_dir, '__pycache__')
@@ -163,15 +164,15 @@ def clear_pycache_on_startup():
 clear_pycache_on_startup()
 # -------------------------------------------------
 
-# --- ESKİ GEİŞCş DOSYALARI TEMİZLEME SİSTEMş ---
+# --- ESKÄ° GEÄ°ÅCÅŸ DOSYALARI TEMÄ°ZLEME SÄ°STEMÅŸ ---
 def cleanup_old_temp_files():
-    """Eski .bak yedeklerini, log arşivlerini ve geüici Excel (TEMP_, ~$) dosyalarını otomatik temizler."""
+    """Eski .bak yedeklerini, log arÅŸivlerini ve geÃ¼ici Excel (TEMP_, ~$) dosyalarÄ±nÄ± otomatik temizler."""
     try:
         now = time.time()
         otuz_gun = 30 * 24 * 60 * 60
         yedi_gun = 7 * 24 * 60 * 60
         
-        # 1. Uygulama dizinindeki 30 günden eski .bak ve log dosyaları
+        # 1. Uygulama dizinindeki 30 gÃ¼nden eski .bak ve log dosyalarÄ±
         base_dir = os.path.dirname(os.path.abspath(__file__))
         for f in os.listdir(base_dir):
             if f.endswith('.bak') or '.log.' in f:
@@ -180,7 +181,7 @@ def cleanup_old_temp_files():
                     try: os.remove(f_path)
                     except: pass
                     
-        # 2. üalİŞma klasöründeki (check) 7 günden eski geüici dosyalar
+        # 2. Ã¼alÄ°Åma klasÃ¶rÃ¼ndeki (check) 7 gÃ¼nden eski geÃ¼ici dosyalar
         check_dir = HEDEF_KLASOR
         if os.path.exists(check_dir):
             for f in os.listdir(check_dir):
@@ -190,7 +191,7 @@ def cleanup_old_temp_files():
                         try: os.remove(f_path)
                         except: pass
 
-        # 3. Arşiv klasöründeki (check\Arsiv) 90 günden eski arşiv raporlarını otomatik temizle
+        # 3. ArÅŸiv klasÃ¶rÃ¼ndeki (check\Arsiv) 90 gÃ¼nden eski arÅŸiv raporlarÄ±nÄ± otomatik temizle
         arsiv_dir = ARSIV_KLASORU
         doksan_gun = 90 * 24 * 60 * 60
         if os.path.exists(arsiv_dir):
@@ -200,7 +201,7 @@ def cleanup_old_temp_files():
                     if os.stat(f_path).st_mtime < now - doksan_gun:
                         try: os.remove(f_path)
                         except: pass
-                # İŞi boşalan arşiv klasörlerini (YYYY_MM) sil
+                # Ä°Åi boÅŸalan arÅŸiv klasÃ¶rlerini (YYYY_MM) sil
                 if not os.listdir(root_d) and root_d != arsiv_dir:
                     try: os.rmdir(root_d)
                     except: pass
@@ -209,9 +210,9 @@ def cleanup_old_temp_files():
 cleanup_old_temp_files()
 # -------------------------------------------------
 
-# --- ESKİ XLS DOSYALARINI SüLME (SADECE EN YENİLERİ TUT) ---
+# --- ESKÄ° XLS DOSYALARINI SÃ¼LME (SADECE EN YENÄ°LERÄ° TUT) ---
 def sadece_en_yeni_dosyalari_tut():
-    """CHECK klasöründeki eski tarihli METAR ve SİNOPTİK dosyalarını program aİŞlüünda siler."""
+    """CHECK klasÃ¶rÃ¼ndeki eski tarihli METAR ve SÄ°NOPTÄ°K dosyalarÄ±nÄ± program aÄ°ÅlÃ¼Ã¼nda siler."""
     hedef_klasor = HEDEF_KLASOR
     if not os.path.exists(hedef_klasor): return
     
@@ -227,21 +228,21 @@ def sadece_en_yeni_dosyalari_tut():
             if f_upper.startswith("~$") or f_upper.startswith("TEMP_"): continue
             
             if f_upper.endswith('.XLS') or f_upper.endswith('.XLSX') or f_upper.endswith('.HTML') or f_upper.endswith('.CSV'):
-                if "SIN" in f_upper or "SİN" in f_upper:
+                if "SIN" in f_upper or "SÄ°N" in f_upper:
                     sin_dosyalari.append(tam_yol)
                 elif "METAR" in f_upper:
                     metar_dosyalari.append(tam_yol)
                     
-        # En yenileri bulmak için tarihe göre sırala
+        # En yenileri bulmak iÃ§in tarihe gÃ¶re sÄ±rala
         sin_dosyalari.sort(key=os.path.getmtime, reverse=True)
         metar_dosyalari.sort(key=os.path.getmtime, reverse=True)
         
-        # En yeni 1 SİNOPTİK hariç diğerlerini sil
+        # En yeni 1 SÄ°NOPTÄ°K hariÃ§ diÄŸerlerini sil
         for eski_f in sin_dosyalari[1:]:
             try: os.remove(eski_f)
             except: pass
             
-        # En yeni 1 METAR hariç diğerlerini sil
+        # En yeni 1 METAR hariÃ§ diÄŸerlerini sil
         for eski_f in metar_dosyalari[1:]:
             try: os.remove(eski_f)
             except: pass
@@ -303,69 +304,69 @@ def safe_askinteger(title, prompt, initialvalue):
         print(f"Error asking integer: {e}")
         return initialvalue
 
-# EXE UYUMLULUĞU: Yetki hatalarını önlemek için Log ve Ayar dosyalarını AppData/Kullanıcı dizinine al
+# EXE UYUMLULUÄU: Yetki hatalarÄ±nÄ± Ã¶nlemek iÃ§in Log ve Ayar dosyalarÄ±nÄ± AppData/KullanÄ±cÄ± dizinine al
 import config_manager
 log_dosyasi = config_manager.setup_logging("denetim_merkezi.log", level=logging.DEBUG)
 
-# Geriye dönük uyumluluk için active handler referansı (flush işlemleri için)
+# Geriye dÃ¶nÃ¼k uyumluluk iÃ§in active handler referansÄ± (flush iÅŸlemleri iÃ§in)
 logging_handler = logging.getLogger().handlers[0] if logging.getLogger().handlers else logging.NullHandler()
 
 def thread_exception_handler(args):
-    logging.error("ARKA PLAN İŞLEM HATASI (THREAD CRASH):", exc_info=(args.exc_type, args.exc_value, args.exc_traceback))
+    logging.error("ARKA PLAN Ä°ÅLEM HATASI (THREAD CRASH):", exc_info=(args.exc_type, args.exc_value, args.exc_traceback))
 threading.excepthook = thread_exception_handler
 # -------------------------------------------------------------------------
 
 SETTINGS_FILE = os.path.join(config_manager.USER_DATA_DIR, 'ayarlar.json')
 
 def ayarlari_yukle():
-    """Kayıtlş ayarlarş json dosyasından okur."""
+    """KayÄ±tlÅŸ ayarlarÅŸ json dosyasÄ±ndan okur."""
     if os.path.exists(SETTINGS_FILE):
         try:
             with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
-            logging.warning(f"Ayarlar dosyası okunamadı: {e}")
+            logging.warning(f"Ayarlar dosyasÄ± okunamadÄ±: {e}")
     return {}
 
 def ayarlari_kaydet(ayarlar):
-    """Mevcut seçimleri json dosyasına kaydeder."""
+    """Mevcut seÃ§imleri json dosyasÄ±na kaydeder."""
     try:
         with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
             json.dump(ayarlar, f, ensure_ascii=False, indent=4)
     except Exception as e:
-        logging.warning(f"Ayarlar dosyası kaydedilemedi: {e}")
+        logging.warning(f"Ayarlar dosyasÄ± kaydedilemedi: {e}")
 
 def get_button_text():
-    return "RAPOR OLUŞTUR"
+    return "RAPOR OLUÅTUR"
 
 def safe_after(delay, func):
-    """Python 3.13 ve Threading kaynaklı 'main thread is not in main loop' hatasınş önler."""
+    """Python 3.13 ve Threading kaynaklÄ± 'main thread is not in main loop' hatasÄ±nÅŸ Ã¶nler."""
     try:
         if not console_mode and 'root' in globals() and root:
             root.after(delay, func)
     except RuntimeError:
-        try: func() # Olay döngüsş dışında kalındıysa doğrudan üalİŞtür
+        try: func() # Olay dÃ¶ngÃ¼sÅŸ dÄ±ÅŸÄ±nda kalÄ±ndÄ±ysa doÄŸrudan Ã¼alÄ°ÅtÃ¼r
         except: pass
 
 def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_sayisi, speci_sayisi, ay, yil):
     if iptal_istendi: return
     pencere = tk.Toplevel(root)
-    pencere.title(f"Detaylı Test Raporu - {ay}/{yil}")
+    pencere.title(f"DetaylÄ± Test Raporu - {ay}/{yil}")
     pencere.geometry("1200x650")
     pencere.configure(bg="#F8F9FA")
                 
     top_ctrl = tk.Frame(pencere, bg="#ECEFF1", pady=5)
     top_ctrl.pack(fill="x", side="top")
-    tk.Label(top_ctrl, text="  SİNOPTİK / METAR ANALİZ ARAYÜZÜ", font=("Segoe UI", 11, "bold"), bg="#ECEFF1", fg="#37474F").pack(side="left")
-    tk.Button(top_ctrl, text="✖ KAPAT", command=pencere.destroy, bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
-    tk.Button(top_ctrl, text="⚡ TAM EKRAN", command=lambda: pencere.state('zoomed') if pencere.state() != 'zoomed' else pencere.state('normal'), bg="#90A4AE", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
-    tk.Button(top_ctrl, text="🗕 SİMGE DURUMU", command=pencere.iconify, bg="#90A4AE", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
+    tk.Label(top_ctrl, text="  SÄ°NOPTÄ°K / METAR ANALÄ°Z ARAYÃœZÃœ", font=("Segoe UI", 11, "bold"), bg="#ECEFF1", fg="#37474F").pack(side="left")
+    tk.Button(top_ctrl, text="âœ– KAPAT", command=pencere.destroy, bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
+    tk.Button(top_ctrl, text="âš¡ TAM EKRAN", command=lambda: pencere.state('zoomed') if pencere.state() != 'zoomed' else pencere.state('normal'), bg="#90A4AE", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
+    tk.Button(top_ctrl, text="ğŸ—• SÄ°MGE DURUMU", command=pencere.iconify, bg="#90A4AE", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
                 
     def ekrandakileri_excele_aktar():
         dosya_yolu = filedialog.asksaveasfilename(
             parent=pencere,
             defaultextension=".xlsx",
-            filetypes=[("Excel Dosyası", "*.xlsx")],
+            filetypes=[("Excel DosyasÄ±", "*.xlsx")],
             initialfile=f"Filtrelenmis_Rapor_{ay}_{yil}.xlsx",
             title="Excel Olarak Kaydet"
         )
@@ -375,18 +376,18 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             veri = []
             for item in tree.get_children():
                 vals = tree.item(item, "values")
-                if vals[0] == "☐":
+                if vals[0] == "â˜":
                     veri.append(vals[1:])
                         
             if not veri:
-                if messagebox.askyesno("Uyarü", "Hiçbir kayıt seçilmemiş (ü). Ekranda görünen TÜM kayıtlar dİŞa aktarılsın mü", parent=pencere):
+                if messagebox.askyesno("UyarÃ¼", "HiÃ§bir kayÄ±t seÃ§ilmemiÅŸ (Ã¼). Ekranda gÃ¶rÃ¼nen TÃœM kayÄ±tlar dÄ°Åa aktarÄ±lsÄ±n mÃ¼", parent=pencere):
                     for item in tree.get_children():
                         veri.append(tree.item(item, "values")[1:])
                 else:
                     return
                         
             if not veri:
-                messagebox.showwarning("Uyarü", "Aktarılacak veri yok.", parent=pencere)
+                messagebox.showwarning("UyarÃ¼", "AktarÄ±lacak veri yok.", parent=pencere)
                 return
                         
             df_export = pd.DataFrame(veri, columns=cols[1:])
@@ -397,7 +398,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                 workbook  = writer.book
                 worksheet = writer.sheets['Hata Raporu']
                 
-                # Format tanümlarü
+                # Format tanÃ¼mlarÃ¼
                 header_format = workbook.add_format({
                     'bold': True, 'text_wrap': True, 'valign': 'vcenter', 'align': 'center',
                     'fg_color': '#4F81BD', 'font_color': 'white', 'border': 1
@@ -407,49 +408,49 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                     'border': 1, 'valign': 'vcenter', 'text_wrap': True
                 })
                 
-                # üst bağlıklarş formatla
+                # Ã¼st baÄŸlÄ±klarÅŸ formatla
                 for col_num, value in enumerate(df_export.columns.values):
                     worksheet.write(0, col_num, value, header_format)
                     
-                # Hücre formatlarünş uygula
+                # HÃ¼cre formatlarÃ¼nÅŸ uygula
                 for row in range(1, len(df_export) + 1):
-                    worksheet.set_row(row, 35) # Satır yüksekliçini artürdüm
+                    worksheet.set_row(row, 35) # SatÄ±r yÃ¼ksekliÃ§ini artÃ¼rdÃ¼m
                     for col_num in range(len(df_export.columns)):
                         val = df_export.iloc[row-1, col_num]
                         if pd.isna(val): val = ""
                         worksheet.write(row, col_num, str(val), cell_format)
                         
-                worksheet.set_row(0, 30) # Başlık satırı yüksekliçi
+                worksheet.set_row(0, 30) # BaÅŸlÄ±k satÄ±rÄ± yÃ¼ksekliÃ§i
                 
-                # Sütun genişlikleri (A4'e sığacak şekilde optimize edildi)
+                # SÃ¼tun geniÅŸlikleri (A4'e sÄ±ÄŸacak ÅŸekilde optimize edildi)
                 worksheet.set_column(0, 0, 11) # Tarih
                 worksheet.set_column(1, 1, 6)  # Saat
                 worksheet.set_column(2, 2, 8)  # Hata Kodu
-                worksheet.set_column(3, 3, 35) # AİŞklama
-                worksheet.set_column(4, 4, 12) # Hatalı Kod
+                worksheet.set_column(3, 3, 35) # AÄ°Åklama
+                worksheet.set_column(4, 4, 12) # HatalÄ± Kod
                 worksheet.set_column(5, 5, 12) # Tavsiye Kod
                 worksheet.set_column(6, 6, 40) # Sinoptik
                 worksheet.set_column(7, 7, 40) # Metar
                 if len(df_export.columns) > 8:
                     worksheet.set_column(8, 8, 10) # Aksiyon
                 
-                # Yazdırma ayarlarü: Yatay A4, kenar boşluklarş dar
+                # YazdÄ±rma ayarlarÃ¼: Yatay A4, kenar boÅŸluklarÅŸ dar
                 worksheet.set_paper(9) # 9 = A4 paper
                 worksheet.set_landscape()
                 worksheet.set_margins(left=0.3, right=0.3, top=0.5, bottom=0.5)
-                worksheet.fit_to_pages(1, 0) # Geniüliçi 1 sayfaya sİŞdür
-                worksheet.repeat_rows(0) # Her sayfada üst baül⚙ tekrarla
+                worksheet.fit_to_pages(1, 0) # GeniÃ¼liÃ§i 1 sayfaya sÄ°ÅdÃ¼r
+                worksheet.repeat_rows(0) # Her sayfada Ã¼st baÃ¼lâš™ tekrarla
                 
-                # Sayfa düzeni görünümş (isteğe bağlı, normal görünüm daha iyidir)
+                # Sayfa dÃ¼zeni gÃ¶rÃ¼nÃ¼mÅŸ (isteÄŸe baÄŸlÄ±, normal gÃ¶rÃ¼nÃ¼m daha iyidir)
                 # worksheet.set_page_view()
-            messagebox.showinfo("Başarılı", f"{len(veri)} kayıt Excel'e aktarıldı:\n{dosya_yolu}", parent=pencere)
+            messagebox.showinfo("BaÅŸarÄ±lÄ±", f"{len(veri)} kayÄ±t Excel'e aktarÄ±ldÄ±:\n{dosya_yolu}", parent=pencere)
             os.startfile(dosya_yolu)
         except Exception as ex:
-            messagebox.showerror("Hata", f"DİŞa aktarım sırasında hata:\n{ex}", parent=pencere)
+            messagebox.showerror("Hata", f"DÄ°Åa aktarÄ±m sÄ±rasÄ±nda hata:\n{ex}", parent=pencere)
 
-    tk.Button(top_ctrl, text="⚡ EKRANDAKİLERİ EXCEL'E AKTAR", command=ekrandakileri_excele_aktar, bg="#107C41", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
+    tk.Button(top_ctrl, text="âš¡ EKRANDAKÄ°LERÄ° EXCEL'E AKTAR", command=ekrandakileri_excele_aktar, bg="#107C41", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10).pack(side="right", padx=5)
 
-    # --- BİLGİ PANELİ ---
+    # --- BÄ°LGÄ° PANELÄ° ---
     info_frame = tk.Frame(pencere, bg="#F8F9FA")
     info_frame.pack(fill="x", padx=15, pady=10)
                 
@@ -459,22 +460,22 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
         tk.Label(card, text=title, font=("Segoe UI", 11, "bold"), bg=bg_color, fg="white").pack()
         tk.Label(card, text=value, font=("Segoe UI", 20, "bold"), bg=bg_color, fg="white").pack()
 
-    create_info_card(info_frame, "SİNOPTİK", str(sinoptik_sayisi), "#0066CC")
+    create_info_card(info_frame, "SÄ°NOPTÄ°K", str(sinoptik_sayisi), "#0066CC")
     create_info_card(info_frame, "METAR", str(metar_normal_sayisi), "#107C41")
     create_info_card(info_frame, "SPECI", str(speci_sayisi), "#673AB7")
-    create_info_card(info_frame, "Hatalı Kayıt", str(len(hatali_kayitlar)), "#D32F2F")
+    create_info_card(info_frame, "HatalÄ± KayÄ±t", str(len(hatali_kayitlar)), "#D32F2F")
                 
-    # Sekmeli yapı (Notebook) oluştur
+    # Sekmeli yapÄ± (Notebook) oluÅŸtur
     notebook = ttk.Notebook(pencere)
     notebook.pack(fill="both", expand=True, padx=15, pady=5)
                 
-    # --- SÜTUN SIRALAMA FONKSİYONU ---
+    # --- SÃœTUN SIRALAMA FONKSÄ°YONU ---
     def treeview_sort_column(tv, col, reverse):
         l = [(tv.set(k, col), k) for k in tv.get_children('')]
                     
         def try_float(val):
             try:
-                # Özel formatlar (h1, h2) için sıralama
+                # Ã–zel formatlar (h1, h2) iÃ§in sÄ±ralama
                 match = re.search(r'\d+', str(val))
                 if match and "h" in str(val).lower() and len(str(val)) < 6:
                     return float(match.group())
@@ -487,7 +488,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             tv.move(k, '', index)
         tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))
 
-    # --- SEİŞM (CHECKBOX) VE SüLME FONKSİYONLARI ---
+    # --- SEÄ°ÅM (CHECKBOX) VE SÃ¼LME FONKSÄ°YONLARI ---
     def tree_toggle_checkbox(event, tv):
         region = tv.identify("region", event.x, event.y)
         if region == "heading":
@@ -514,8 +515,8 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                 item = tv.identify_row(event.y)
                 if item:
                     vals = list(tv.item(item, "values"))
-                    if len(vals) > 9 and ("DETAY" in str(vals[-1]) or "İNCELE" in str(vals[-1])):
-                        if tv == tree: satir_detay_goster(event, tv, "Rasat Hata Detayı")
+                    if len(vals) > 9 and ("DETAY" in str(vals[-1]) or "Ä°NCELE" in str(vals[-1])):
+                        if tv == tree: satir_detay_goster(event, tv, "Rasat Hata DetayÄ±")
                         return "break"
 
     def to_csv_value(v):
@@ -527,19 +528,19 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
     def secilenleri_sil(tv):
         silinecekler = [item for item in tv.get_children() if tv.item(item, "values")[0] == "[x]"]
         if not silinecekler:
-            messagebox.showwarning("Uyarü", "Silinecek/Gizlenecek kayıt seçilmedi.", parent=pencere)
+            messagebox.showwarning("UyarÃ¼", "Silinecek/Gizlenecek kayÄ±t seÃ§ilmedi.", parent=pencere)
             return
-        if messagebox.askyesno("Onay", f"Seçili {len(silinecekler)} kaydı gizlemek/silmek istediçinize emin misiniz?", parent=pencere):
+        if messagebox.askyesno("Onay", f"SeÃ§ili {len(silinecekler)} kaydÄ± gizlemek/silmek istediÃ§inize emin misiniz?", parent=pencere):
             for item in silinecekler:
                 tv.delete(item)
 
     def secilileri_panoya_kopyala(tv, kolonlar):
-        secililer = [item for item in tv.get_children() if tv.item(item, "values")[0] == "☐"]
+        secililer = [item for item in tv.get_children() if tv.item(item, "values")[0] == "â˜"]
         if not secililer:
-            messagebox.showwarning("Uyarü", "Kopyalanacak kayıt seçilmedi.", parent=pencere)
+            messagebox.showwarning("UyarÃ¼", "Kopyalanacak kayÄ±t seÃ§ilmedi.", parent=pencere)
             return
                     
-        basliklar = [str(col) for col in kolonlar if col != "Seç"]
+        basliklar = [str(col) for col in kolonlar if col != "SeÃ§"]
         metin = ";".join(to_csv_value(b) for b in basliklar) + "\n"
                     
         for item in secililer:
@@ -548,34 +549,34 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                         
         pencere.clipboard_clear()
         pencere.clipboard_append(metin)
-        messagebox.showinfo("Başarılı", f"{len(secililer)} kayıt panoya kopyalandı.", parent=pencere)
+        messagebox.showinfo("BaÅŸarÄ±lÄ±", f"{len(secililer)} kayÄ±t panoya kopyalandÄ±.", parent=pencere)
 
-    # --- ORTAK İŞFRE İŞZüMLEYüCş PENCERELERİ ---
+    # --- ORTAK Ä°ÅFRE Ä°ÅZÃ¼MLEYÃ¼CÅŸ PENCERELERÄ° ---
     def goster_sinoptik_cozumleyici(sinoptik_sifresi, parent_widget):
         if SynopDecoder is None:
-            messagebox.showerror("Hata", "SynopDecoder modülş yüklenemedi.", parent=parent_widget)
+            messagebox.showerror("Hata", "SynopDecoder modÃ¼lÅŸ yÃ¼klenemedi.", parent=parent_widget)
             return
                         
         if not sinoptik_sifresi or sinoptik_sifresi.lower() in ["-", "nan", ""]:
-            messagebox.showinfo("Bilgi", "İŞzümlenecek geçerli bir SİNOPTİK Şifresi bulunamadı.", parent=parent_widget)
+            messagebox.showinfo("Bilgi", "Ä°ÅzÃ¼mlenecek geÃ§erli bir SÄ°NOPTÄ°K Åifresi bulunamadÄ±.", parent=parent_widget)
             return
                         
         try:
             decoder = SynopDecoder()
             ayiklanan_veri = decoder.decode_line(sinoptik_sifresi)
-            # anakardelenden temizlik mantüü
-            temiz_sifre = re.sub(r'^(?:SİNOPTİK|SYNOP|SINOPTIK|KAYIT:.*?BULTEN\s*:|BULTEN\s*:|.*GELDİ:|.*YENİ RASAT)\s*', '', sinoptik_sifresi, flags=re.IGNORECASE|re.DOTALL).strip()
+            # anakardelenden temizlik mantÃ¼Ã¼
+            temiz_sifre = re.sub(r'^(?:SÄ°NOPTÄ°K|SYNOP|SINOPTIK|KAYIT:.*?BULTEN\s*:|BULTEN\s*:|.*GELDÄ°:|.*YENÄ° RASAT)\s*', '', sinoptik_sifresi, flags=re.IGNORECASE|re.DOTALL).strip()
             ayiklanan_veri = decoder.decode_line(temiz_sifre)
             is_valid = decoder.validate()
             hatalar = decoder.get_errors() if hasattr(decoder, 'get_errors') else []
                         
             cozum_pop = tk.Toplevel(parent_widget)
-            cozum_pop.title("SİNOPTİK Şifre İŞzümleyici")
+            cozum_pop.title("SÄ°NOPTÄ°K Åifre Ä°ÅzÃ¼mleyici")
             cozum_pop.geometry("600x450")
             cozum_pop.geometry("750x550")
             cozum_pop.configure(bg="#F8F9FA")
                         
-            # Dikey ve Yatay Kaydırma Çubukları (Scrollbar)
+            # Dikey ve Yatay KaydÄ±rma Ã‡ubuklarÄ± (Scrollbar)
             f_txt = tk.Frame(cozum_pop, bg="#37474F")
             f_txt.pack(expand=True, fill="both", padx=15, pady=15)
                         
@@ -590,15 +591,15 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             v_scroll.config(command=txt.yview)
             h_scroll.config(command=txt.xview)
                         
-            sonuc = f"--- ORİJİNAL İŞFRE ---\n{sinoptik_sifresi}\n\n"
-            sonuc = f"--- ORİJİNAL İŞFRE ---\n{temiz_sifre}\n\n"
-            sonuc += f"Format Geçerli mi? : {'EVET ü' if is_valid else 'HAYIR ü'}\n"
+            sonuc = f"--- ORÄ°JÄ°NAL Ä°ÅFRE ---\n{sinoptik_sifresi}\n\n"
+            sonuc = f"--- ORÄ°JÄ°NAL Ä°ÅFRE ---\n{temiz_sifre}\n\n"
+            sonuc += f"Format GeÃ§erli mi? : {'EVET Ã¼' if is_valid else 'HAYIR Ã¼'}\n"
                         
             if hatalar:
-                sonuc += "\nTespit Edilen Format Hataları:\n"
+                sonuc += "\nTespit Edilen Format HatalarÄ±:\n"
                 for h in hatalar: sonuc += f" - {h}\n"
                                 
-            sonuc += "\n--- AYIKLANAN VERİLER ---\n"
+            sonuc += "\n--- AYIKLANAN VERÄ°LER ---\n"
             if ayiklanan_veri:
                 if hasattr(decoder, 'generate_human_readable'):
                     sonuc += decoder.generate_human_readable(ayiklanan_veri) + "\n"
@@ -607,7 +608,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                         if not k.startswith('_') and k not in ['errors', 'raw_line', 'raw_groups', 'ham_veri']:
                             sonuc += f"{str(k).upper():<20}: {v}\n"
             else:
-                sonuc += "İŞzümlenebilecek geçerli bir veri bulunamadı.\n"
+                sonuc += "Ä°ÅzÃ¼mlenebilecek geÃ§erli bir veri bulunamadÄ±.\n"
                                 
             txt.insert("1.0", sonuc)
             txt.config(state=tk.DISABLED)
@@ -615,23 +616,23 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             def metni_kopyala():
                 cozum_pop.clipboard_clear()
                 cozum_pop.clipboard_append(sonuc)
-                messagebox.showinfo("Başarılı", "İŞzümlenen veriler panoya kopyalandı!", parent=cozum_pop)
+                messagebox.showinfo("BaÅŸarÄ±lÄ±", "Ä°ÅzÃ¼mlenen veriler panoya kopyalandÄ±!", parent=cozum_pop)
                             
             def metni_kaydet():
                 dosya_yolu = filedialog.asksaveasfilename(
                     parent=cozum_pop,
-                    title="SİNOPTİK İŞzümünş Kaydet",
+                    title="SÄ°NOPTÄ°K Ä°ÅzÃ¼mÃ¼nÅŸ Kaydet",
                     defaultextension=".txt",
-                    filetypes=[("Metin Belgesi", "*.txt"), ("Tüm Dosyalar", "*.*")],
+                    filetypes=[("Metin Belgesi", "*.txt"), ("TÃ¼m Dosyalar", "*.*")],
                     initialfile="SINOPTIK_Cozum_Raporu.txt"
                 )
                 if dosya_yolu:
                     try:
                         with open(dosya_yolu, "w", encoding="utf-8") as f:
                             f.write(sonuc)
-                        messagebox.showinfo("Başarılı", f"Dosya kaydedildi:\n{dosya_yolu}", parent=cozum_pop)
+                        messagebox.showinfo("BaÅŸarÄ±lÄ±", f"Dosya kaydedildi:\n{dosya_yolu}", parent=cozum_pop)
                     except Exception as ex:
-                        messagebox.showerror("Hata", f"Kayıt sırasında hata oluştu:\n{ex}", parent=cozum_pop)
+                        messagebox.showerror("Hata", f"KayÄ±t sÄ±rasÄ±nda hata oluÅŸtu:\n{ex}", parent=cozum_pop)
                                     
             btn_frame = tk.Frame(cozum_pop, bg="#F8F9FA")
             btn_frame.pack(pady=(0, 15))
@@ -642,29 +643,29 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             btn_kaydet = tk.Button(btn_frame, text="TXT Kaydet", command=metni_kaydet, font=("Segoe UI", 10, "bold"), bg="#107C41", fg="white", activebackground="#0C5D31", activeforeground="white", cursor="hand2", padx=20, pady=5)
             btn_kaydet.pack(side=tk.LEFT, padx=10)
         except Exception as e:
-            messagebox.showerror("Hata", f"İŞzümleme Hatası:\n{e}", parent=parent_widget)
+            messagebox.showerror("Hata", f"Ä°ÅzÃ¼mleme HatasÄ±:\n{e}", parent=parent_widget)
 
     def goster_metar_cozumleyici(metar_sifresi, parent_widget):
         if MetarDecoder is None:
-            messagebox.showerror("Hata", "MetarDecoder modülş yüklenemedi.", parent=parent_widget)
+            messagebox.showerror("Hata", "MetarDecoder modÃ¼lÅŸ yÃ¼klenemedi.", parent=parent_widget)
             return
 
         if not metar_sifresi or metar_sifresi.lower() in ["-", "nan", ""]:
-            messagebox.showinfo("Bilgi", "İŞzümlenecek geçerli bir METAR Şifresi bulunamadı.", parent=parent_widget)
+            messagebox.showinfo("Bilgi", "Ä°ÅzÃ¼mlenecek geÃ§erli bir METAR Åifresi bulunamadÄ±.", parent=parent_widget)
             return
                         
         try:
             decoder = MetarDecoder()
             ayiklanan_veri = decoder.decode_line(metar_sifresi)
-            # anakardelenden temizlik mantüü
-            temiz_sifre = re.sub(r'^(?:KAYIT:.*?BULTEN\s*:|BULTEN\s*:|.*GELDİ:|.*YENİ RASAT)\s*', '', metar_sifresi, flags=re.IGNORECASE|re.DOTALL).strip()
+            # anakardelenden temizlik mantÃ¼Ã¼
+            temiz_sifre = re.sub(r'^(?:KAYIT:.*?BULTEN\s*:|BULTEN\s*:|.*GELDÄ°:|.*YENÄ° RASAT)\s*', '', metar_sifresi, flags=re.IGNORECASE|re.DOTALL).strip()
             m_match = re.search(r'(METAR|SPECI|SATT\d*|SA[A-Z0-9]{2}|SP[A-Z0-9]{2})', temiz_sifre)
             if m_match: temiz_sifre = temiz_sifre[m_match.start():]
                         
             ayiklanan_veri = decoder.decode_line(temiz_sifre)
                         
             metar_pop = tk.Toplevel(parent_widget)
-            metar_pop.title("METAR Şifre İŞzümleyici")
+            metar_pop.title("METAR Åifre Ä°ÅzÃ¼mleyici")
             metar_pop.geometry("600x450")
             metar_pop.geometry("750x550")
             metar_pop.configure(bg="#F8F9FA")
@@ -686,8 +687,8 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             if ayiklanan_veri:
                 sonuc = decoder.generate_human_readable(ayiklanan_veri)
             else:
-                sonuc = f"--- ORİJİNAL METAR İŞFRESş ---\n{metar_sifresi}\n\nİŞzümlenebilecek geçerli bir veri bulunamadı."
-                sonuc = f"--- ORİJİNAL METAR İŞFRESş ---\n{temiz_sifre}\n\nİŞzümlenebilecek geçerli bir veri bulunamadı."
+                sonuc = f"--- ORÄ°JÄ°NAL METAR Ä°ÅFRESÅŸ ---\n{metar_sifresi}\n\nÄ°ÅzÃ¼mlenebilecek geÃ§erli bir veri bulunamadÄ±."
+                sonuc = f"--- ORÄ°JÄ°NAL METAR Ä°ÅFRESÅŸ ---\n{temiz_sifre}\n\nÄ°ÅzÃ¼mlenebilecek geÃ§erli bir veri bulunamadÄ±."
                             
             txt.insert("1.0", sonuc)
             txt.config(state=tk.DISABLED)
@@ -695,23 +696,23 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             def metni_kopyala():
                 metar_pop.clipboard_clear()
                 metar_pop.clipboard_append(sonuc)
-                messagebox.showinfo("Başarılı", "METAR verileri panoya kopyalandı!", parent=metar_pop)
+                messagebox.showinfo("BaÅŸarÄ±lÄ±", "METAR verileri panoya kopyalandÄ±!", parent=metar_pop)
                             
             def metni_kaydet():
                 dosya_yolu = filedialog.asksaveasfilename(
                     parent=metar_pop,
-                    title="METAR İŞzümünş Kaydet",
+                    title="METAR Ä°ÅzÃ¼mÃ¼nÅŸ Kaydet",
                     defaultextension=".txt",
-                    filetypes=[("Metin Belgesi", "*.txt"), ("Tüm Dosyalar", "*.*")],
+                    filetypes=[("Metin Belgesi", "*.txt"), ("TÃ¼m Dosyalar", "*.*")],
                     initialfile="METAR_Cozum_Raporu.txt"
                 )
                 if dosya_yolu:
                     try:
                         with open(dosya_yolu, "w", encoding="utf-8") as f:
                             f.write(sonuc)
-                        messagebox.showinfo("Başarılı", f"Dosya kaydedildi:\n{dosya_yolu}", parent=metar_pop)
+                        messagebox.showinfo("BaÅŸarÄ±lÄ±", f"Dosya kaydedildi:\n{dosya_yolu}", parent=metar_pop)
                     except Exception as ex:
-                        messagebox.showerror("Hata", f"Kayıt sırasında hata oluştu:\n{ex}", parent=metar_pop)
+                        messagebox.showerror("Hata", f"KayÄ±t sÄ±rasÄ±nda hata oluÅŸtu:\n{ex}", parent=metar_pop)
                                     
             btn_frame = tk.Frame(metar_pop, bg="#F8F9FA")
             btn_frame.pack(pady=(0, 15))
@@ -722,11 +723,11 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             btn_kaydet = tk.Button(btn_frame, text="TXT Kaydet", command=metni_kaydet, font=("Segoe UI", 10, "bold"), bg="#107C41", fg="white", activebackground="#0C5D31", activeforeground="white", cursor="hand2", padx=20, pady=5)
             btn_kaydet.pack(side=tk.LEFT, padx=10)
         except Exception as e:
-            messagebox.showerror("Hata", f"İŞzümleme Hatası:\n{e}", parent=parent_widget)
+            messagebox.showerror("Hata", f"Ä°ÅzÃ¼mleme HatasÄ±:\n{e}", parent=parent_widget)
 
-    # --- SAĞ TIK MENÜSÜ FONKSİYONU ---
+    # --- SAÄ TIK MENÃœSÃœ FONKSÄ°YONU ---
     def show_context_menu(event, tv):
-        # Sağ tıklanan satırı seç
+        # SaÄŸ tÄ±klanan satÄ±rÄ± seÃ§
         iid = tv.identify_row(event.y)
         if iid and iid not in tv.selection():
             tv.selection_set(iid)
@@ -739,7 +740,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             text_to_copy = ""
             for item in selected:
                 vals = tv.item(item, "values")
-                if tv["columns"][0] == "Seç":
+                if tv["columns"][0] == "SeÃ§":
                     vals = vals[1:]
                 text_to_copy += ";".join(to_csv_value(v) for v in vals) + "\n"
             tv.clipboard_clear()
@@ -750,13 +751,13 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                         
         def tr_lower(metin):
             if not metin: return ""
-            return str(metin).replace("I", "ü").replace("ü", "i").replace("ü", "ü").replace("ü", "ü").replace("ü", "ü").replace("ü", "ü").replace("ü", "ü").lower()
+            return str(metin).replace("I", "Ã¼").replace("Ã¼", "i").replace("Ã¼", "Ã¼").replace("Ã¼", "Ã¼").replace("Ã¼", "Ã¼").replace("Ã¼", "Ã¼").replace("Ã¼", "Ã¼").lower()
 
         def find_text():
             search_term = simpledialog.askstring("Bul", "Aranacak kelime(ler):", parent=tv)
             if not search_term: return
                         
-            # Kullanıcının girdiçi kelimeleri boşluklara göre ayır (Örn: "h37 06:00")
+            # KullanÄ±cÄ±nÄ±n girdiÃ§i kelimeleri boÅŸluklara gÃ¶re ayÄ±r (Ã–rn: "h37 06:00")
             arananlar = tr_lower(search_term.strip()).split()
             tv.selection_remove(tv.selection())
             found = False
@@ -764,7 +765,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                 values = tv.item(item, "values")
                 satir_metni = tr_lower(" ".join(str(v) for v in values))
                             
-                # Aranan TÜM kelimeler bu satırda geçiyorsa seç (Akıllı çoklu arama)
+                # Aranan TÃœM kelimeler bu satÄ±rda geÃ§iyorsa seÃ§ (AkÄ±llÄ± Ã§oklu arama)
                 if all(kelime in satir_metni for kelime in arananlar):
                     tv.selection_add(item)
                     if not found:
@@ -772,14 +773,14 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                         found = True
                                     
             if not found:
-                messagebox.showinfo("Bulunamadı", "Eşleşen kayıt bulunamadı.", parent=tv)
+                messagebox.showinfo("BulunamadÄ±", "EÅŸleÅŸen kayÄ±t bulunamadÄ±.", parent=tv)
 
         def cozumle_sinoptik():
             selected = tv.selection()
             if not selected: return
             degerler = tv.item(selected[0], "values")
             kolonlar = tv["columns"]
-            s_idx = list(kolonlar).index("SİNOPTİK Şifresi") if "SİNOPTİK Şifresi" in kolonlar else -1
+            s_idx = list(kolonlar).index("SÄ°NOPTÄ°K Åifresi") if "SÄ°NOPTÄ°K Åifresi" in kolonlar else -1
             if s_idx != -1:
                 sinoptik_sifresi = str(degerler[s_idx]).strip() 
                 goster_sinoptik_cozumleyici(sinoptik_sifresi, tv)
@@ -789,16 +790,16 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             if not selected: return
             degerler = tv.item(selected[0], "values")
             kolonlar = tv["columns"]
-            m_idx = list(kolonlar).index("METAR Şifresi") if "METAR Şifresi" in kolonlar else -1
+            m_idx = list(kolonlar).index("METAR Åifresi") if "METAR Åifresi" in kolonlar else -1
             if m_idx != -1:
                 metar_sifresi = str(degerler[m_idx]).strip() 
                 goster_metar_cozumleyici(metar_sifresi, tv)
 
-        menu.add_command(label="Satırş Kopyala", command=copy_selection)
-        menu.add_command(label="Hepsini Seç", command=select_all)
+        menu.add_command(label="SatÄ±rÅŸ Kopyala", command=copy_selection)
+        menu.add_command(label="Hepsini SeÃ§", command=select_all)
         menu.add_separator()
-        menu.add_command(label="SİNOPTİK Şifresini İŞzümle", command=cozumle_sinoptik)
-        menu.add_command(label="METAR Şifresini İŞzümle", command=cozumle_metar)
+        menu.add_command(label="SÄ°NOPTÄ°K Åifresini Ä°ÅzÃ¼mle", command=cozumle_sinoptik)
+        menu.add_command(label="METAR Åifresini Ä°ÅzÃ¼mle", command=cozumle_metar)
         menu.add_separator()
         menu.add_command(label="Bul...", command=find_text)
                     
@@ -807,7 +808,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
         finally:
             menu.grab_release()
 
-    # --- YENİ: Çift tıklama ile detay okuma fonksiyonu ---
+    # --- YENÄ°: Ã‡ift tÄ±klama ile detay okuma fonksiyonu ---
     def satir_detay_goster(event, tree_widget, pencere_baslik):
         item = tree_widget.identify_row(event.y)
         if not item:
@@ -835,13 +836,13 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                     
         detay_metni = ""
         for col, val in zip(kolonlar, degerler):
-            if str(col).upper() == "SEÇ" or str(col).upper() == "AKSİYON": continue
-            detay_metni += f"• {str(col).upper()}:\n{val}\n\n"
+            if str(col).upper() == "SEÃ‡" or str(col).upper() == "AKSÄ°YON": continue
+            detay_metni += f"â€¢ {str(col).upper()}:\n{val}\n\n"
             
         text_alan.insert("1.0", detay_metni.strip())
         text_alan.config(state=tk.DISABLED) # Sadece okunabilir yapar
 
-        # --- Sağ Tık Menüsş (Detay Penceresi İŞin) ---
+        # --- SaÄŸ TÄ±k MenÃ¼sÅŸ (Detay Penceresi Ä°Åin) ---
         sag_tik_menu = tk.Menu(text_alan, tearoff=0)
                     
         def kopyala():
@@ -862,18 +863,18 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             return 'break'
 
         sag_tik_menu.add_command(label="Kopyala", command=kopyala)
-        sag_tik_menu.add_command(label="Tümünş Kopyala", command=tumunu_kopyala)
+        sag_tik_menu.add_command(label="TÃ¼mÃ¼nÅŸ Kopyala", command=tumunu_kopyala)
         sag_tik_menu.add_separator()
-        sag_tik_menu.add_command(label="Hepsini Seç", command=hepsini_sec)
+        sag_tik_menu.add_command(label="Hepsini SeÃ§", command=hepsini_sec)
 
-        # Şifre İŞzümleme butonlarünş detay penceresinde sağ tıka ekle
+        # Åifre Ä°ÅzÃ¼mleme butonlarÃ¼nÅŸ detay penceresinde saÄŸ tÄ±ka ekle
         sinoptik_idx = -1
         metar_idx = -1
         for i, col in enumerate(kolonlar):
             col_str = str(col).upper()
-            if "SİNOPTİK" in col_str and "İŞFRE" in col_str:
+            if "SÄ°NOPTÄ°K" in col_str and "Ä°ÅFRE" in col_str:
                 sinoptik_idx = i
-            elif "METAR" in col_str and "İŞFRE" in col_str:
+            elif "METAR" in col_str and "Ä°ÅFRE" in col_str:
                 metar_idx = i
                             
         if sinoptik_idx != -1 or metar_idx != -1:
@@ -882,59 +883,59 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             if sinoptik_idx != -1:
                 def detay_cozumle_sinoptik():
                     goster_sinoptik_cozumleyici(str(degerler[sinoptik_idx]).strip(), detay_pop)
-                sag_tik_menu.add_command(label="SİNOPTİK Şifresini İŞzümle", command=detay_cozumle_sinoptik)
+                sag_tik_menu.add_command(label="SÄ°NOPTÄ°K Åifresini Ä°ÅzÃ¼mle", command=detay_cozumle_sinoptik)
                             
             if metar_idx != -1:
                 def detay_cozumle_metar():
                     goster_metar_cozumleyici(str(degerler[metar_idx]).strip(), detay_pop)
-                sag_tik_menu.add_command(label="METAR Şifresini İŞzümle", command=detay_cozumle_metar)
+                sag_tik_menu.add_command(label="METAR Åifresini Ä°ÅzÃ¼mle", command=detay_cozumle_metar)
 
         text_alan.bind("<Button-3>", lambda e: sag_tik_menu.tk_popup(e.x_root, e.y_root))
 
     # --- 1. SEKME: HATALI RASATLAR ---
     tree_frame = tk.Frame(notebook, bg="white")
-    notebook.add(tree_frame, text="⚡ Rasatlar (Hatalı / Tüm)")
+    notebook.add(tree_frame, text="âš¡ Rasatlar (HatalÄ± / TÃ¼m)")
                 
-    # FüLTRELEME ALANI
+    # FÃ¼LTRELEME ALANI
     filter_frame = tk.Frame(tree_frame, bg="white")
     filter_frame.pack(fill="x", padx=5, pady=5)
                 
-    btn_sil = tk.Button(filter_frame, text="🗑️ Seçili Olanları Gizle/Sil", command=lambda: secilenleri_sil(tree), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+    btn_sil = tk.Button(filter_frame, text="ğŸ—‘ï¸ SeÃ§ili OlanlarÄ± Gizle/Sil", command=lambda: secilenleri_sil(tree), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
     btn_sil.pack(side="right", padx=5)
 
-    btn_kopyala = tk.Button(filter_frame, text="⚡ Seçilileri Kopyala", command=lambda: secilileri_panoya_kopyala(tree, cols), bg="#008CBA", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+    btn_kopyala = tk.Button(filter_frame, text="âš¡ SeÃ§ilileri Kopyala", command=lambda: secilileri_panoya_kopyala(tree, cols), bg="#008CBA", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
     btn_kopyala.pack(side="right", padx=5)
 
-    tk.Label(filter_frame, text="⚡ Güsterim Filtresi:", bg="white", font=("Segoe UI", 11, "bold"), fg="#343A40").pack(side="left", padx=5)
-    filtre_combo = ttk.Combobox(filter_frame, values=["Hatalı Rasatlar (Tümü)", "Tüm Kayıtlar (Hatalı + Doğru)", "Tüm METAR/SPECI Rasatları", "Tüm SİNOPTİK Rasatları", "Sadece Çapraz Kontrol Hataları", "Sadece WMO / Standart Hatalar", "Veri Yok / Eksik Hataları", "Sadece 7. Grup (Halihazır/Geümiş Hava) Hataları", "Sadece 8. Grup (Bulut) Hataları"], state="readonly", width=45, font=("Segoe UI", 11))
-    filtre_combo.set("Hatalı Rasatlar (Tümü)")
+    tk.Label(filter_frame, text="âš¡ GÃ¼sterim Filtresi:", bg="white", font=("Segoe UI", 11, "bold"), fg="#343A40").pack(side="left", padx=5)
+    filtre_combo = ttk.Combobox(filter_frame, values=["HatalÄ± Rasatlar (TÃ¼mÃ¼)", "TÃ¼m KayÄ±tlar (HatalÄ± + DoÄŸru)", "TÃ¼m METAR/SPECI RasatlarÄ±", "TÃ¼m SÄ°NOPTÄ°K RasatlarÄ±", "Sadece Ã‡apraz Kontrol HatalarÄ±", "Sadece WMO / Standart Hatalar", "Veri Yok / Eksik HatalarÄ±", "Sadece 7. Grup (HalihazÄ±r/GeÃ¼miÅŸ Hava) HatalarÄ±", "Sadece 8. Grup (Bulut) HatalarÄ±"], state="readonly", width=45, font=("Segoe UI", 11))
+    filtre_combo.set("HatalÄ± Rasatlar (TÃ¼mÃ¼)")
     filtre_combo.pack(side="left", padx=5)
                 
-    cols = ("Seç", "Tarih", "Saat", "GMT", "Hata Kodu", "AİŞklama", "Hatalı Kod", "Tavsiye Kod", "SİNOPTİK Şifresi", "METAR Şifresi", "Aksiyon")
-    tree = ttk.Treeview(tree_frame, columns=cols, show="headings", style="Treeview", displaycolumns=("Seç", "Tarih", "Saat", "GMT", "Hata Kodu", "Hatalı Kod", "Tavsiye Kod", "Aksiyon"))
+    cols = ("SeÃ§", "Tarih", "Saat", "GMT", "Hata Kodu", "AÄ°Åklama", "HatalÄ± Kod", "Tavsiye Kod", "SÄ°NOPTÄ°K Åifresi", "METAR Åifresi", "Aksiyon")
+    tree = ttk.Treeview(tree_frame, columns=cols, show="headings", style="Treeview", displaycolumns=("SeÃ§", "Tarih", "Saat", "GMT", "Hata Kodu", "HatalÄ± Kod", "Tavsiye Kod", "Aksiyon"))
                 
-    tree.heading("Seç", text="[ ]")
+    tree.heading("SeÃ§", text="[ ]")
     tree.heading("Tarih", text="Tarih")
     tree.heading("Saat", text="Saat")
     tree.heading("GMT", text="GMT")
     tree.heading("Hata Kodu", text="Hata Kodu")
-    tree.heading("AİŞklama", text="AİŞklama")
-    tree.heading("Hatalı Kod", text="Hatalı Kod")
+    tree.heading("AÄ°Åklama", text="AÄ°Åklama")
+    tree.heading("HatalÄ± Kod", text="HatalÄ± Kod")
     tree.heading("Tavsiye Kod", text="Tavsiye Kod")
-    tree.heading("SİNOPTİK Şifresi", text="SİNOPTİK Şifresi")
-    tree.heading("METAR Şifresi", text="METAR Şifresi")
+    tree.heading("SÄ°NOPTÄ°K Åifresi", text="SÄ°NOPTÄ°K Åifresi")
+    tree.heading("METAR Åifresi", text="METAR Åifresi")
     tree.heading("Aksiyon", text="Detay")
                 
-    tree.column("Seç", width=40, anchor="center")
+    tree.column("SeÃ§", width=40, anchor="center")
     tree.column("Tarih", width=90, anchor="center")
     tree.column("Saat", width=60, anchor="center")
     tree.column("GMT", width=60, anchor="center")
     tree.column("Hata Kodu", width=120, anchor="center")
-    tree.column("AİŞklama", width=350, anchor="w")
-    tree.column("Hatalı Kod", width=100, anchor="center")
+    tree.column("AÄ°Åklama", width=350, anchor="w")
+    tree.column("HatalÄ± Kod", width=100, anchor="center")
     tree.column("Tavsiye Kod", width=100, anchor="center")
-    tree.column("SİNOPTİK Şifresi", width=0, stretch=False)
-    tree.column("METAR Şifresi", width=0, stretch=False)
+    tree.column("SÄ°NOPTÄ°K Åifresi", width=0, stretch=False)
+    tree.column("METAR Åifresi", width=0, stretch=False)
     tree.column("Aksiyon", width=80, anchor="center")
                 
     yscroll = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
@@ -945,23 +946,23 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
     tree.pack(side="left", fill="both", expand=True)
                 
     tree.bind("<Button-1>", lambda e: tree_toggle_checkbox(e, tree))
-    tree.bind("<Double-1>", lambda e: satir_detay_goster(e, tree, "Rasat Hata Detayı"))
+    tree.bind("<Double-1>", lambda e: satir_detay_goster(e, tree, "Rasat Hata DetayÄ±"))
     tree.bind("<Button-3>", lambda e: show_context_menu(e, tree))
     for col in cols:
-        if col != "Seç":
+        if col != "SeÃ§":
             tree.heading(col, command=lambda c=col: treeview_sort_column(tree, c, False))
                 
-    def populate_tree(filter_type="Hatalı Rasatlar (Tümü)"):
+    def populate_tree(filter_type="HatalÄ± Rasatlar (TÃ¼mÃ¼)"):
         for item in tree.get_children():
             tree.delete(item)
 
-        if filter_type in ["Tüm Kayıtlar (Hatalı + Doğru)", "Tüm METAR/SPECI Rasatları", "Tüm SİNOPTİK Rasatları"]:
+        if filter_type in ["TÃ¼m KayÄ±tlar (HatalÄ± + DoÄŸru)", "TÃ¼m METAR/SPECI RasatlarÄ±", "TÃ¼m SÄ°NOPTÄ°K RasatlarÄ±"]:
             hedef_df = birlesik
         else:
             hedef_df = hatali_kayitlar
 
         if hedef_df.empty:
-            tree.insert("", tk.END, values=("", "-", "-", "-", "BİLGİ", "Gösterilecek kayıt bulunamadı.", "-", "-"))
+            tree.insert("", tk.END, values=("", "-", "-", "-", "BÄ°LGÄ°", "GÃ¶sterilecek kayÄ±t bulunamadÄ±.", "-", "-"))
             return
 
         def safe_tree_str(val):
@@ -979,19 +980,19 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                 hata_kodu = "Hata Yok"
 
             hk_upper = hata_kodu.upper()
-            is_capraz = "ÇAPRAZ" in hk_upper or "UYUM" in hk_upper or "VAL_" in hk_upper
-            is_veri_yok = "VERİ YOK" in hk_upper or "VERI YOK" in hk_upper
+            is_capraz = "Ã‡APRAZ" in hk_upper or "UYUM" in hk_upper or "VAL_" in hk_upper
+            is_veri_yok = "VERÄ° YOK" in hk_upper or "VERI YOK" in hk_upper
 
-            if filter_type == "Sadece Çapraz Kontrol Hataları" and not is_capraz:
+            if filter_type == "Sadece Ã‡apraz Kontrol HatalarÄ±" and not is_capraz:
                 continue
             if filter_type == "Sadece WMO / Standart Hatalar" and (is_capraz or is_veri_yok or hata_kodu == "Hata Yok"):
                 continue
-            if filter_type == "Veri Yok / Eksik Hataları" and not is_veri_yok:
+            if filter_type == "Veri Yok / Eksik HatalarÄ±" and not is_veri_yok:
                 continue
                             
-            # 7. Grup (ww, W1, W2) filtreleme mantüü
+            # 7. Grup (ww, W1, W2) filtreleme mantÃ¼Ã¼
             is_7_grup = False
-            aciklama = str(row.get("AÇIKLAMA", "")).upper()
+            aciklama = str(row.get("AÃ‡IKLAMA", "")).upper()
             hk_list = [k.strip() for k in hk_upper.split(",")]
             for hk in hk_list:
                 if hk.startswith("H"):
@@ -1002,15 +1003,15 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                             is_7_grup = True
                             break
                     except: pass
-            if not is_7_grup and any(k in aciklama for k in ["WW=", "W1", "W2", "HALİHAZIR", "GEüM⚡ HAVA", "7. GRUP", "İŞMüEK", "ORAJ", "SİS", "PUS", "KAR ", "YAĞMUR"]):
+            if not is_7_grup and any(k in aciklama for k in ["WW=", "W1", "W2", "HALÄ°HAZIR", "GEÃ¼Mâš¡ HAVA", "7. GRUP", "Ä°ÅMÃ¼EK", "ORAJ", "SÄ°S", "PUS", "KAR ", "YAÄMUR"]):
                 is_7_grup = True
 
-            if filter_type == "Sadece 7. Grup (Halihazır/Geümiş Hava) Hataları" and not is_7_grup:
+            if filter_type == "Sadece 7. Grup (HalihazÄ±r/GeÃ¼miÅŸ Hava) HatalarÄ±" and not is_7_grup:
                 continue
                             
-            # 8. Grup (N, Nh, CL, CM, CH, h) filtreleme mantüü
+            # 8. Grup (N, Nh, CL, CM, CH, h) filtreleme mantÃ¼Ã¼
             is_8_grup = False
-            if filter_type == "Sadece 8. Grup (Bulut) Hataları":
+            if filter_type == "Sadece 8. Grup (Bulut) HatalarÄ±":
                 for hk in hk_list:
                     if hk.startswith("H"):
                         try:
@@ -1020,17 +1021,17 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                                 is_8_grup = True
                                 break
                         except: pass
-                if not is_8_grup and any(k in aciklama for k in ["BULUT", "TAVAN", "DüKEY", "KAPALILIK", "CüNS", "8. GRUP", "N=", "NH=", "CL=", "CM=", "CH="]):
+                if not is_8_grup and any(k in aciklama for k in ["BULUT", "TAVAN", "DÃ¼KEY", "KAPALILIK", "CÃ¼NS", "8. GRUP", "N=", "NH=", "CL=", "CM=", "CH="]):
                     is_8_grup = True
                 if not is_8_grup:
                     continue
                             
-            sin_msg = safe_tree_str(row.get("SİNOPTİK - Şifreli Mesaj"))
-            met_msg = safe_tree_str(row.get("METAR - Şifreli Mesaj"))
+            sin_msg = safe_tree_str(row.get("SÄ°NOPTÄ°K - Åifreli Mesaj"))
+            met_msg = safe_tree_str(row.get("METAR - Åifreli Mesaj"))
                         
-            if filter_type == "Tüm SİNOPTİK Rasatları" and sin_msg == "-":
+            if filter_type == "TÃ¼m SÄ°NOPTÄ°K RasatlarÄ±" and sin_msg == "-":
                 continue
-            if filter_type == "Tüm METAR/SPECI Rasatları" and met_msg == "-":
+            if filter_type == "TÃ¼m METAR/SPECI RasatlarÄ±" and met_msg == "-":
                 continue
 
             hatali_kod = "-"
@@ -1038,7 +1039,7 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
             if hata_kodu == "h378":
                 try:
                     import re
-                    aciklama_str = safe_tree_str(row.get("AÇIKLAMA"))
+                    aciklama_str = safe_tree_str(row.get("AÃ‡IKLAMA"))
                     m_ww = re.search(r"\[TAVSIYE_WW=(\d{2})\]", aciklama_str)
                     if m_ww:
                         hedef_ww = m_ww.group(1)
@@ -1059,21 +1060,21 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                 except: pass
 
             hazirlanan_veriler.append((
-                "ü",
+                "Ã¼",
                 safe_tree_str(row.get("Tarih")),
                 safe_tree_str(row.get("Saat (GMT)")),
-                safe_tree_str(row.get("SİNOPTİK - GMT_EXACT", row.get("METAR - GMT_EXACT", ""))),
+                safe_tree_str(row.get("SÄ°NOPTÄ°K - GMT_EXACT", row.get("METAR - GMT_EXACT", ""))),
                 hata_kodu,
-                safe_tree_str(row.get("AÇIKLAMA")),
+                safe_tree_str(row.get("AÃ‡IKLAMA")),
                 hatali_kod,
                 tavsiye_kod,
                 sin_msg,
                 met_msg,
-                " 🔍 İNCELE "
+                " ğŸ” Ä°NCELE "
             ))
                         
         if not hazirlanan_veriler:
-            tree.insert("", tk.END, values=("", "-", "-", "BİLGİ", "Gösterilecek kayıt bulunamadı.", "-", "-", "-", "-", "-"))
+            tree.insert("", tk.END, values=("", "-", "-", "BÄ°LGÄ°", "GÃ¶sterilecek kayÄ±t bulunamadÄ±.", "-", "-", "-", "-", "-"))
             return
 
         def chunk_insert(index=0, chunk_size=100):
@@ -1088,32 +1089,32 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
     filtre_combo.bind("<<ComboboxSelected>>", lambda e: populate_tree(filtre_combo.get()))
     populate_tree()
                         
-    # --- 2. SEKME: TÜM KURAL TESTLERİ DETAYI ---
+    # --- 2. SEKME: TÃœM KURAL TESTLERÄ° DETAYI ---
     kural_frame = tk.Frame(notebook, bg="white")
-    notebook.add(kural_frame, text="✅ Test Edilen Tüm Kurallar (h1..h267)")
+    notebook.add(kural_frame, text="âœ… Test Edilen TÃ¼m Kurallar (h1..h267)")
                 
     kural_top_frame = tk.Frame(kural_frame, bg="white")
     kural_top_frame.pack(fill="x", padx=5, pady=5)
                 
-    btn_sil_k = tk.Button(kural_top_frame, text="🗑️ Seçili Olanları Gizle/Sil", command=lambda: secilenleri_sil(tree_k), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+    btn_sil_k = tk.Button(kural_top_frame, text="ğŸ—‘ï¸ SeÃ§ili OlanlarÄ± Gizle/Sil", command=lambda: secilenleri_sil(tree_k), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
     btn_sil_k.pack(side="right", padx=5)
 
-    btn_kopyala_k = tk.Button(kural_top_frame, text="⚡ Seçilileri Kopyala", command=lambda: secilileri_panoya_kopyala(tree_k, cols_k), bg="#008CBA", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+    btn_kopyala_k = tk.Button(kural_top_frame, text="âš¡ SeÃ§ilileri Kopyala", command=lambda: secilileri_panoya_kopyala(tree_k, cols_k), bg="#008CBA", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
     btn_kopyala_k.pack(side="right", padx=5)
 
-    cols_k = ("Seç", "Kural", "Durum", "Hata Sayısı", "Kural AİŞklamasü")
+    cols_k = ("SeÃ§", "Kural", "Durum", "Hata SayÄ±sÄ±", "Kural AÄ°ÅklamasÃ¼")
     tree_k = ttk.Treeview(kural_frame, columns=cols_k, show="headings", style="Treeview")
-    tree_k.heading("Seç", text="☐")
+    tree_k.heading("SeÃ§", text="â˜")
     tree_k.heading("Kural", text="Kural Kodu")
     tree_k.heading("Durum", text="Test Durumu")
-    tree_k.heading("Hata Sayısı", text="Tespit Edilen Hata")
-    tree_k.heading("Kural AİŞklamasü", text="Kural AİŞklamasü")
+    tree_k.heading("Hata SayÄ±sÄ±", text="Tespit Edilen Hata")
+    tree_k.heading("Kural AÄ°ÅklamasÃ¼", text="Kural AÄ°ÅklamasÃ¼")
                 
-    tree_k.column("Seç", width=40, anchor="center")
+    tree_k.column("SeÃ§", width=40, anchor="center")
     tree_k.column("Kural", width=100, anchor="center")
     tree_k.column("Durum", width=130, anchor="center")
-    tree_k.column("Hata Sayısı", width=110, anchor="center")
-    tree_k.column("Kural AİŞklamasü", width=600, anchor="w")
+    tree_k.column("Hata SayÄ±sÄ±", width=110, anchor="center")
+    tree_k.column("Kural AÄ°ÅklamasÃ¼", width=600, anchor="w")
                 
     yscroll_k = ttk.Scrollbar(kural_frame, orient="vertical", command=tree_k.yview)
     yscroll_k.pack(side="right", fill="y")
@@ -1123,13 +1124,13 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
     tree_k.pack(side="left", fill="both", expand=True)
                 
     tree_k.bind("<Button-1>", lambda e: tree_toggle_checkbox(e, tree_k))
-    tree_k.bind("<Double-1>", lambda e: satir_detay_goster(e, tree_k, "Kural Test Detayı"))
+    tree_k.bind("<Double-1>", lambda e: satir_detay_goster(e, tree_k, "Kural Test DetayÄ±"))
     tree_k.bind("<Button-3>", lambda e: show_context_menu(e, tree_k))
     for col in cols_k:
-        if col != "Seç":
+        if col != "SeÃ§":
             tree_k.heading(col, command=lambda c=col: treeview_sort_column(tree_k, c, False))
                 
-    # Tüm kuralların dökümünş listele
+    # TÃ¼m kurallarÄ±n dÃ¶kÃ¼mÃ¼nÅŸ listele
     from collections import Counter
     tum_kodlar = []
     if not hatali_kayitlar.empty:
@@ -1139,23 +1140,23 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
                 
     tum_kural_listesi = []
                 
-    # 1. Sözlükte tanımlı olan tüm güncel kuralları ekle
+    # 1. SÃ¶zlÃ¼kte tanÄ±mlÄ± olan tÃ¼m gÃ¼ncel kurallarÄ± ekle
     for k_kod, k_aciklama in kurallar.HATA_SOZLUGU.items():
         adet = kod_sayilari.get(k_kod, 0)
         tum_kural_listesi.append((k_kod, adet, k_aciklama))
                     
-    # 2. Sözlükte olmayan ancak analizde tespit edilen sistem içi Çapraz kontrolleri ekle
+    # 2. SÃ¶zlÃ¼kte olmayan ancak analizde tespit edilen sistem iÃ§i Ã‡apraz kontrolleri ekle
     mevcut_kodlar = [x[0] for x in tum_kural_listesi]
     for k_kod, adet in kod_sayilari.items():
         if k_kod not in mevcut_kodlar:
-            k_aciklama = kurallar.HATA_SOZLUGU.get(k_kod, "Sistem İŞi Dinamik Çapraz Kontrol")
+            k_aciklama = kurallar.HATA_SOZLUGU.get(k_kod, "Sistem Ä°Åi Dinamik Ã‡apraz Kontrol")
             if k_kod == "Veri Yok":
-                k_aciklama = "İlgili ana/ara sinoptik saatinde rasat verisi bulunamadı (Tüm zorunlu parametreler eksik)."
+                k_aciklama = "Ä°lgili ana/ara sinoptik saatinde rasat verisi bulunamadÄ± (TÃ¼m zorunlu parametreler eksik)."
             elif k_kod == "Ara Rasat":
-                k_aciklama = "Sadece METAR bulunur, SİNOPTİK beklenmez."
+                k_aciklama = "Sadece METAR bulunur, SÄ°NOPTÄ°K beklenmez."
             tum_kural_listesi.append((k_kod, adet, k_aciklama))
                         
-    # Sıralama: h1, h2, h3... ve ardından diçerleri
+    # SÄ±ralama: h1, h2, h3... ve ardÄ±ndan diÃ§erleri
     def sort_key(x):
         match = re.search(r'\d+', x[0])
         if x[0].startswith('h') and match: return (0, int(match.group()))
@@ -1165,9 +1166,9 @@ def arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_say
     tum_kural_listesi.sort(key=sort_key)
                 
     for k_kod, adet, k_aciklama in tum_kural_listesi:
-        durum = "BAÇARISIZ ü" if adet > 0 else "BAŞARILI (Geçti) ü"
+        durum = "BAÃ‡ARISIZ Ã¼" if adet > 0 else "BAÅARILI (GeÃ§ti) Ã¼"
         hata_metni = f"{adet} Defa" if adet > 0 else "0"
-        tree_k.insert("", tk.END, values=("☐", k_kod, durum, hata_metni, k_aciklama))
+        tree_k.insert("", tk.END, values=("â˜", k_kod, durum, hata_metni, k_aciklama))
             
 
 def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None, df_metar_param=None, override_yil=None, override_ay=None, custom_title=None):
@@ -1176,20 +1177,20 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
     iptal_istendi = False
 
     
-    # --- UI Geri Bildirimini Başlat ---
+    # --- UI Geri Bildirimini BaÅŸlat ---
     if not console_mode:
         try:
-            btn_run.config(state=tk.DISABLED, text="üalüüyor...")
+            btn_run.config(state=tk.DISABLED, text="Ã¼alÃ¼Ã¼yor...")
             if btn_cancel: btn_cancel.config(state=tk.NORMAL)
-            lbl_status.config(text="İŞlem başlatılıyor...")
+            lbl_status.config(text="Ä°Ålem baÅŸlatÄ±lÄ±yor...")
             root.config(cursor="watch")
                         
         except Exception as e:
             print(f"Progress window creation error: {e}")
 
     def islem_yurut(load_from_cache=False, df_sin_param=None, df_metar_param=None, override_yil=None, override_ay=None, custom_title=None):
-        # --- OPTİMİZASYON (Gecikmeli Yükleme / Lazy Loading) ---
-        # Arayüzün donmasını önlemek için aİŞr kütüphaneleri arka plan iş parüacüünda içe aktarıyoruz.
+        # --- OPTÄ°MÄ°ZASYON (Gecikmeli YÃ¼kleme / Lazy Loading) ---
+        # ArayÃ¼zÃ¼n donmasÄ±nÄ± Ã¶nlemek iÃ§in aÄ°År kÃ¼tÃ¼phaneleri arka plan iÅŸ parÃ¼acÃ¼Ã¼nda iÃ§e aktarÄ±yoruz.
         global pd, dm1, dm2, dm3, sutun_duzeltici, btn_run, btn_cancel
         import pandas as pd
         import warnings
@@ -1210,7 +1211,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             else:
                 def run_update():
                     if btn_run:
-                        btn_run.config(text=f"ÇALIŞIYOR... %{int(pct)}")
+                        btn_run.config(text=f"Ã‡ALIÅIYOR... %{int(pct)}")
                     if lbl_status:
                         elapsed = time.time() - start_time
                         if pct > 0:
@@ -1223,12 +1224,12 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 safe_after(0, run_update)
         try:
             if load_from_cache:
-                update_overall_progress(10, "Önbellek aranıyor...")
+                update_overall_progress(10, "Ã–nbellek aranÄ±yor...")
                 cache_path = os.path.join(os.path.expanduser("~"), "Desktop", "check", ".kardelen_cache.pkl")
                 if os.path.exists(cache_path):
                     try:
                         import pickle
-                        update_overall_progress(40, "Önbellek dosyası yükleniyor...")
+                        update_overall_progress(40, "Ã–nbellek dosyasÄ± yÃ¼kleniyor...")
                         with open(cache_path, 'rb') as f:
                             cache_data = pickle.load(f)
                         birlesik = cache_data["birlesik"]
@@ -1239,20 +1240,20 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         yil = cache_data["yil"]
                         hatali_kayitlar = birlesik[~birlesik["DURUM"].isin(["Hata Yok", "Ara Rasat"])]
                         
-                        update_overall_progress(100, "Arayüz güncelleniyor...")
-                        # Ekranda göster
+                        update_overall_progress(100, "ArayÃ¼z gÃ¼ncelleniyor...")
+                        # Ekranda gÃ¶ster
                         safe_after(0, lambda: arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_sayisi, speci_sayisi, ay, yil))
                         return
                     except Exception as ce:
-                        print(f"Cache okuma hatası: {ce}")
-                        safe_showerror("Hata", f"Önbellek dosyası okunamadı, normal analize geçiliyor.\nHata: {ce}")
+                        print(f"Cache okuma hatasÄ±: {ce}")
+                        safe_showerror("Hata", f"Ã–nbellek dosyasÄ± okunamadÄ±, normal analize geÃ§iliyor.\nHata: {ce}")
                 else:
-                    safe_showerror("Hata", "Daha ünce kaydedilmiş bir analiz bulunamadı. Lütfen ünce normal bir analiz üalİŞtürün.")
+                    safe_showerror("Hata", "Daha Ã¼nce kaydedilmiÅŸ bir analiz bulunamadÄ±. LÃ¼tfen Ã¼nce normal bir analiz Ã¼alÄ°ÅtÃ¼rÃ¼n.")
                     # UI temizle
                     def finalize_ui():
                         if btn_run: btn_run.config(state=tk.NORMAL, text=get_button_text())
                         if btn_cancel: btn_cancel.config(state=tk.DISABLED)
-                        if lbl_status: lbl_status.config(text="Hazür")
+                        if lbl_status: lbl_status.config(text="HazÃ¼r")
                         if root: root.config(cursor="")
                         try:
                             if 'progress_win' in globals() and progress_win and progress_win.winfo_exists():
@@ -1263,27 +1264,27 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     safe_after(0, finalize_ui)
                     return
 
-            update_overall_progress(5, "İŞlem başlatılıyor...")
-            # Raporlamaya başlamadan hemen ünce, eski dosyaları silip sadece en son inen 1 Metar ve 1 Sinoptik bürak:
+            update_overall_progress(5, "Ä°Ålem baÅŸlatÄ±lÄ±yor...")
+            # Raporlamaya baÅŸlamadan hemen Ã¼nce, eski dosyalarÄ± silip sadece en son inen 1 Metar ve 1 Sinoptik bÃ¼rak:
             sadece_en_yeni_dosyalari_tut()
-            update_overall_progress(10, "Eski geüici dosyalar temizlendi.")
+            update_overall_progress(10, "Eski geÃ¼ici dosyalar temizlendi.")
 
-            # --- Dosya Arama ve ün İŞleme ---
-            update_overall_progress(15, "Klasör taranıyor ve dosyalar aranıyor...")
+            # --- Dosya Arama ve Ã¼n Ä°Åleme ---
+            update_overall_progress(15, "KlasÃ¶r taranÄ±yor ve dosyalar aranÄ±yor...")
 
-            if iptal_istendi: raise InterruptedError("İŞlem kullanıcı tarafündan iptal edildi.")
+            if iptal_istendi: raise InterruptedError("Ä°Ålem kullanÄ±cÄ± tarafÃ¼ndan iptal edildi.")
 
-            if custom_title is not None and "GÜNCEL" in custom_title.upper():
+            if custom_title is not None and "GÃœNCEL" in custom_title.upper():
                 # We are in Live Analysis mode (canli_analiz.py injected this)
                 if df_sin_param is None or df_metar_param is None:
-                    error_msg = "SİNOPTİK veya METAR verisi Kardelen'den indirilemedi! Lütfen baülantünüzş veya istasyon kodunu kontrol edin."
+                    error_msg = "SÄ°NOPTÄ°K veya METAR verisi Kardelen'den indirilemedi! LÃ¼tfen baÃ¼lantÃ¼nÃ¼zÅŸ veya istasyon kodunu kontrol edin."
                     print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
                     safe_showerror("Hata", error_msg)
                     return
                 
                 df_sin = df_sin_param.copy()
                 df_metar = df_metar_param.copy()
-                sin_yolu = "CANLI_HTML_SİNOPTİK"
+                sin_yolu = "CANLI_HTML_SÄ°NOPTÄ°K"
                 metar_yolu = "CANLI_HTML_METAR"
                 hedef_klasor = HEDEF_KLASOR
                 sin_dosyalari = []
@@ -1291,23 +1292,23 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             elif df_sin_param is not None and df_metar_param is not None:
                 df_sin = df_sin_param.copy()
                 df_metar = df_metar_param.copy()
-                sin_yolu = "CANLI_HTML_SİNOPTİK"
+                sin_yolu = "CANLI_HTML_SÄ°NOPTÄ°K"
                 metar_yolu = "CANLI_HTML_METAR"
                 hedef_klasor = HEDEF_KLASOR
                 sin_dosyalari = []
                 metar_dosyalari = []
-                update_overall_progress(20, "Veriler doğrudan bellekten (HTML) alündü.")
+                update_overall_progress(20, "Veriler doÄŸrudan bellekten (HTML) alÃ¼ndÃ¼.")
             else:
                 hedef_klasor = HEDEF_KLASOR
                 if not os.path.exists(hedef_klasor):
-                    error_msg = f"Hata: Hedef klasör bulunamadı:\n{hedef_klasor}"
+                    error_msg = f"Hata: Hedef klasÃ¶r bulunamadÄ±:\n{hedef_klasor}"
                     print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
                     safe_showerror("Hata", error_msg)
                     return
 
                 tum_dosyalar = glob.glob(os.path.join(hedef_klasor, "*"))
                 
-                # Dosyalarş deüiütirilme tarihine göre sırala (en yeni en üstte)
+                # DosyalarÅŸ deÃ¼iÃ¼tirilme tarihine gÃ¶re sÄ±rala (en yeni en Ã¼stte)
                 try:
                     tum_dosyalar.sort(key=lambda x: os.path.getmtime(x) if os.path.exists(x) else 0, reverse=True)
                 except: pass
@@ -1320,12 +1321,12 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     bulunan_str = "\n".join(bulunan_dosyalar) if bulunan_dosyalar else "Yok"
                     
                     if not sin_dosyalari:
-                        error_msg = f"SİNOPTİK dosyası bulunamadı!\n\nKlasörde isminde 'sinoptik' veya 'sünoptük' (veya sadece 'sin') geüen bir dosya bulunamadı.\n\nKlasördeki Mevcut Dosyalar:\n{bulunan_str}"
+                        error_msg = f"SÄ°NOPTÄ°K dosyasÄ± bulunamadÄ±!\n\nKlasÃ¶rde isminde 'sinoptik' veya 'sÃ¼noptÃ¼k' (veya sadece 'sin') geÃ¼en bir dosya bulunamadÄ±.\n\nKlasÃ¶rdeki Mevcut Dosyalar:\n{bulunan_str}"
                         print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
                         safe_showerror("Hata", error_msg)
                         return
                     if not metar_dosyalari:
-                        error_msg = f"METAR dosyası bulunamadı!\n\nKlasörde isminde 'METAR' geüen bir dosya bulunamadı.\n\nKlasördeki Mevcut Dosyalar:\n{bulunan_str}"
+                        error_msg = f"METAR dosyasÄ± bulunamadÄ±!\n\nKlasÃ¶rde isminde 'METAR' geÃ¼en bir dosya bulunamadÄ±.\n\nKlasÃ¶rdeki Mevcut Dosyalar:\n{bulunan_str}"
                         print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
                         safe_showerror("Hata", error_msg)
                         return
@@ -1333,9 +1334,9 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 sin_yolu = sin_dosyalari[0]
                 metar_yolu = metar_dosyalari[0]
 
-            # --- OTOMATİK SÜTUN DÜZELTİCİ ENTEGRASYONU ---
+            # --- OTOMATÄ°K SÃœTUN DÃœZELTÄ°CÄ° ENTEGRASYONU ---
             if not console_mode:
-                root.after(0, lambda: lbl_status.config(text="Dosyalar düzeltiliyor..."))
+                root.after(0, lambda: lbl_status.config(text="Dosyalar dÃ¼zeltiliyor..."))
 
             print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
 
@@ -1343,26 +1344,26 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             if not os.path.exists(yedek_klasoru):
                 os.makedirs(yedek_klasoru)
 
-            print(f"{Colors.OKBLUE}Orijinal dosyalar '{yedek_klasoru}' klasörüne yedekleniyor...{Colors.ENDC}")
+            print(f"{Colors.OKBLUE}Orijinal dosyalar '{yedek_klasoru}' klasÃ¶rÃ¼ne yedekleniyor...{Colors.ENDC}")
             for dosya in (sin_dosyalari + metar_dosyalari):
                 try:
                     shutil.copy2(dosya, yedek_klasoru)
                 except Exception as e:
-                    print(f"{Colors.FAIL}Yedekleme Hatası ({os.path.basename(dosya)}): {e}{Colors.ENDC}")
+                    print(f"{Colors.FAIL}Yedekleme HatasÄ± ({os.path.basename(dosya)}): {e}{Colors.ENDC}")
                     traceback.print_exc()
 
-            print(f"{Colors.OKCYAN}SÜTUN DÜZELTİCİ İPTAL EDİLDİ (Veri kaybını önlemek için)...{Colors.ENDC}")
+            print(f"{Colors.OKCYAN}SÃœTUN DÃœZELTÄ°CÄ° Ä°PTAL EDÄ°LDÄ° (Veri kaybÄ±nÄ± Ã¶nlemek iÃ§in)...{Colors.ENDC}")
             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
 
-            # --- Ana İŞlem ---
+            # --- Ana Ä°Ålem ---
             if not console_mode:
                 root.after(0, lambda: lbl_status.config(text="Veriler okunuyor..."))
 
             import concurrent.futures
             
             if df_sin_param is None or df_metar_param is None:
-                # 1. Veri Okuma (Threading ile Paralel İŞlem - Performans Artüü)
-                print(f"\n{Colors.OKCYAN}Veriler paralel (eşzamanlı) olarak okunuyor, lütfen bekleyin...{Colors.ENDC}")
+                # 1. Veri Okuma (Threading ile Paralel Ä°Ålem - Performans ArtÃ¼Ã¼)
+                print(f"\n{Colors.OKCYAN}Veriler paralel (eÅŸzamanlÄ±) olarak okunuyor, lÃ¼tfen bekleyin...{Colors.ENDC}")
                 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
                     future_sin = executor.submit(dm1.dosya_oku_akilli, sin_yolu)
                     future_metar = executor.submit(dm1.dosya_oku_akilli, metar_yolu)
@@ -1370,36 +1371,36 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     df_sin = future_sin.result()
                     df_metar = future_metar.result()
 
-            # Terminal ekranının taşmasını önlemek için sadece ilk 15 satırı göster
+            # Terminal ekranÄ±nÄ±n taÅŸmasÄ±nÄ± Ã¶nlemek iÃ§in sadece ilk 15 satÄ±rÄ± gÃ¶ster
             pd.set_option('display.max_rows', 15)
             pd.set_option('display.max_columns', None)
             pd.set_option('display.width', 1000)
 
-            # Okunan verilerin boyutlarını ve ilk satırlarınş konsola yazdır
+            # Okunan verilerin boyutlarÄ±nÄ± ve ilk satÄ±rlarÄ±nÅŸ konsola yazdÄ±r
             print(f"\n{Colors.HEADER}{'='*50}{Colors.ENDC}")
-            print(f"{Colors.BOLD}>>> SİNOPTİK VERİSş OKUNDU <<<{Colors.ENDC}")
-            print(f"Boyut: {len(df_sin)} Satır, {len(df_sin.columns)} Sütun")
+            print(f"{Colors.BOLD}>>> SÄ°NOPTÄ°K VERÄ°SÅŸ OKUNDU <<<{Colors.ENDC}")
+            print(f"Boyut: {len(df_sin)} SatÄ±r, {len(df_sin.columns)} SÃ¼tun")
             print(df_sin)
-            print(f"\n{Colors.BOLD}>>> METAR VERİSş OKUNDU <<<{Colors.ENDC}")
-            print(f"Boyut: {len(df_metar)} Satır, {len(df_metar.columns)} Sütun")
+            print(f"\n{Colors.BOLD}>>> METAR VERÄ°SÅŸ OKUNDU <<<{Colors.ENDC}")
+            print(f"Boyut: {len(df_metar)} SatÄ±r, {len(df_metar.columns)} SÃ¼tun")
             print(df_metar)
             print(f"{Colors.HEADER}{'='*50}{Colors.ENDC}\n")
 
-            # Diçer işlemlerde performansı etkilememesi için ayarlarş sıfırla
+            # DiÃ§er iÅŸlemlerde performansÄ± etkilememesi iÃ§in ayarlarÅŸ sÄ±fÄ±rla
             pd.reset_option('display.max_rows')
             pd.reset_option('display.max_columns')
 
-            # --- YIL VE AY TESPİTİ ---
+            # --- YIL VE AY TESPÄ°TÄ° ---
             yil, ay = None, None
             
             if override_yil and override_ay:
                 yil = override_yil
                 ay = override_ay
             else:
-                # 1. Adüm: Orijinal dosyanün içinden (J1, K1 vb. hücrelerden) kesin tarihi bul (Kullanıcı İsteği)
+                # 1. AdÃ¼m: Orijinal dosyanÃ¼n iÃ§inden (J1, K1 vb. hÃ¼crelerden) kesin tarihi bul (KullanÄ±cÄ± Ä°steÄŸi)
                 for yol in [sin_yolu, metar_yolu]:
                     try:
-                        # Sadece ilk 10 satırı okuyarak hücrelerde tarih/ay ara
+                        # Sadece ilk 10 satÄ±rÄ± okuyarak hÃ¼crelerde tarih/ay ara
                         raw = pd.read_excel(yol, sheet_name=0, header=None, nrows=10)
                         for r in range(len(raw)):
                             for c in range(len(raw.columns)):
@@ -1415,44 +1416,44 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     except: pass
                     if yil and ay: break
     
-                # 2. Adüm: Dosya isimlerinden (örneğin 2026_01 veya 01_2026) tespit etmeye üalİŞ
+                # 2. AdÃ¼m: Dosya isimlerinden (Ã¶rneÄŸin 2026_01 veya 01_2026) tespit etmeye Ã¼alÄ°Å
                 if not yil or not ay:
                     for yol in [sin_yolu, metar_yolu]:
                         yol_str = os.path.basename(yol).upper()
-                        m1 = re.search(r'\b(20[0-2]\d)[_-](0[1-9]|1[0-2])\b', yol_str) # Örn: 2023_05
+                        m1 = re.search(r'\b(20[0-2]\d)[_-](0[1-9]|1[0-2])\b', yol_str) # Ã–rn: 2023_05
                         if m1: yil, ay = int(m1.group(1)), int(m1.group(2)); break
                         
-                        m2 = re.search(r'\b(0[1-9]|1[0-2])[_-](20[0-2]\d)\b', yol_str) # Örn: 05-2023
+                        m2 = re.search(r'\b(0[1-9]|1[0-2])[_-](20[0-2]\d)\b', yol_str) # Ã–rn: 05-2023
                         if m2: ay, yil = int(m2.group(1)), int(m2.group(2)); break
 
-                        m3 = re.search(r'\b(0[1-9]|1[0-2])(20[0-2]\d)\b', yol_str) # Örn: 072026
+                        m3 = re.search(r'\b(0[1-9]|1[0-2])(20[0-2]\d)\b', yol_str) # Ã–rn: 072026
                         if m3: ay, yil = int(m3.group(1)), int(m3.group(2)); break
                         
-                        aylar_sz = {"OCAK":1, "SUBAT":2, "ŞUBAT":2, "MART":3, "NISAN":4, "NİSAN":4, "MAYIS":5, "HAZIRAN":6, "HAZüRAN":6, "TEMMUZ":7, "AGUSTOS":8, "AĞUSTOS":8, "EYLUL":9, "EYLÜL":9, "EKIM":10, "EKİM":10, "KASIM":11, "ARALIK":12}
+                        aylar_sz = {"OCAK":1, "SUBAT":2, "ÅUBAT":2, "MART":3, "NISAN":4, "NÄ°SAN":4, "MAYIS":5, "HAZIRAN":6, "HAZÃ¼RAN":6, "TEMMUZ":7, "AGUSTOS":8, "AÄUSTOS":8, "EYLUL":9, "EYLÃœL":9, "EKIM":10, "EKÄ°M":10, "KASIM":11, "ARALIK":12}
                         y_match = re.search(r'\b(20[0-2]\d)\b', yol_str)
                         if y_match:
                             for ay_isim, ay_no in aylar_sz.items():
                                 if ay_isim in yol_str: yil, ay = int(y_match.group(1)), ay_no; break
                         if yil and ay: break
     
-                # 3. Adüm: Dosya isminden bulunamazsa veri içinden (GG.AA.YYYY) en çok tekrar eden tarihi bul
+                # 3. AdÃ¼m: Dosya isminden bulunamazsa veri iÃ§inden (GG.AA.YYYY) en Ã§ok tekrar eden tarihi bul
                 if not yil or not ay:
                     olasi_tarihler = []
-                    hedef_sutunlar = ['sayfa', 'tarih', 'kayit', 'kayıt', 'date', 'zaman']
+                    hedef_sutunlar = ['sayfa', 'tarih', 'kayit', 'kayÄ±t', 'date', 'zaman']
                     
                     for df in [df_metar, df_sin]:
                         for col in df.columns:
                             if not any(hs in str(col).lower() for hs in hedef_sutunlar):
                                 continue
                                 
-                            # GG.AA.YYYY, GG/AA/YYYY, GG-AA-YYYY formatı
+                            # GG.AA.YYYY, GG/AA/YYYY, GG-AA-YYYY formatÄ±
                             sample = df[col].astype(str).str.extract(r'\b\d{2}[\./-](\d{2})[\./-](\d{4})\b').dropna()
                             if not sample.empty:
                                 for _, r in sample.iterrows():
                                     if 1 <= int(r[0]) <= 12 and 2000 <= int(r[1]) <= 2050:
                                         olasi_tarihler.append((int(r[1]), int(r[0])))
                                 
-                            # YYYY.AA.GG, YYYY-AA-GG, YYYY/AA/GG formatı
+                            # YYYY.AA.GG, YYYY-AA-GG, YYYY/AA/GG formatÄ±
                             sample_rev = df[col].astype(str).str.extract(r'\b(\d{4})[\./-](\d{2})[\./-]\d{2}\b').dropna()
                             if not sample_rev.empty:
                                 for _, r in sample_rev.iterrows():
@@ -1464,31 +1465,31 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         en_cok_gecen = Counter(olasi_tarihler).most_common(1)[0][0]
                         yil, ay = en_cok_gecen[0], en_cok_gecen[1]
     
-                # 4. Adüm: Hiçbir şekilde bulunamazsa varsayılan olarak kullanıcıya sor
+                # 4. AdÃ¼m: HiÃ§bir ÅŸekilde bulunamazsa varsayÄ±lan olarak kullanÄ±cÄ±ya sor
                 if not yil or not ay:
                     if not console_mode:
                         simdi = datetime.datetime.now()
-                        yil = safe_askinteger("Tarih Bulunamadı", "Dosyalardan YIL tespit edilemedi.\nLütfen verilerin ait olduşu YILI girin:", initialvalue=simdi.year)
-                        ay = safe_askinteger("Tarih Bulunamadı", "Dosyalardan AY tespit edilemedi.\nLütfen verilerin ait olduşu AYI girin:", initialvalue=simdi.month)
+                        yil = safe_askinteger("Tarih BulunamadÄ±", "Dosyalardan YIL tespit edilemedi.\nLÃ¼tfen verilerin ait olduÅŸu YILI girin:", initialvalue=simdi.year)
+                        ay = safe_askinteger("Tarih BulunamadÄ±", "Dosyalardan AY tespit edilemedi.\nLÃ¼tfen verilerin ait olduÅŸu AYI girin:", initialvalue=simdi.month)
                     
                     if not yil or not ay:
-                        error_msg = "Hata: Verilerin hangi yıla ve aya ait olduşu tespit edilemedi!\nİŞlem iptal edildi."
+                        error_msg = "Hata: Verilerin hangi yÄ±la ve aya ait olduÅŸu tespit edilemedi!\nÄ°Ålem iptal edildi."
                         print(f"{Colors.FAIL}{error_msg}{Colors.ENDC}")
                         if not console_mode:
-                            safe_showerror("Tarih Hatası", error_msg)
+                            safe_showerror("Tarih HatasÄ±", error_msg)
                         return
     
-            print(f"\n{Colors.OKGREEN}>>> KULLANILACAK RAPOR DÖNEMİ: {ay:02d}/{yil} <<<{Colors.ENDC}")
+            print(f"\n{Colors.OKGREEN}>>> KULLANILACAK RAPOR DÃ–NEMÄ°: {ay:02d}/{yil} <<<{Colors.ENDC}")
             
             if not console_mode and btn_run is not None:
                 try:
-                    root.after(0, lambda: btn_run.config(text=f"İŞleniyor... ({ay:02d}/{yil})"))
-                    root.after(0, lambda: lbl_status.config(text=f"Dönem: {ay:02d}/{yil} - Veriler işleniyor..."))
+                    root.after(0, lambda: btn_run.config(text=f"Ä°Åleniyor... ({ay:02d}/{yil})"))
+                    root.after(0, lambda: lbl_status.config(text=f"DÃ¶nem: {ay:02d}/{yil} - Veriler iÅŸleniyor..."))
                 except Exception:
                     pass
 
-            # dm1.tarih_olustur_helper fonksiyonu kullanılarak 1, 2, 3 gibi günlerin
-            # kaybolması ve sheet2, sheet4 gibi isimlerin doğru ayrİŞtürülmasş sağlanür.
+            # dm1.tarih_olustur_helper fonksiyonu kullanÄ±larak 1, 2, 3 gibi gÃ¼nlerin
+            # kaybolmasÄ± ve sheet2, sheet4 gibi isimlerin doÄŸru ayrÄ°ÅtÃ¼rÃ¼lmasÅŸ saÄŸlanÃ¼r.
 
             # Okuma Raporu
             okuma_raporu = ""
@@ -1499,18 +1500,18 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     for s in sheets:
                         t = dm1.tarih_olustur_helper(s, yil, ay)
                         if t: mapped.append(f"[{s}] -> {t}")
-                    okuma_raporu = "SİNOPTİK SAYFA - TARİH EŞLEŞMELERİ:\n" + "-"*40 + "\n" + ("\n".join(mapped) if mapped else "⚙ Eşleşme yok")
+                    okuma_raporu = "SÄ°NOPTÄ°K SAYFA - TARÄ°H EÅLEÅMELERÄ°:\n" + "-"*40 + "\n" + ("\n".join(mapped) if mapped else "âš™ EÅŸleÅŸme yok")
             except: pass
 
-            # GMT Kontrolş (Sütun İsimlendirme - Temizlikten ünce Yapılmalı)
+            # GMT KontrolÅŸ (SÃ¼tun Ä°simlendirme - Temizlikten Ã¼nce YapÄ±lmalÄ±)
             if "gmt" not in df_sin.columns:
-                # 1. Adüm: Birleşik Tarih-Saat (Datetime) sütunu varsa saati oradan ayıkla
+                # 1. AdÃ¼m: BirleÅŸik Tarih-Saat (Datetime) sÃ¼tunu varsa saati oradan ayÄ±kla
                 gmt_extracted = False
                 for col in list(df_sin.columns):
                     col_str = str(col).lower()
-                    if col_str in ["kayıt", "kayit", "kayıt zamanı", "kayit zamani", "tarih", "date", "sayfa"]:
+                    if col_str in ["kayÄ±t", "kayit", "kayÄ±t zamanÄ±", "kayit zamani", "tarih", "date", "sayfa"]:
                         try:
-                            # Sütunun gerçekten bir saat barındırıp baründürmadüünş test et
+                            # SÃ¼tunun gerÃ§ekten bir saat barÄ±ndÄ±rÄ±p barÃ¼ndÃ¼rmadÃ¼Ã¼nÅŸ test et
                             ornek = pd.to_datetime(df_sin[col].dropna().astype(str), errors='coerce')
                             if not ornek.isna().all():
                                 if len(ornek.dt.hour.unique()) > 1 or (ornek.dt.hour > 0).any():
@@ -1519,7 +1520,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                                     break
                         except: pass
 
-                # 2. Adüm: Akıllı GMT Sütunu Bulma (Eüer datetime'dan İŞkarülamadüysa)
+                # 2. AdÃ¼m: AkÄ±llÄ± GMT SÃ¼tunu Bulma (EÃ¼er datetime'dan Ä°ÅkarÃ¼lamadÃ¼ysa)
                 gmt_col_found = None
                 if not gmt_extracted:
                     for col in df_sin.columns:
@@ -1528,7 +1529,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                             target_hours = {0, 3, 6, 9, 12, 15, 18, 21, '00', '03', '06', '09', '12', '15', '18', '21'}
                             match_count = sum(1 for v in vals if v in target_hours)
                             
-                            # Sayısal Aralık Kontrolş (0-23 arası mü) - üstasyon No (17xxx) karİŞmasünş önler
+                            # SayÄ±sal AralÄ±k KontrolÅŸ (0-23 arasÄ± mÃ¼) - Ã¼stasyon No (17xxx) karÄ°ÅmasÃ¼nÅŸ Ã¶nler
                             is_valid_range = False
                             try:
                                 nums = pd.to_numeric(vals, errors='coerce')
@@ -1544,7 +1545,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 if gmt_col_found: 
                     df_sin.rename(columns={gmt_col_found: "gmt"}, inplace=True)
                 elif not gmt_extracted:
-                    # Fallback: Bilinen sütunlarş atla, ilk uygun sütunu GMT yap
+                    # Fallback: Bilinen sÃ¼tunlarÅŸ atla, ilk uygun sÃ¼tunu GMT yap
                     known_cols = ['istasyon_no', 'sayfa', 'tarih', 'personel', 'rasatci']
                     for col in df_sin.columns:
                         if str(col).lower() not in known_cols:
@@ -1553,10 +1554,10 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             if "gmt" not in df_metar.columns:
                 gmt_found = False
                 
-                # ünce METAR için Datetime saat ayıklama dene
+                # Ã¼nce METAR iÃ§in Datetime saat ayÄ±klama dene
                 for col in list(df_metar.columns):
                     col_str = str(col).lower()
-                    if col_str in ["kayıt", "kayit", "kayıt zamanı", "kayit zamani", "tarih", "date", "sayfa"]:
+                    if col_str in ["kayÄ±t", "kayit", "kayÄ±t zamanÄ±", "kayit zamani", "tarih", "date", "sayfa"]:
                         try:
                             ornek = pd.to_datetime(df_metar[col].dropna().astype(str), errors='coerce')
                             if not ornek.isna().all() and (len(ornek.dt.hour.unique()) > 1 or (ornek.dt.hour > 0).any()):
@@ -1573,31 +1574,31 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         gmt_found = True
                         
                 if not gmt_found and len(df_metar.columns) > 0:
-                    # Rastgele ilk sütunu almak yerine, gerçekten saat formatına (13:50 veya 1350Z) benzeyen bir sütun bul
+                    # Rastgele ilk sÃ¼tunu almak yerine, gerÃ§ekten saat formatÄ±na (13:50 veya 1350Z) benzeyen bir sÃ¼tun bul
                     for col in df_metar.columns:
                         if col == 'sayfa': continue
                         sample = df_metar[col].dropna().astype(str).head(20)
                         if sample.str.contains(r'\d{2}:\d{2}').any() or sample.str.match(r'^\d{3,4}Z?$', flags=re.IGNORECASE).any():
                             df_metar.rename(columns={col: "gmt"}, inplace=True); break
                             
-                # YENİ EKLENEN GÜVENLİK: Hala GMT bulunamadıysa İŞkmemesi için boş oluştur
+                # YENÄ° EKLENEN GÃœVENLÄ°K: Hala GMT bulunamadÄ±ysa Ä°Åkmemesi iÃ§in boÅŸ oluÅŸtur
                 if "gmt" not in df_metar.columns:
                     df_metar["gmt"] = "00:00"
 
-            # Veri Temizliçi ve Hazırlığı
+            # Veri TemizliÃ§i ve HazÄ±rlÄ±ÄŸÄ±
             for i, df in enumerate([df_sin, df_metar]):
                 is_metar = (i == 1) # 1. indeks METAR
                 
-                # METAR Bülteninden Gür⚡ ve Hadise Ayıklama
+                # METAR BÃ¼lteninden GÃ¼râš¡ ve Hadise AyÄ±klama
                 if is_metar:
-                    # Eüer "bulten" sütunu yanlİŞlükla "M" veya "S" gibi tip harflerini aldıysa düzelt
+                    # EÃ¼er "bulten" sÃ¼tunu yanlÄ°ÅlÃ¼kla "M" veya "S" gibi tip harflerini aldÄ±ysa dÃ¼zelt
                     if "bulten" in df.columns:
                         bulten_sample = df["bulten"].dropna().astype(str)
                         if not bulten_sample.empty and bulten_sample.map(len).max() < 10:
                             df.rename(columns={"bulten": "mesaj_tipi"}, inplace=True)
 
                     if "bulten" not in df.columns:
-                        # Gerçek bülten sütununu bul (İŞeriçi en uzun olan metin sütunu)
+                        # GerÃ§ek bÃ¼lten sÃ¼tununu bul (Ä°ÅeriÃ§i en uzun olan metin sÃ¼tunu)
                         best_col = None
                         max_len = 0
                         for c in df.columns:
@@ -1620,27 +1621,27 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         if "ww" not in df.columns:
                             df["ww"] = df["bulten"]
 
-                # Güvenlik Kontrolü: sayfa (Gün/Tarih) sütunu yoksa oluştur
+                # GÃ¼venlik KontrolÃ¼: sayfa (GÃ¼n/Tarih) sÃ¼tunu yoksa oluÅŸtur
                 if "sayfa" not in df.columns:
                     for col in df.columns:
                         if col not in ["gmt", "bulten", "tarih", "saat"]:
                             df.rename(columns={col: "sayfa"}, inplace=True); break
                     if "sayfa" not in df.columns: df["sayfa"] = "1"
 
-                # GÜVENLİK: Excel sayfa ismi yerine, gerçekten bir Tarih/Kayıt sütunu varsa daima onu kullan
+                # GÃœVENLÄ°K: Excel sayfa ismi yerine, gerÃ§ekten bir Tarih/KayÄ±t sÃ¼tunu varsa daima onu kullan
                 for col in list(df.columns):
                     col_str = str(col).lower()
-                    if col_str in ["kayıt", "kayit", "kayıt zamanı", "kayit zamani", "tarih", "date"]:
+                    if col_str in ["kayÄ±t", "kayit", "kayÄ±t zamanÄ±", "kayit zamani", "tarih", "date"]:
                         df["sayfa"] = df[col]
                         break
 
-                # ünce Tarih Formatını Düzenle (Tarih kaydırma için gerekli)
+                # Ã¼nce Tarih FormatÄ±nÄ± DÃ¼zenle (Tarih kaydÄ±rma iÃ§in gerekli)
                 df["sayfa"] = df["sayfa"].astype(str)
                 df["sayfa"] = df["sayfa"].apply(lambda x: dm1.tarih_olustur_helper(x, yil, ay))
                 
-                # KESİN İŞZüM: Dosyadan gelen yıl/ay ile kullanıcınün girdiçi yıl/ay uyuşmazsa 
-                # SİNOPTİK verisi şablonla eşleşemez ve tamamen BOŞ İŞkar.
-                # Bu yüzden tüm tarihleri kullanıcınün arayüzde girdiçi YIL ve AYA zorluyoruz!
+                # KESÄ°N Ä°ÅZÃ¼M: Dosyadan gelen yÄ±l/ay ile kullanÄ±cÄ±nÃ¼n girdiÃ§i yÄ±l/ay uyuÅŸmazsa 
+                # SÄ°NOPTÄ°K verisi ÅŸablonla eÅŸleÅŸemez ve tamamen BOÅ Ä°Åkar.
+                # Bu yÃ¼zden tÃ¼m tarihleri kullanÄ±cÄ±nÃ¼n arayÃ¼zde girdiÃ§i YIL ve AYA zorluyoruz!
                 def yili_ayi_zorla(tarih_str):
                     if pd.isna(tarih_str): return tarih_str
                     try:
@@ -1656,20 +1657,20 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 df.dropna(subset=["sayfa"], inplace=True)
 
                 if "gmt" in df.columns:
-                    # Saat Temizliçi ve AyrİŞtürma
+                    # Saat TemizliÃ§i ve AyrÄ°ÅtÃ¼rma
                     if "gmt_raw" not in df.columns:
                         df["gmt_raw"] = df["gmt"].astype(str).str.upper().str.replace('Z', '').str.strip()
                     
-                    # Kardelen raporlarının altündaki ham Şifre küsümlarş bazen veri tablosuna süzabilir.
-                    # Bu satırları saat (gmt) formatında olmadüklarş için ayıkla
+                    # Kardelen raporlarÄ±nÄ±n altÃ¼ndaki ham Åifre kÃ¼sÃ¼mlarÅŸ bazen veri tablosuna sÃ¼zabilir.
+                    # Bu satÄ±rlarÄ± saat (gmt) formatÄ±nda olmadÃ¼klarÅŸ iÃ§in ayÄ±kla
                     mask_uzun = df["gmt_raw"].str.len() > 10
                     mask_cop = df["gmt_raw"].str.contains(r'(=|CAVOK|RASATLAR|17244)', regex=True, case=False, na=False)
-                    # Orijinal referansı (df_sin/df_metar) bozmamak için in-place drop kullanmalüyüz!
+                    # Orijinal referansÄ± (df_sin/df_metar) bozmamak iÃ§in in-place drop kullanmalÃ¼yÃ¼z!
                     df.drop(df[mask_uzun | mask_cop].index, inplace=True)
 
                     
                     if is_metar:
-                        # METAR için en yakın Sinoptik saatini bul (0050 -> 00, 2350 -> 00 ertesi gün)
+                        # METAR iÃ§in en yakÄ±n Sinoptik saatini bul (0050 -> 00, 2350 -> 00 ertesi gÃ¼n)
                         def match_time(row):
                             val = str(row.get("gmt_exact", row.get("gmt_raw", row["gmt"]))).strip()
                             if val.endswith('.0'): val = val[:-2]
@@ -1693,7 +1694,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
 
                             orig_h, orig_m = h, m
 
-                            # Dakika 40'tan büyükse bir sonraki saate yuvarla (Örn: 23:50 -> 24:00)
+                            # Dakika 40'tan bÃ¼yÃ¼kse bir sonraki saate yuvarla (Ã–rn: 23:50 -> 24:00)
                             if m >= 40:
                                 h += 1
                                 
@@ -1768,37 +1769,37 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 
                 numeric_cols = ['ir', 'ix', 'rrr', 'ww', 'w1', 'w2', 't', 'td', 'n', 'nh', 'cl', 'cm', 'ch', 'dd', 'ff', 'vv', 'a', 'ppp', 'tx', 'tn', 'tg', 'p', 'p0', 'e', 'h', 'tr', 'g924', 'g910', 'g911', 'g931', 'g932', 'g960', 'rh']
                 for col in numeric_cols:
-                    # Eüer zorunlu bir meteorolojik sütun veride hiç yoksa çökmeyi önlemek için boş olarak ekle
+                    # EÃ¼er zorunlu bir meteorolojik sÃ¼tun veride hiÃ§ yoksa Ã§Ã¶kmeyi Ã¶nlemek iÃ§in boÅŸ olarak ekle
                     if col not in df.columns:
                         df[col] = float('nan')
 
                     if col in df.columns:
                         if df[col].dtype == 'object':
-                            # 1. Görünmez karakterleri (non-breaking space vb.) ve boşluklarş temizle
+                            # 1. GÃ¶rÃ¼nmez karakterleri (non-breaking space vb.) ve boÅŸluklarÅŸ temizle
                             df[col] = df[col].astype(str).str.replace(r'[\xa0\u200b]', '', regex=True).str.strip()
-                            # 2. Virgülş noktaya çevir
+                            # 2. VirgÃ¼lÅŸ noktaya Ã§evir
                             df[col] = df[col].str.replace(',', '.', regex=False)
-                            # 3. 'nan' metinlerini gerçek NaN'a dünİŞtür
+                            # 3. 'nan' metinlerini gerÃ§ek NaN'a dÃ¼nÄ°ÅtÃ¼r
                             df[col] = df[col].replace(['nan', 'NAN', 'None', 'NONE', '', '-', ' - '], float('nan'))
                         
                         if is_metar and col in ['ww', 'ww2', 'ww3']:
-                            pass # METAR'da halihazır hava metin (RA, BR vb.) olabilir, sayısal değere zorlama
+                            pass # METAR'da halihazÄ±r hava metin (RA, BR vb.) olabilir, sayÄ±sal deÄŸere zorlama
                         else:
                             if df[col].dtype == 'object':
-                                # 4. Hücreye yanlİŞlükla "15 C" veya "1012 hPa" gibi metin girilmiüse sadece sayıyı kurtar
+                                # 4. HÃ¼creye yanlÄ°ÅlÃ¼kla "15 C" veya "1012 hPa" gibi metin girilmiÃ¼se sadece sayÄ±yÄ± kurtar
                                 mask = df[col].notna()
                                 df.loc[mask, col] = df.loc[mask, col].astype(str).str.extract(r'([+-]?\d+\.?\d*)', expand=False)
                                 
                             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-            # Eşleşme sorunlarını (Veri Yok hatasınü) önlemek için tarih formatlarünş (%d.%m.%Y) ve saat tiplerini (float) GARANTİYE alıyoruz
+            # EÅŸleÅŸme sorunlarÄ±nÄ± (Veri Yok hatasÄ±nÃ¼) Ã¶nlemek iÃ§in tarih formatlarÃ¼nÅŸ (%d.%m.%Y) ve saat tiplerini (float) GARANTÄ°YE alÄ±yoruz
             df_sin["sayfa"] = pd.to_datetime(df_sin["sayfa"], format='%d.%m.%Y', errors='coerce').dt.strftime('%d.%m.%Y')
             df_sin["gmt"] = pd.to_numeric(df_sin["gmt"], errors='coerce').astype(float)
             
             df_metar["sayfa"] = pd.to_datetime(df_metar["sayfa"], format='%d.%m.%Y', errors='coerce').dt.strftime('%d.%m.%Y')
             df_metar["gmt"] = pd.to_numeric(df_metar["gmt"], errors='coerce').astype(float)
 
-            # Gruplama esnasında first() metodunun boş stringleri alıp asıl metni ezmemesi için boş hücreleri gerçek NaN yap
+            # Gruplama esnasÄ±nda first() metodunun boÅŸ stringleri alÄ±p asÄ±l metni ezmemesi iÃ§in boÅŸ hÃ¼creleri gerÃ§ek NaN yap
             df_metar.replace(r'^\s*-\s*$', pd.NA, regex=True, inplace=True)
             df_metar.replace(r'^\s*$', pd.NA, regex=True, inplace=True)
             df_sin.replace(r'^\s*-\s*$', pd.NA, regex=True, inplace=True)
@@ -1816,9 +1817,9 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     df_metar['bulten'] = df_metar['_raw_line']
 
             if df_sin.empty:
-                raise ValueError("Sinoptik verileri işlendikten sonra boş kaldı! Tarih veya Saat sütunlarş okunamam⚡ olabilir.\nLütfen Excel sayfa isimlerinin (1, 2, 3...) veya tarih formatınün doğru olduşundan emin olun.")
+                raise ValueError("Sinoptik verileri iÅŸlendikten sonra boÅŸ kaldÄ±! Tarih veya Saat sÃ¼tunlarÅŸ okunamamâš¡ olabilir.\nLÃ¼tfen Excel sayfa isimlerinin (1, 2, 3...) veya tarih formatÄ±nÃ¼n doÄŸru olduÅŸundan emin olun.")
 
-            # Rasatlar Sütunu
+            # Rasatlar SÃ¼tunu
             if not df_sin.empty:
                 def raw_rasat_olustur(row):
                     if 'bulten' in row and pd.notna(row['bulten']) and str(row['bulten']).strip().lower() not in ["", "nan", "none"]:
@@ -1840,14 +1841,14 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     return " ".join(items)
                 df_sin["RASATLAR"] = df_sin.apply(raw_rasat_olustur, axis=1)
 
-            # Sadece geçerli Sinoptik saatlerini filtrele ve tekrarları temizle
+            # Sadece geÃ§erli Sinoptik saatlerini filtrele ve tekrarlarÄ± temizle
             df_sin = df_sin[df_sin["gmt"].isin([0.0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0])]
             df_sin = df_sin.drop_duplicates(subset=["sayfa", "gmt"])
 
             sinoptik_sayisi = len(df_sin)
             metar_sayisi = len(df_metar)
             
-            # SPECI ve METAR ayrımı
+            # SPECI ve METAR ayrÄ±mÄ±
             speci_sayisi = 0
             metar_normal_sayisi = metar_sayisi
             
@@ -1859,7 +1860,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             if b_col_m in df_metar.columns:
                 speci_mask = speci_mask | df_metar[b_col_m].astype(str).str.contains(r'\b(?:SPECI)\b', case=False, na=False)
                 
-            # YENİ: Dakikası 50, 20 veya 00 olmayan rasatları da SPECI (Özel Rasat) kabul et
+            # YENÄ°: DakikasÄ± 50, 20 veya 00 olmayan rasatlarÄ± da SPECI (Ã–zel Rasat) kabul et
             if 'gmt_exact' in df_metar.columns:
                 gmt_exact_str = df_metar['gmt_exact'].astype(str).str.upper().str.replace('Z', '', regex=False).str.strip()
                 dakika_mask = ~gmt_exact_str.str.endswith(('50', '20', '00', 'NAN', 'NONE', '.0'))
@@ -1868,18 +1869,18 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             speci_sayisi = int(speci_mask.sum())
             metar_normal_sayisi = metar_sayisi - speci_sayisi
 
-            # üablon ve Birleştirme
+            # Ã¼ablon ve BirleÅŸtirme
             _, son_gun = calendar.monthrange(yil, ay)
             sablon_data = []
             for d in range(1, son_gun + 1):
                 t_str = pd.Timestamp(year=yil, month=ay, day=d).strftime('%d.%m.%Y')
-                for h in range(24): # 23:50'ler ertesi gün 0'a devredeceği için üablon tekrar standart 24 saate (0-23) döndürüldü
+                for h in range(24): # 23:50'ler ertesi gÃ¼n 0'a devredeceÄŸi iÃ§in Ã¼ablon tekrar standart 24 saate (0-23) dÃ¶ndÃ¼rÃ¼ldÃ¼
                     sablon_data.append({"sayfa": t_str, "gmt": float(h)})
             df_sablon = pd.DataFrame(sablon_data)
 
-            # --- KESİN İŞZüM (REINDEXING HATASI üüN): SÜTUNLARI VE İNDEKSLERİ TEMİZLE ---
+            # --- KESÄ°N Ä°ÅZÃ¼M (REINDEXING HATASI Ã¼Ã¼N): SÃœTUNLARI VE Ä°NDEKSLERÄ° TEMÄ°ZLE ---
             for df_temp in [df_sin, df_metar]:
-                df_temp.reset_index(drop=True, inplace=True) # İndeks üakİŞmalarünş önler
+                df_temp.reset_index(drop=True, inplace=True) # Ä°ndeks Ã¼akÄ°ÅmalarÃ¼nÅŸ Ã¶nler
                 if any(df_temp.columns.duplicated()):
                     cols = pd.Series(df_temp.columns)
                     for dup in cols[cols.duplicated()].unique():
@@ -1892,29 +1893,29 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
 
             df_sin = pd.merge(df_sablon, df_sin, on=["sayfa", "gmt"], how="left")
             
-            # KESİN İŞZüM: METAR verisindeki saat tekrarlarınş (Ham mesajlar ve Meteorolojik veriler ayrı satürlardadür) ezmeden birleütir
+            # KESÄ°N Ä°ÅZÃ¼M: METAR verisindeki saat tekrarlarÄ±nÅŸ (Ham mesajlar ve Meteorolojik veriler ayrÄ± satÃ¼rlardadÃ¼r) ezmeden birleÃ¼tir
             df_metar['is_speci'] = speci_mask
-            df_metar = df_metar.sort_values(by=['sayfa', 'gmt', 'is_speci'], ascending=[True, True, True]) # Rutin METAR'lar (False) üstte olsun
+            df_metar = df_metar.sort_values(by=['sayfa', 'gmt', 'is_speci'], ascending=[True, True, True]) # Rutin METAR'lar (False) Ã¼stte olsun
             
-            # Boş stringleri None yapıyoruz ki .first() metodu boş stringi gürüp asıl Şifreli mesajş ezmesin
+            # BoÅŸ stringleri None yapÄ±yoruz ki .first() metodu boÅŸ stringi gÃ¼rÃ¼p asÄ±l Åifreli mesajÅŸ ezmesin
             df_metar.replace(r'^\s*$', None, regex=True, inplace=True)
             df_metar.replace('-', None, inplace=True)
             
             df_metar_tekil = df_metar.groupby(["sayfa", "gmt"], as_index=False).first()
             df_metar_tekil.drop(columns=['is_speci'], inplace=True, errors='ignore')
             
-            # YENİ: SİNOPTİK VE METAR SÜTUNLARINI BİRLEŞTİRME VE RAPORLAMA üüN GARANTİLEME
-            # _sin ve _metar eklerinin çiftlenmesini önlemek için replace yapıyoruz
+            # YENÄ°: SÄ°NOPTÄ°K VE METAR SÃœTUNLARINI BÄ°RLEÅTÄ°RME VE RAPORLAMA Ã¼Ã¼N GARANTÄ°LEME
+            # _sin ve _metar eklerinin Ã§iftlenmesini Ã¶nlemek iÃ§in replace yapÄ±yoruz
             df_sin.columns = [str(c) if str(c) in ['sayfa', 'gmt', 'RASATLAR'] else ("gmt_exact_sin" if c == "gmt_exact" else f"{str(c).replace('_sin', '')}_sin") for c in df_sin.columns]
             df_metar_tekil.columns = [str(c) if str(c) in ['sayfa', 'gmt', 'RASATLAR'] else ("gmt_exact_metar" if c == "gmt_exact" else f"{str(c).replace('_metar', '')}_metar") for c in df_metar_tekil.columns]
             
-            # DEBUG: Merge öncesi sütunlarş göster
+            # DEBUG: Merge Ã¶ncesi sÃ¼tunlarÅŸ gÃ¶ster
             print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
-            print(f"{Colors.BOLD}MERGE ÖNCESI SÜTUNLar:{Colors.ENDC}")
-            print(f"df_sin sütun sayısı: {len(df_sin.columns)}")
-            print(f"df_sin ilk 10 sütun: {list(df_sin.columns)[:10]}")
-            print(f"\ndf_metar_tekil sütun sayısı: {len(df_metar_tekil.columns)}")
-            print(f"df_metar_tekil ilk 10 sütun: {list(df_metar_tekil.columns)[:10]}")
+            print(f"{Colors.BOLD}MERGE Ã–NCESI SÃœTUNLar:{Colors.ENDC}")
+            print(f"df_sin sÃ¼tun sayÄ±sÄ±: {len(df_sin.columns)}")
+            print(f"df_sin ilk 10 sÃ¼tun: {list(df_sin.columns)[:10]}")
+            print(f"\ndf_metar_tekil sÃ¼tun sayÄ±sÄ±: {len(df_metar_tekil.columns)}")
+            print(f"df_metar_tekil ilk 10 sÃ¼tun: {list(df_metar_tekil.columns)[:10]}")
             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}")
             
             birlesik = pd.merge(df_sin, df_metar_tekil, on=["sayfa", "gmt"], how="left", suffixes=('_sin', '_metar'))
@@ -1940,32 +1941,32 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     return f"{int(float(row.get('gmt', 0))):02d}00"
                 except: return "-"
 
-            birlesik["SİNOPTİK - Saat"] = birlesik.apply(format_sin_time, axis=1)
+            birlesik["SÄ°NOPTÄ°K - Saat"] = birlesik.apply(format_sin_time, axis=1)
             if "Saat_sin" in birlesik.columns:
                 mask = birlesik["Saat_sin"].notna() & (birlesik["Saat_sin"].astype(str).str.strip() != "")
-                birlesik.loc[mask, "SİNOPTİK - Saat"] = birlesik.loc[mask, "Saat_sin"]
+                birlesik.loc[mask, "SÄ°NOPTÄ°K - Saat"] = birlesik.loc[mask, "Saat_sin"]
                 
             if "Saat_met" in birlesik.columns:
                 birlesik["METAR - Saat"] = birlesik["Saat_met"]
             else:
                 birlesik["METAR - Saat"] = birlesik.apply(extract_metar_time, axis=1)
             
-            # DEBUG: Merge sonrasş sütunlarş göster
-            print(f"\n{Colors.BOLD}MERGE SONRASI SÜTUNLar:{Colors.ENDC}")
-            print(f"Birleşik sütun sayısı: {len(birlesik.columns)}")
-            print(f"Birleşik ilk 20 sütun: {list(birlesik.columns)[:20]}")
+            # DEBUG: Merge sonrasÅŸ sÃ¼tunlarÅŸ gÃ¶ster
+            print(f"\n{Colors.BOLD}MERGE SONRASI SÃœTUNLar:{Colors.ENDC}")
+            print(f"BirleÅŸik sÃ¼tun sayÄ±sÄ±: {len(birlesik.columns)}")
+            print(f"BirleÅŸik ilk 20 sÃ¼tun: {list(birlesik.columns)[:20]}")
             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
             
-            # --- YENİ EKLENEN: PANDAS NaN DAVRANIŞLARINI GÜVENLİ HALE GETİRME ---
-            # Metin (Object) sütunlaründaki NaN değerlerini boş stringe ("") çeviriyoruz.
-            # Bu sayede validator ve analiz tarafünda str(NaN) sonucu oluşan "nan" kelimesinin
-            # sahte hadise eşleşmelerine (Örn: FG, N vb.) yol açmasını kesin olarak önlüyoruz.
+            # --- YENÄ° EKLENEN: PANDAS NaN DAVRANIÅLARINI GÃœVENLÄ° HALE GETÄ°RME ---
+            # Metin (Object) sÃ¼tunlarÃ¼ndaki NaN deÄŸerlerini boÅŸ stringe ("") Ã§eviriyoruz.
+            # Bu sayede validator ve analiz tarafÃ¼nda str(NaN) sonucu oluÅŸan "nan" kelimesinin
+            # sahte hadise eÅŸleÅŸmelerine (Ã–rn: FG, N vb.) yol aÃ§masÄ±nÄ± kesin olarak Ã¶nlÃ¼yoruz.
             for col in birlesik.columns:
                 if birlesik[col].dtype == 'object' or birlesik[col].dtype.name == 'category':
                     birlesik[col] = birlesik[col].replace(['nan', 'NAN', 'NaN', 'None', 'NONE', '-', ' - '], "")
                     birlesik[col] = birlesik[col].fillna("")
             
-            # Geümiş METAR aramalarında 'nan' kelimesi oluşmasını önlemek için aynı işlemi df_metar'a da uygula
+            # GeÃ¼miÅŸ METAR aramalarÄ±nda 'nan' kelimesi oluÅŸmasÄ±nÄ± Ã¶nlemek iÃ§in aynÄ± iÅŸlemi df_metar'a da uygula
             for col in df_metar.columns:
                 if df_metar[col].dtype == 'object' or df_metar[col].dtype.name == 'category':
                     df_metar[col] = df_metar[col].replace(['nan', 'NAN', 'NaN', 'None', 'NONE', '-', ' - '], "")
@@ -1974,7 +1975,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
 
             
 
-# --- YENİ EKLENEN: HIZLI METAR CACHE SİSTEMş ---
+# --- YENÄ° EKLENEN: HIZLI METAR CACHE SÄ°STEMÅŸ ---
             metar_cache = {}
             df_metar_records = df_metar.to_dict('records')
             for m_row in df_metar_records:
@@ -2070,8 +2071,8 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 if b not in birlesik.columns: birlesik[b] = float('nan')
                 else: birlesik[b] = pd.to_numeric(birlesik[b], errors='coerce')
                     
-            if iptal_istendi: raise InterruptedError("İŞlem kullanıcı tarafündan iptal edildi.")
-            update_overall_progress(75, "Hata denetimi başlatılıyor...")
+            if iptal_istendi: raise InterruptedError("Ä°Ålem kullanÄ±cÄ± tarafÃ¼ndan iptal edildi.")
+            update_overall_progress(75, "Hata denetimi baÅŸlatÄ±lÄ±yor...")
             
             def progress_cb(completed, total, pct, remaining):
                 overall_pct = int(75 + (pct * 0.25))
@@ -2081,7 +2082,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 else:
                     def update_widgets():
                         if btn_run:
-                            btn_run.config(text=f"ANALİZ EDİLİYOR... %{overall_pct}")
+                            btn_run.config(text=f"ANALÄ°Z EDÄ°LÄ°YOR... %{overall_pct}")
                         elapsed = time.time() - start_time
                         if overall_pct > 0:
                             total_est = elapsed / (overall_pct / 100.0)
@@ -2095,21 +2096,21 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             birlesik = dm2.hata_analizi_yap(birlesik, df_metar, progress_callback=progress_cb, df_sinoptik=df_sin_param)
             
             print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
-            print(f"{Colors.BOLD}HATA ANALİZİ SONRASI - SÜTUNLAR:{Colors.ENDC}")
-            print(f"Toplam satır: {len(birlesik)}")
+            print(f"{Colors.BOLD}HATA ANALÄ°ZÄ° SONRASI - SÃœTUNLAR:{Colors.ENDC}")
+            print(f"Toplam satÄ±r: {len(birlesik)}")
             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
 
-            # --- HIZLANDIRILMIŞ TEK DÖNGÜ VE KONTROLLER ---
+            # --- HIZLANDIRILMIÅ TEK DÃ–NGÃœ VE KONTROLLER ---
             b_col = "bulten_metar" if "bulten_metar" in birlesik.columns else "bulten"
             bulten_col_m = "bulten" if "bulten" in df_metar.columns else None
             
-            if 'ANALİZ_SONUCU' not in birlesik.columns and 'DURUM' in birlesik.columns:
-                birlesik['ANALİZ_SONUCU'] = birlesik['DURUM']
+            if 'ANALÄ°Z_SONUCU' not in birlesik.columns and 'DURUM' in birlesik.columns:
+                birlesik['ANALÄ°Z_SONUCU'] = birlesik['DURUM']
             if 'HATA_KODLARI' not in birlesik.columns: birlesik['HATA_KODLARI'] = ""
             if 'HATA_ACIKLAMALARI' not in birlesik.columns: birlesik['HATA_ACIKLAMALARI'] = ""
             if b_col not in birlesik.columns: birlesik[b_col] = ""
 
-            analiz_sonucu_list = birlesik['ANALİZ_SONUCU'].astype(str).tolist()
+            analiz_sonucu_list = birlesik['ANALÄ°Z_SONUCU'].astype(str).tolist()
             hata_kodlari_list = birlesik['HATA_KODLARI'].astype(str).tolist()
             hata_aciklama_list = birlesik['HATA_ACIKLAMALARI'].astype(str).tolist()
             bulten_list = [str(x) if pd.notna(x) else "" for x in birlesik[b_col]]
@@ -2117,7 +2118,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             def add_error(i, kod, aciklama):
                 mevcut = str(analiz_sonucu_list[i])
                 if mevcut in ["Hata Yok", "Veri Yok", "Ara Rasat", "nan", "None"]:
-                    analiz_sonucu_list[i] = "Hatalı"
+                    analiz_sonucu_list[i] = "HatalÄ±"
                     hata_kodlari_list[i] = kod
                     hata_aciklama_list[i] = aciklama
                 else:
@@ -2131,7 +2132,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 gmt = float(row.get("gmt")) if pd.notna(row.get("gmt")) else -1.0
                 dt_hedef = dt_hedef_list[i]
                 
-                # 1. W1/W2 Uyumsuzluk Kontrolü
+                # 1. W1/W2 Uyumsuzluk KontrolÃ¼
                 w1_ok_in_raw = False
                 if ":" not in rasatlar_str and len(rasatlar_str.strip()) > 5 and SynopDecoder is not None:
                     decoder_tmp = SynopDecoder()
@@ -2166,14 +2167,14 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                             except: pass
                         if not match:
                             saat_tipi = "6" if gmt in [0.0, 6.0, 12.0, 18.0] else "3"
-                            add_error(i, "h361", f"Son {saat_tipi} saatlik METAR'da hadise var ancak SİNOPTİK Geçmiş Hava (W1/W2) eksik veya uyumsuz (Beklenen W1: {expected_W1}).")
+                            add_error(i, "h361", f"Son {saat_tipi} saatlik METAR'da hadise var ancak SÄ°NOPTÄ°K GeÃ§miÅŸ Hava (W1/W2) eksik veya uyumsuz (Beklenen W1: {expected_W1}).")
 
-                # 2. Geçmiş Metarları Garantileme
+                # 2. GeÃ§miÅŸ MetarlarÄ± Garantileme
                 if "Veri Yok" not in str(analiz_sonucu_list[i]):
                     mevcut_bulten = str(bulten_list[i])
                     if mevcut_bulten.replace('"', '').replace("'", "").strip().lower() in ['nan', 'none', '<na>', '-', '']:
                         mevcut_bulten = ""
-                    if dt_hedef and "İLGİLİ METAR GEÇMİŞİ:" not in mevcut_bulten and bulten_col_m:
+                    if dt_hedef and "Ä°LGÄ°LÄ° METAR GEÃ‡MÄ°ÅÄ°:" not in mevcut_bulten and bulten_col_m:
                         lb = 12 if gmt in [6.0, 18.0] else (6 if gmt in [0.0, 12.0] else 3)
                         dt_bas = dt_hedef - datetime.timedelta(hours=lb)
                         d_keys = list(set([dt_bas.date(), dt_hedef.date()]))
@@ -2200,7 +2201,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         
                         if m_list:
                             m_list.sort(key=lambda x: x[0], reverse=True)
-                            ek_metar_bilgisi = "İLGİLİ METAR GEÇMİŞİ:\n" + "\n".join([x[1] for x in m_list])
+                            ek_metar_bilgisi = "Ä°LGÄ°LÄ° METAR GEÃ‡MÄ°ÅÄ°:\n" + "\n".join([x[1] for x in m_list])
                             if not mevcut_bulten:
                                 m_reg = re.match(r'^\[.*?\]\s*(.*)', m_list[0][1])
                                 if m_reg: mevcut_bulten = m_reg.group(1)
@@ -2225,8 +2226,8 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         'RASATLAR': rasatlar_str
                     }
                     met_dict = {
-                        'Kuru': row.get('t_metar'), 'İşba': row.get('td_metar'), '%': row.get('rh_metar'),
-                        'Hız': row.get('ff_metar'), 'Yön': row.get('dd_metar'), 
+                        'Kuru': row.get('t_metar'), 'Ä°ÅŸba': row.get('td_metar'), '%': row.get('rh_metar'),
+                        'HÄ±z': row.get('ff_metar'), 'YÃ¶n': row.get('dd_metar'), 
                         'QFE': row.get('p_metar'), 'QNH': row.get('p0_metar'), 'T. Kp.': row.get('n_metar'),
                         '1. BULUT Cins': row.get('1. bulut cins_metar', row.get('1. bulut_cins_metar')),
                         '2. BULUT Cins': row.get('2. bulut cins_metar', row.get('2. bulut_cins_metar')),
@@ -2287,9 +2288,9 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     decoder = SynopDecoder()
                     decoder.decode_line(rasatlar_str)
                     if not decoder.validate():
-                        for err in decoder.get_errors(): add_error(i, "h362", f"SİNOPTİK Format Hatası: {err}")
+                        for err in decoder.get_errors(): add_error(i, "h362", f"SÄ°NOPTÄ°K Format HatasÄ±: {err}")
 
-                # 5. Taze/Toplam Kar Kontrolü
+                # 5. Taze/Toplam Kar KontrolÃ¼
                 m_333 = re.search(r' 333 ', rasatlar_str)
                 has_4e = False
                 if m_333:
@@ -2299,8 +2300,8 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         if m_4e:
                             has_4e = True
                             sss = int(m_4e.group(2))
-                            if sss == 0: add_error(i, "h245", "Kar erimiş (0 cm) ise 4E'sss grubu (Toplam Kar) rapora dahil edilmemelidir.")
-                            elif 500 < sss < 997: add_error(i, "h243", f"Toplam kar kalınlığı için aşırı yüksek bir değer ({sss} cm)")
+                            if sss == 0: add_error(i, "h245", "Kar erimiÅŸ (0 cm) ise 4E'sss grubu (Toplam Kar) rapora dahil edilmemelidir.")
+                            elif 500 < sss < 997: add_error(i, "h243", f"Toplam kar kalÄ±nlÄ±ÄŸÄ± iÃ§in aÅŸÄ±rÄ± yÃ¼ksek bir deÄŸer ({sss} cm)")
                             
                         m_931 = re.search(r' 931(\d{2}) ', bolum_3)
                         if m_931:
@@ -2309,43 +2310,43 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                             if 0 <= ss <= 55: gercek_kar_mm = ss * 10
                             elif 56 <= ss <= 90: gercek_kar_mm = (ss - 50) * 100
                             elif 91 <= ss <= 96: gercek_kar_mm = ss - 90
-                            if gercek_kar_mm >= 900: add_error(i, "h242", f"Taze kar için yüksek bir değer")
+                            if gercek_kar_mm >= 900: add_error(i, "h242", f"Taze kar iÃ§in yÃ¼ksek bir deÄŸer")
                     except: pass
                 if gmt == 6.0 and re.search(r' 931\d{2} ', rasatlar_str) and not has_4e and not re.search(r' 93100 ', rasatlar_str):
-                    add_error(i, "h244", "0600 GMT rasadında taze kar (931) bildirilmiş ancak toplam kar kalınlığı (4E'sss) grubu eksik.")
+                    add_error(i, "h244", "0600 GMT rasadÄ±nda taze kar (931) bildirilmiÅŸ ancak toplam kar kalÄ±nlÄ±ÄŸÄ± (4E'sss) grubu eksik.")
 
                 # 6. Metar Decoder
-                b_col_metar_raw = "METAR - Şifreli Mesaj" if "METAR - Şifreli Mesaj" in row else ("bulten_metar" if "bulten_metar" in row else "bulten")
+                b_col_metar_raw = "METAR - Åifreli Mesaj" if "METAR - Åifreli Mesaj" in row else ("bulten_metar" if "bulten_metar" in row else "bulten")
                 metar_str = str(row.get(b_col_metar_raw, ''))
                 if MetarDecoder is not None and metar_str and len(metar_str.strip()) >= 10:
                     try:
                         decoder = MetarDecoder()
                         decoder.decode_line(metar_str)
                         if hasattr(decoder, 'errors') and decoder.errors:
-                            for err in decoder.errors: add_error(i, "h363", f"METAR Format Hatası: {err}")
+                            for err in decoder.errors: add_error(i, "h363", f"METAR Format HatasÄ±: {err}")
                     except Exception as e:
-                        add_error(i, "h363", f"METAR İŞzümleme Hatası: Beklenmeyen format veya karakter ({e})")
+                        add_error(i, "h363", f"METAR Ä°ÅzÃ¼mleme HatasÄ±: Beklenmeyen format veya karakter ({e})")
                         
                 # 7. Scrub Spread Error (hata listesinden silme)
                 kod_metni = str(hata_kodlari_list[i])
                 if 'VAL_MANTIK_SPREAD' in kod_metni:
                     yeni_kodlar = [x.strip() for x in kod_metni.split(',') if x.strip() and x.strip() != 'VAL_MANTIK_SPREAD']
                     hata_kodlari_list[i] = ', '.join(yeni_kodlar)
-                    yeni_aciklamalar = [x.strip() for x in str(hata_aciklama_list[i]).split('|') if 'Sıcaklık ve İŞba' not in x and 'VAL_MANTIK_SPREAD' not in x]
+                    yeni_aciklamalar = [x.strip() for x in str(hata_aciklama_list[i]).split('|') if 'SÄ±caklÄ±k ve Ä°Åba' not in x and 'VAL_MANTIK_SPREAD' not in x]
                     hata_aciklama_list[i] = ' | '.join(yeni_aciklamalar)
-                    if not yeni_kodlar and analiz_sonucu_list[i] == 'Hatalı':
+                    if not yeni_kodlar and analiz_sonucu_list[i] == 'HatalÄ±':
                         analiz_sonucu_list[i] = 'Hata Yok'
 
             # Listeleri DataFrame'e geri yaz
-            birlesik['ANALİZ_SONUCU'] = analiz_sonucu_list
+            birlesik['ANALÄ°Z_SONUCU'] = analiz_sonucu_list
             birlesik['HATA_KODLARI'] = hata_kodlari_list
             
             rasatlar_list = birlesik.get('RASATLAR', pd.Series([''] * len(birlesik))).astype(str).tolist()
             for i in range(len(birlesik)):
-                if '💡 İLGİLİ GEÇMİŞ SİNOPTİK:' in str(hata_aciklama_list[i]):
-                    parts = str(hata_aciklama_list[i]).split('💡 İLGİLİ GEÇMİŞ SİNOPTİK:')
+                if 'ğŸ’¡ Ä°LGÄ°LÄ° GEÃ‡MÄ°Å SÄ°NOPTÄ°K:' in str(hata_aciklama_list[i]):
+                    parts = str(hata_aciklama_list[i]).split('ğŸ’¡ Ä°LGÄ°LÄ° GEÃ‡MÄ°Å SÄ°NOPTÄ°K:')
                     hata_aciklama_list[i] = parts[0].strip()
-                    ek = 'İLGİLİ GEÇMİŞ SİNOPTİK:' + parts[1]
+                    ek = 'Ä°LGÄ°LÄ° GEÃ‡MÄ°Å SÄ°NOPTÄ°K:' + parts[1]
                     if ek not in rasatlar_list[i]:
                         rasatlar_list[i] = rasatlar_list[i] + '\n\n' + ek if rasatlar_list[i].strip() else ek
             birlesik['RASATLAR'] = rasatlar_list
@@ -2353,7 +2354,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             
             birlesik[b_col] = bulten_list
             
-            # --- METAR HALİHAZIR HAVA (1, 2 ve 3. GRUP) SÜTUNLARINI BİRLEŞTİR ---
+            # --- METAR HALÄ°HAZIR HAVA (1, 2 ve 3. GRUP) SÃœTUNLARINI BÄ°RLEÅTÄ°R ---
             ww_metar_cols = [c for c in ['ww_metar', 'ww2_metar', 'ww3_metar'] if c in birlesik.columns]
             if len(ww_metar_cols) > 1:
                 def metar_ww_birlestir(row):
@@ -2361,48 +2362,48 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     for c in ww_metar_cols:
                         val = str(row[c]).strip()
                         if val and val.lower() != 'nan':
-                            if val not in vals: # Aynı hadise tekrarlanmasün (Örn: RA RA -> RA)
+                            if val not in vals: # AynÄ± hadise tekrarlanmasÃ¼n (Ã–rn: RA RA -> RA)
                                 vals.append(val)
                     return " ".join(vals) if vals else float('nan')
                 
                 birlesik['ww_metar'] = birlesik.apply(metar_ww_birlestir, axis=1)
                 birlesik.drop(columns=[c for c in ww_metar_cols if c != 'ww_metar'], inplace=True, errors='ignore')
                 
-            # SAAT YAZIMLARINI 0000, 1500, 1200 ŞEKLİNDE GÖSTER
+            # SAAT YAZIMLARINI 0000, 1500, 1200 ÅEKLÄ°NDE GÃ–STER
             def format_saat_str(x):
                 try: return f"{int(float(x)):02d}00"
                 except: return str(x)
             
             birlesik["gmt"] = birlesik["gmt"].apply(format_saat_str)
 
-            # Sütun İsimlendirme ve Sıralama
+            # SÃ¼tun Ä°simlendirme ve SÄ±ralama
             col_map = {
-                'sayfa': 'Tarih', 'gmt': 'Saat (GMT)', 'gmt_exact_sin': 'SİNOPTİK - Saat', 'gmt_exact_metar': 'METAR - Saat',
-                'ir': 'İndikatör (ir)', 'ix': 'İndikatör (ix)',
-                'h': 'Bulut Yük. (h)', 'vv': 'Gür⚡ (VV)', 'n': 'Toplam Bulut (N)',
-                'dd': 'Rüzgar Yönş (dd)', 'ff': 'Rüzgar Hızı (ff)', 't': 'Sıcaklık (T)',
-                'td': 'İŞba (Td)', 'p0': 'Deniz Basıncı (P0)', 'p': 'üstasyon Basıncı (P)',
-                'a': 'Basınç Karakteri (a)', 'ppp': 'Basınç Deüiçimi (ppp)',
-                'nh': 'Alçak/Orta Bulut (Nh)', 'cl': 'Alçak Bulut (CL)', 'cm': 'Orta Bulut (CM)',
-                'ch': 'Yüksek Bulut (CH)', 'tx': 'Maks. Sıcaklık (Tx)', 'tn': 'Min. Sıcaklık (Tn)',
-                'tg': 'Toprak Sıcakl⚙ (Tg)', 'e': 'Yerin Hali (E)', 'rrr': 'Ya⚙ Miktarı (RRR)',
-                'tr': 'Ya⚙ Süresi (tR)', 'g910': '910 Grubu (Hamle)', 'g911': '911 Grubu (Hamle)',
+                'sayfa': 'Tarih', 'gmt': 'Saat (GMT)', 'gmt_exact_sin': 'SÄ°NOPTÄ°K - Saat', 'gmt_exact_metar': 'METAR - Saat',
+                'ir': 'Ä°ndikatÃ¶r (ir)', 'ix': 'Ä°ndikatÃ¶r (ix)',
+                'h': 'Bulut YÃ¼k. (h)', 'vv': 'GÃ¼râš¡ (VV)', 'n': 'Toplam Bulut (N)',
+                'dd': 'RÃ¼zgar YÃ¶nÅŸ (dd)', 'ff': 'RÃ¼zgar HÄ±zÄ± (ff)', 't': 'SÄ±caklÄ±k (T)',
+                'td': 'Ä°Åba (Td)', 'p0': 'Deniz BasÄ±ncÄ± (P0)', 'p': 'Ã¼stasyon BasÄ±ncÄ± (P)',
+                'a': 'BasÄ±nÃ§ Karakteri (a)', 'ppp': 'BasÄ±nÃ§ DeÃ¼iÃ§imi (ppp)',
+                'nh': 'AlÃ§ak/Orta Bulut (Nh)', 'cl': 'AlÃ§ak Bulut (CL)', 'cm': 'Orta Bulut (CM)',
+                'ch': 'YÃ¼ksek Bulut (CH)', 'tx': 'Maks. SÄ±caklÄ±k (Tx)', 'tn': 'Min. SÄ±caklÄ±k (Tn)',
+                'tg': 'Toprak SÄ±caklâš™ (Tg)', 'e': 'Yerin Hali (E)', 'rrr': 'Yaâš™ MiktarÄ± (RRR)',
+                'tr': 'Yaâš™ SÃ¼resi (tR)', 'g910': '910 Grubu (Hamle)', 'g911': '911 Grubu (Hamle)',
                 'g931': '931 Grubu (Kar)', 'g932': '932 Grubu (Taze Kar)', 'g960': '960 Grubu (Hadise)', 
-                'rh': 'BaİŞl Nem (%)', 'tw': 'Islak Sıcaklık (Tw)', 
-                'buhar': 'Buharlaşma', 'rad_tipi': 'Radyasyon Tipi', 'radyasyon': 'Radyasyon Miktarı',
-                'gunes': 'Güneülenme Süresi', 'deniz_suyu': 'Deniz Suyu Sıc.', 'rrr_toplam': 'Toplam Yaüü',
+                'rh': 'BaÄ°Ål Nem (%)', 'tw': 'Islak SÄ±caklÄ±k (Tw)', 
+                'buhar': 'BuharlaÅŸma', 'rad_tipi': 'Radyasyon Tipi', 'radyasyon': 'Radyasyon MiktarÄ±',
+                'gunes': 'GÃ¼neÃ¼lenme SÃ¼resi', 'deniz_suyu': 'Deniz Suyu SÄ±c.', 'rrr_toplam': 'Toplam YaÃ¼Ã¼',
                 'buh_alet_tipi': 'Buhar Aleti Tipi', 'e_kar': 'Yerin Hali (Kar)',
-                'top_ustu_min': 'Toprak Üstş Min.',
+                'top_ustu_min': 'Toprak ÃœstÅŸ Min.',
                 'mak_deger': 'Mak',
-                '1. bulut kap': '1. Bulut Kap.', '1. bulut cins': '1. Bulut Cinsi', '1. bulut yuk': '1. Bulut Yük.',
-                '2. bulut kap': '2. Bulut Kap.', '2. bulut cins': '2. Bulut Cinsi', '2. bulut yuk': '2. Bulut Yük.',
-                '3. bulut kap': '3. Bulut Kap.', '3. bulut cins': '3. Bulut Cinsi', '3. bulut yuk': '3. Bulut Yük.',
-                '4. bulut kap': '4. Bulut Kap.', '4. bulut cins': '4. Bulut Cinsi', '4. bulut yuk': '4. Bulut Yük.',
-                'ww_hesaplanan': 'RE/GEüM⚡ HADİSE',
-                'ANALİZ_SONUCU': 'DURUM', 'HATA_KODLARI': 'HATA KODU', 'HATA_ACIKLAMALARI': 'AÇIKLAMA',
-                'RASATLAR': 'SİNOPTİK - Şifreli Mesaj', 'g924': '924 Grubu', 'hadise_kayit': 'Hadise Kayıtlarü',
+                '1. bulut kap': '1. Bulut Kap.', '1. bulut cins': '1. Bulut Cinsi', '1. bulut yuk': '1. Bulut YÃ¼k.',
+                '2. bulut kap': '2. Bulut Kap.', '2. bulut cins': '2. Bulut Cinsi', '2. bulut yuk': '2. Bulut YÃ¼k.',
+                '3. bulut kap': '3. Bulut Kap.', '3. bulut cins': '3. Bulut Cinsi', '3. bulut yuk': '3. Bulut YÃ¼k.',
+                '4. bulut kap': '4. Bulut Kap.', '4. bulut cins': '4. Bulut Cinsi', '4. bulut yuk': '4. Bulut YÃ¼k.',
+                'ww_hesaplanan': 'RE/GEÃ¼Mâš¡ HADÄ°SE',
+                'ANALÄ°Z_SONUCU': 'DURUM', 'HATA_KODLARI': 'HATA KODU', 'HATA_ACIKLAMALARI': 'AÃ‡IKLAMA',
+                'RASATLAR': 'SÄ°NOPTÄ°K - Åifreli Mesaj', 'g924': '924 Grubu', 'hadise_kayit': 'Hadise KayÄ±tlarÃ¼',
                 'personel': 'Personel',
-                'bulten': 'METAR - Şifreli Mesaj'
+                'bulten': 'METAR - Åifreli Mesaj'
             }
 
             if "bulten" in birlesik.columns and "bulten_metar" in birlesik.columns:
@@ -2417,18 +2418,18 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 suffix = '_sin' if '_sin' in c else ('_metar' if '_metar' in c else '')
                 if base in col_map:
                     new_name = col_map[base]
-                    if new_name.startswith("SİNOPTİK") or new_name.startswith("METAR"):
+                    if new_name.startswith("SÄ°NOPTÄ°K") or new_name.startswith("METAR"):
                         new_columns[c] = new_name
-                    elif suffix == '_sin': new_name = f"SİNOPTİK - {new_name}"
+                    elif suffix == '_sin': new_name = f"SÄ°NOPTÄ°K - {new_name}"
                     elif suffix == '_metar': new_name = f"METAR - {new_name}"
                     new_columns[c] = new_name
                 else: 
-                    if suffix == '_sin': new_columns[c] = f"SİNOPTİK - {base.upper()}"
+                    if suffix == '_sin': new_columns[c] = f"SÄ°NOPTÄ°K - {base.upper()}"
                     elif suffix == '_metar': new_columns[c] = f"METAR - {base.upper()}"
                     else: new_columns[c] = c.upper()
             birlesik.rename(columns=new_columns, inplace=True)
 
-            # Aynı isme sahip sütunlar oluşursa (Örn: iki tane PERSONEL) Pandas'ün İŞkmesini engellemek için tekilleştir
+            # AynÄ± isme sahip sÃ¼tunlar oluÅŸursa (Ã–rn: iki tane PERSONEL) Pandas'Ã¼n Ä°Åkmesini engellemek iÃ§in tekilleÅŸtir
             if any(birlesik.columns.duplicated()):
                 cols = pd.Series(birlesik.columns)
                 for dup in cols[cols.duplicated()].unique():
@@ -2438,83 +2439,83 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                             cols[idx] = f"{dup}_{idx_num}"
                 birlesik.columns = cols
 
-            # --- İSTENEN KESİN SÜTUN SIRALAMASI ---
+            # --- Ä°STENEN KESÄ°N SÃœTUN SIRALAMASI ---
             istenen_siralama = [
-                'Tarih', 'Saat (GMT)', 'SİNOPTİK - Saat', 'METAR - Saat', 'SİNOPTİK - Şifreli Mesaj', 'METAR - Şifreli Mesaj', 'DURUM', 'HATA KODU', 'AÇIKLAMA',
-                'SİNOPTİK - İndikatör (ir)', 'SİNOPTİK - İndikatör (ix)', 'SİNOPTİK - Bulut Yük. (h)', 'SİNOPTİK - Gür⚡ (VV)', 'METAR - Gür⚡ (VV)',
-                'SİNOPTİK - Toplam Bulut (N)', 'METAR - Toplam Bulut (N)', 'SİNOPTİK - Rüzgar Yönş (dd)', 'METAR - Rüzgar Yönş (dd)',
-                'SİNOPTİK - Rüzgar Hızı (ff)', 'METAR - Rüzgar Hızı (ff)', 'SİNOPTİK - Sıcaklık (T)', 'METAR - Sıcaklık (T)',
-                'SİNOPTİK - İŞba (Td)', 'METAR - İŞba (Td)', 'SİNOPTİK - Deniz Basıncı (P0)', 'METAR - Deniz Basıncı (P0)',
-                'SİNOPTİK - üstasyon Basıncı (P)', 'METAR - üstasyon Basıncı (P)', 'SİNOPTİK - Basınç Karakteri (a)', 'SİNOPTİK - Basınç Deüiçimi (ppp)',
-                'SİNOPTİK - Halihazır Hava (ww)', 'METAR - Halihazır Hava (ww)', 'SİNOPTİK - Geümiş Hava 1 (W1)', 'SİNOPTİK - Geümiş Hava 2 (W2)',
-                'SİNOPTİK - Alçak/Orta Bulut (Nh)', 'SİNOPTİK - Alçak Bulut (CL)', 'SİNOPTİK - Orta Bulut (CM)', 'SİNOPTİK - Yüksek Bulut (CH)',
-                'SİNOPTİK - Maks. Sıcaklık (Tx)', 'SİNOPTİK - Min. Sıcaklık (Tn)', 'SİNOPTİK - Toprak Sıcakl⚙ (Tg)', 'SİNOPTİK - Yerin Hali (E)',
-                'SİNOPTİK - Ya⚙ Miktarı (RRR)', 'SİNOPTİK - Ya⚙ Süresi (tR)', 'SİNOPTİK - 910 Grubu (Hamle)', 'SİNOPTİK - 911 Grubu (Hamle)',
-                'SİNOPTİK - 924 Grubu', 'SİNOPTİK - 931 Grubu (Kar)', 'SİNOPTİK - 932 Grubu (Taze Kar)', 'SİNOPTİK - 960 Grubu (Hadise)',
-                'SİNOPTİK - BaİŞl Nem (%)', 'METAR - BaİŞl Nem (%)', 'METAR - Islak Sıcaklık (Tw)', 'SİNOPTİK - Toplam Yaüü', 'SİNOPTİK - Yerin Hali (Kar)',
-                'METAR - 1. Bulut Kap.', 'METAR - 1. Bulut Cinsi', 'METAR - 1. Bulut Yük.', 'METAR - 2. Bulut Kap.', 'METAR - 2. Bulut Cinsi', 'METAR - 2. Bulut Yük.',
-                'METAR - 3. Bulut Kap.', 'METAR - 3. Bulut Cinsi', 'METAR - 3. Bulut Yük.', 'METAR - 4. Bulut Kap.', 'METAR - 4. Bulut Cinsi', 'METAR - 4. Bulut Yük.',
-                'RE/GEüM⚡ HADİSE', 'SİNOPTİK - Personel', 'METAR - Personel', 'SİNOPTİK - BG4', 'METAR - DIKINE_GORUS', 'SİNOPTİK - GMT_RAW', 'METAR - INCH'
+                'Tarih', 'Saat (GMT)', 'SÄ°NOPTÄ°K - Saat', 'METAR - Saat', 'SÄ°NOPTÄ°K - Åifreli Mesaj', 'METAR - Åifreli Mesaj', 'DURUM', 'HATA KODU', 'AÃ‡IKLAMA',
+                'SÄ°NOPTÄ°K - Ä°ndikatÃ¶r (ir)', 'SÄ°NOPTÄ°K - Ä°ndikatÃ¶r (ix)', 'SÄ°NOPTÄ°K - Bulut YÃ¼k. (h)', 'SÄ°NOPTÄ°K - GÃ¼râš¡ (VV)', 'METAR - GÃ¼râš¡ (VV)',
+                'SÄ°NOPTÄ°K - Toplam Bulut (N)', 'METAR - Toplam Bulut (N)', 'SÄ°NOPTÄ°K - RÃ¼zgar YÃ¶nÅŸ (dd)', 'METAR - RÃ¼zgar YÃ¶nÅŸ (dd)',
+                'SÄ°NOPTÄ°K - RÃ¼zgar HÄ±zÄ± (ff)', 'METAR - RÃ¼zgar HÄ±zÄ± (ff)', 'SÄ°NOPTÄ°K - SÄ±caklÄ±k (T)', 'METAR - SÄ±caklÄ±k (T)',
+                'SÄ°NOPTÄ°K - Ä°Åba (Td)', 'METAR - Ä°Åba (Td)', 'SÄ°NOPTÄ°K - Deniz BasÄ±ncÄ± (P0)', 'METAR - Deniz BasÄ±ncÄ± (P0)',
+                'SÄ°NOPTÄ°K - Ã¼stasyon BasÄ±ncÄ± (P)', 'METAR - Ã¼stasyon BasÄ±ncÄ± (P)', 'SÄ°NOPTÄ°K - BasÄ±nÃ§ Karakteri (a)', 'SÄ°NOPTÄ°K - BasÄ±nÃ§ DeÃ¼iÃ§imi (ppp)',
+                'SÄ°NOPTÄ°K - HalihazÄ±r Hava (ww)', 'METAR - HalihazÄ±r Hava (ww)', 'SÄ°NOPTÄ°K - GeÃ¼miÅŸ Hava 1 (W1)', 'SÄ°NOPTÄ°K - GeÃ¼miÅŸ Hava 2 (W2)',
+                'SÄ°NOPTÄ°K - AlÃ§ak/Orta Bulut (Nh)', 'SÄ°NOPTÄ°K - AlÃ§ak Bulut (CL)', 'SÄ°NOPTÄ°K - Orta Bulut (CM)', 'SÄ°NOPTÄ°K - YÃ¼ksek Bulut (CH)',
+                'SÄ°NOPTÄ°K - Maks. SÄ±caklÄ±k (Tx)', 'SÄ°NOPTÄ°K - Min. SÄ±caklÄ±k (Tn)', 'SÄ°NOPTÄ°K - Toprak SÄ±caklâš™ (Tg)', 'SÄ°NOPTÄ°K - Yerin Hali (E)',
+                'SÄ°NOPTÄ°K - Yaâš™ MiktarÄ± (RRR)', 'SÄ°NOPTÄ°K - Yaâš™ SÃ¼resi (tR)', 'SÄ°NOPTÄ°K - 910 Grubu (Hamle)', 'SÄ°NOPTÄ°K - 911 Grubu (Hamle)',
+                'SÄ°NOPTÄ°K - 924 Grubu', 'SÄ°NOPTÄ°K - 931 Grubu (Kar)', 'SÄ°NOPTÄ°K - 932 Grubu (Taze Kar)', 'SÄ°NOPTÄ°K - 960 Grubu (Hadise)',
+                'SÄ°NOPTÄ°K - BaÄ°Ål Nem (%)', 'METAR - BaÄ°Ål Nem (%)', 'METAR - Islak SÄ±caklÄ±k (Tw)', 'SÄ°NOPTÄ°K - Toplam YaÃ¼Ã¼', 'SÄ°NOPTÄ°K - Yerin Hali (Kar)',
+                'METAR - 1. Bulut Kap.', 'METAR - 1. Bulut Cinsi', 'METAR - 1. Bulut YÃ¼k.', 'METAR - 2. Bulut Kap.', 'METAR - 2. Bulut Cinsi', 'METAR - 2. Bulut YÃ¼k.',
+                'METAR - 3. Bulut Kap.', 'METAR - 3. Bulut Cinsi', 'METAR - 3. Bulut YÃ¼k.', 'METAR - 4. Bulut Kap.', 'METAR - 4. Bulut Cinsi', 'METAR - 4. Bulut YÃ¼k.',
+                'RE/GEÃ¼Mâš¡ HADÄ°SE', 'SÄ°NOPTÄ°K - Personel', 'METAR - Personel', 'SÄ°NOPTÄ°K - BG4', 'METAR - DIKINE_GORUS', 'SÄ°NOPTÄ°K - GMT_RAW', 'METAR - INCH'
             ]
             
             mevcut_istenen = [c for c in istenen_siralama if c in birlesik.columns]
 
-            # UNNAMED, NAN veya isimsiz anlamsız sütunlarş nihai Excel raporundan tamamen gizle (Zaten RASATLAR sütununa eklendiler)
+            # UNNAMED, NAN veya isimsiz anlamsÄ±z sÃ¼tunlarÅŸ nihai Excel raporundan tamamen gizle (Zaten RASATLAR sÃ¼tununa eklendiler)
             def anlamsiz_mi(kolon_adi):
                 k_str = str(kolon_adi).upper()
                 if "UNNAMED" in k_str or "NAN" == k_str.strip():
                     return True
                 if "METAR - " in k_str:
                     istenmeyen_metar_sutunlari = [
-                        "911 GRUBU", "MİN. SICAKLIK", "MIN. SICAKLIK", "BULUT YÜK. (H)", "2. GRUP", "GMT_RAW", "İNDİKATÖR", "INDIKATOR",
-                        "YAĞIŞ MİKTARI", "GEüM⚡ HAVA", "GECMIS HAVA", "ALüAK/ORTA BULUT", "ALCAK/ORTA BULUT", "ALüAK BULUT", "ALCAK BULUT",
-                        "ORTA BULUT", "YÜKSEK BULUT", "YUKSEK BULUT", "BASINÇ KARAKTERü", "BASINC KARAKTERI", "BASINÇ DEüüüMü", "BASINC DEGISIMI",
-                        "MAKS. SICAKLIK", "TOPRAK SICAKLIĞI", "TOPRAK SICAKLIGI", "YERİN HALü", "YERIN HALI", "YAĞIŞ SÜRESİ", "YAGIS SURESI",
+                        "911 GRUBU", "MÄ°N. SICAKLIK", "MIN. SICAKLIK", "BULUT YÃœK. (H)", "2. GRUP", "GMT_RAW", "Ä°NDÄ°KATÃ–R", "INDIKATOR",
+                        "YAÄIÅ MÄ°KTARI", "GEÃ¼Mâš¡ HAVA", "GECMIS HAVA", "ALÃ¼AK/ORTA BULUT", "ALCAK/ORTA BULUT", "ALÃ¼AK BULUT", "ALCAK BULUT",
+                        "ORTA BULUT", "YÃœKSEK BULUT", "YUKSEK BULUT", "BASINÃ‡ KARAKTERÃ¼", "BASINC KARAKTERI", "BASINÃ‡ DEÃ¼Ã¼Ã¼MÃ¼", "BASINC DEGISIMI",
+                        "MAKS. SICAKLIK", "TOPRAK SICAKLIÄI", "TOPRAK SICAKLIGI", "YERÄ°N HALÃ¼", "YERIN HALI", "YAÄIÅ SÃœRESÄ°", "YAGIS SURESI",
                         "924 GRUBU", "910 GRUBU", "931 GRUBU", "932 GRUBU", "960 GRUBU", "3. GRUP"
                     ]
                     if any(istenmeyen in k_str for istenmeyen in istenmeyen_metar_sutunlari):
                         return True
-                # Eksiksiz tam döküm için METAR veri alanlarünün filtrelenerek gizlenmesi iptal edildi.
+                # Eksiksiz tam dÃ¶kÃ¼m iÃ§in METAR veri alanlarÃ¼nÃ¼n filtrelenerek gizlenmesi iptal edildi.
                 return False
                 
             digerleri = [c for c in birlesik.columns if c not in mevcut_istenen and not anlamsiz_mi(c)]
             
-            # Geriye kalan ve listede olmayan ekstra sütunlarş da isim benzerliçine göre yan yana getir
+            # Geriye kalan ve listede olmayan ekstra sÃ¼tunlarÅŸ da isim benzerliÃ§ine gÃ¶re yan yana getir
             kalan_gruplar = {}
             for c in digerleri:
-                base = str(c).replace("SİNOPTİK - ", "").replace("METAR - ", "")
+                base = str(c).replace("SÄ°NOPTÄ°K - ", "").replace("METAR - ", "")
                 if base not in kalan_gruplar:
                     kalan_gruplar[base] = []
                 kalan_gruplar[base].append(c)
                 
             sirali_digerleri = []
             for base in sorted(kalan_gruplar.keys()):
-                # Alfabetik ters sıralama ile (S)İNOPTİK'in (M)ETAR'dan ünce gelmesini sağlar
+                # Alfabetik ters sÄ±ralama ile (S)Ä°NOPTÄ°K'in (M)ETAR'dan Ã¼nce gelmesini saÄŸlar
                 sirali_grup = sorted(kalan_gruplar[base], reverse=True) 
                 sirali_digerleri.extend(sirali_grup)
 
             birlesik = birlesik[mevcut_istenen + sirali_digerleri]
             # -------------------------------------------------------------------------------------
 
-            # LOG DOSYASI ÇIKTISI: İŞlem Özeti ve Hatalar
+            # LOG DOSYASI Ã‡IKTISI: Ä°Ålem Ã–zeti ve Hatalar
             print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
-            print(f"{Colors.BOLD}İŞLEM ÖZETİ VE HATALI RASATLAR ({ay}/{yil}){Colors.ENDC}")
+            print(f"{Colors.BOLD}Ä°ÅLEM Ã–ZETÄ° VE HATALI RASATLAR ({ay}/{yil}){Colors.ENDC}")
             print(f"{Colors.HEADER}{'-' * 60}{Colors.ENDC}")
-            print(f"Okunan SİNOPTİK Sayısı : {Colors.OKBLUE}{sinoptik_sayisi}{Colors.ENDC}")
-            print(f"Okunan METAR Sayısı    : {Colors.OKBLUE}{metar_sayisi}{Colors.ENDC}")
-            print(f"üablon Kayıt Sayısı    : {Colors.OKBLUE}{len(birlesik)}{Colors.ENDC}")
+            print(f"Okunan SÄ°NOPTÄ°K SayÄ±sÄ± : {Colors.OKBLUE}{sinoptik_sayisi}{Colors.ENDC}")
+            print(f"Okunan METAR SayÄ±sÄ±    : {Colors.OKBLUE}{metar_sayisi}{Colors.ENDC}")
+            print(f"Ã¼ablon KayÄ±t SayÄ±sÄ±    : {Colors.OKBLUE}{len(birlesik)}{Colors.ENDC}")
 
             logging.info("="*60)
-            logging.info(f"İŞLEM ÖZETİ VE HATALI RASATLAR ({ay}/{yil})")
+            logging.info(f"Ä°ÅLEM Ã–ZETÄ° VE HATALI RASATLAR ({ay}/{yil})")
             logging.info("-" * 60)
-            logging.info(f"Okunan SİNOPTİK Sayısı : {sinoptik_sayisi}")
-            logging.info(f"Okunan METAR Sayısı    : {metar_sayisi}")
-            logging.info(f"üablon Kayıt Sayısı    : {len(birlesik)}")
+            logging.info(f"Okunan SÄ°NOPTÄ°K SayÄ±sÄ± : {sinoptik_sayisi}")
+            logging.info(f"Okunan METAR SayÄ±sÄ±    : {metar_sayisi}")
+            logging.info(f"Ã¼ablon KayÄ±t SayÄ±sÄ±    : {len(birlesik)}")
             
             hatali_kayitlar = birlesik[~birlesik["DURUM"].isin(["Hata Yok", "Ara Rasat"])]
-            print(f"Hatalı Kayıt Sayısı    : {Colors.FAIL}{len(hatali_kayitlar)}{Colors.ENDC}")
+            print(f"HatalÄ± KayÄ±t SayÄ±sÄ±    : {Colors.FAIL}{len(hatali_kayitlar)}{Colors.ENDC}")
             print(f"{Colors.HEADER}{'-' * 60}{Colors.ENDC}")
-            logging.info(f"Hatalı Kayıt Sayısı    : {len(hatali_kayitlar)}")
+            logging.info(f"HatalÄ± KayÄ±t SayÄ±sÄ±    : {len(hatali_kayitlar)}")
             logging.info("-" * 60)
             
             # --- YENI ALARM MANTIGI ---
@@ -2535,16 +2536,16 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     if new_errors:
                         import winsound
                         winsound.Beep(1000, 1000) # 1000Hz 1 saniye
-                        logging.info(f"YENİ HATA BULUNDU! Alarm üalündü. Yeni Hatalar: {new_errors}")
+                        logging.info(f"YENÄ° HATA BULUNDU! Alarm Ã¼alÃ¼ndÃ¼. Yeni Hatalar: {new_errors}")
                     previous_error_codes = current_error_codes
             except Exception as e:
-                logging.error(f"Alarm hatası: {e}")
+                logging.error(f"Alarm hatasÄ±: {e}")
 
             # --- YENI HTML REPORT ---
             try:
                 ayarlar = ayarlari_yukle()
                 if ayarlar.get("web_server_aktif", False):
-                    display_cols = ["GüN", "SAAT", "HATA KODU", "AÇIKLAMA"]
+                    display_cols = ["GÃ¼N", "SAAT", "HATA KODU", "AÃ‡IKLAMA"]
                     mevcut_cols = [c for c in display_cols if c in hatali_kayitlar.columns]
                     html_df = hatali_kayitlar[mevcut_cols] if mevcut_cols else hatali_kayitlar
                     html_str = html_df.to_html(classes='table table-striped table-bordered table-hover', index=False, justify='center')
@@ -2553,7 +2554,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
 <html>
 <head>
     <meta charset='utf-8'>
-    <title>HATA RAMA - Güncel Analiz</title>
+    <title>HATA RAMA - GÃ¼ncel Analiz</title>
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
     <style>
         body {{ padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }}
@@ -2562,8 +2563,8 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
 </head>
 <body>
     <div class='container-fluid'>
-        <h2 class='mb-4 text-primary'>Güncel SİNOPTİK Analiz Sonuçları</h2>
-        <div class='mb-3 text-muted'>Son Güncellenme: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}</div>
+        <h2 class='mb-4 text-primary'>GÃ¼ncel SÄ°NOPTÄ°K Analiz SonuÃ§larÄ±</h2>
+        <div class='mb-3 text-muted'>Son GÃ¼ncellenme: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}</div>
         <div class='table-responsive'>
             {html_str}
         </div>
@@ -2574,7 +2575,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title text-danger fw-bold">🔍 Hata Detay İncelemesi</h5>
+            <h5 class="modal-title text-danger fw-bold">ğŸ” Hata Detay Ä°ncelemesi</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body" id="modalContent" style="font-family: monospace; white-space: pre-wrap;">
@@ -2602,12 +2603,12 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                         var td = document.createElement("td");
                         var btn = document.createElement("button");
                         btn.className = "btn btn-primary btn-sm fw-bold";
-                        btn.innerHTML = "🔍 İNCELE";
+                        btn.innerHTML = "ğŸ” Ä°NCELE";
                         btn.onclick = function() {{
                             var cells = tr.querySelectorAll("td");
                             var content = "";
                             for(var i=0; i<cells.length-1; i++) {{
-                                content += "• " + headers[i].toUpperCase() + ":
+                                content += "â€¢ " + headers[i].toUpperCase() + ":
 " + cells[i].innerText + "
 
 ";
@@ -2630,11 +2631,11 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "latest_report.html"), "w", encoding="utf-8") as f:
                         f.write(page)
             except Exception as e:
-                logging.error(f"HTML Rapor hatası: {e}")
+                logging.error(f"HTML Rapor hatasÄ±: {e}")
             
-            if iptal_istendi: raise InterruptedError("İŞlem kullanıcı tarafündan iptal edildi.")
+            if iptal_istendi: raise InterruptedError("Ä°Ålem kullanÄ±cÄ± tarafÃ¼ndan iptal edildi.")
             if not hatali_kayitlar.empty:
-                print(f"{Colors.BOLD}{'TARİH':<15} {'SAAT':<10} {'HATA KODU'}{Colors.ENDC}")
+                print(f"{Colors.BOLD}{'TARÄ°H':<15} {'SAAT':<10} {'HATA KODU'}{Colors.ENDC}")
                 print(f"{Colors.HEADER}{'-' * 60}{Colors.ENDC}")
                 print(f"{Colors.BOLD}HATALI KAYIT DETAYLARI:{Colors.ENDC}")
                 print(f"{Colors.HEADER}{'-' * 80}{Colors.ENDC}")
@@ -2644,29 +2645,29 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     tarih = str(row.get('Tarih', ''))
                     saat = str(row.get('Saat (GMT)', ''))
                     hata_kodu = str(row.get('HATA KODU', ''))
-                    aciklama = str(row.get('AÇIKLAMA', ''))
-                    sin_ham = str(row.get('SİNOPTİK - Şifreli Mesaj', ''))
-                    met_ham = str(row.get('METAR - Şifreli Mesaj', ''))
-                    personel = str(row.get('SİNOPTİK - Personel', row.get('Personel', 'Bilinmiyor/Belirtilmemiş')))
+                    aciklama = str(row.get('AÃ‡IKLAMA', ''))
+                    sin_ham = str(row.get('SÄ°NOPTÄ°K - Åifreli Mesaj', ''))
+                    met_ham = str(row.get('METAR - Åifreli Mesaj', ''))
+                    personel = str(row.get('SÄ°NOPTÄ°K - Personel', row.get('Personel', 'Bilinmiyor/BelirtilmemiÅŸ')))
                     
                     print(f"{tarih: <15} {saat: <10} {Colors.FAIL}{hata_kodu}{Colors.ENDC}")
                     logging.info(f"[{tarih} - {saat} GMT] HATA: {hata_kodu}")
-                    logging.info(f" -> AÇIKLAMA : {aciklama}")
-                    logging.info(f" -> SİNOPTİK : {sin_ham}")
+                    logging.info(f" -> AÃ‡IKLAMA : {aciklama}")
+                    logging.info(f" -> SÄ°NOPTÄ°K : {sin_ham}")
                     logging.info(f" -> METAR    : {met_ham}")
                     logging.info(f" -> PERSONEL : {personel}")
                     logging.info("-" * 80)
             else:
-                print(f"{Colors.OKGREEN}Tebrikler! Hiçbir hata bulunamadı.{Colors.ENDC}")
-                logging.info("Tebrikler! Hiçbir hata bulunamadı.")
+                print(f"{Colors.OKGREEN}Tebrikler! HiÃ§bir hata bulunamadÄ±.{Colors.ENDC}")
+                logging.info("Tebrikler! HiÃ§bir hata bulunamadÄ±.")
             print(f"{Colors.HEADER}{'='*60}{Colors.ENDC}\n")
             logging.info("="*60)
             
-            # LOG HANDLER'INI FLUSH ET (Verilerin disk'e yazılması için)
+            # LOG HANDLER'INI FLUSH ET (Verilerin disk'e yazÄ±lmasÄ± iÃ§in)
             logging_handler.flush()
             
-            # --- YENİ: EXCEL YERİNE EKRANDA HIZLI GÖSTERİM ---
-            # --- üNBELLEüE KAYDET ---
+            # --- YENÄ°: EXCEL YERÄ°NE EKRANDA HIZLI GÃ–STERÄ°M ---
+            # --- Ã¼NBELLEÃ¼E KAYDET ---
             try:
                 cache_path = os.path.join(os.path.expanduser("~"), "Desktop", "check", ".kardelen_cache.pkl")
                 import pickle
@@ -2680,14 +2681,14 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                 }
                 with open(cache_path, 'wb') as f:
                     pickle.dump(cache_data, f)
-                print("Analiz başarıyla önbelleğe kaydedildi.")
+                print("Analiz baÅŸarÄ±yla Ã¶nbelleÄŸe kaydedildi.")
             except Exception as ce:
-                print(f"Önbellek kaydetme hatası: {ce}")
+                print(f"Ã–nbellek kaydetme hatasÄ±: {ce}")
 
             safe_after(0, lambda: arayuzde_goster(birlesik, hatali_kayitlar, sinoptik_sayisi, metar_normal_sayisi, speci_sayisi, ay, yil))
             # ------------------------------------------------
 
-            if iptal_istendi: raise InterruptedError("İŞlem kullanıcı tarafündan iptal edildi.")
+            if iptal_istendi: raise InterruptedError("Ä°Ålem kullanÄ±cÄ± tarafÃ¼ndan iptal edildi.")
             # 3. Rapor Kaydetme
             islenen_dosyalar = {
                 "sinoptik": os.path.basename(sin_yolu),
@@ -2695,8 +2696,8 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
             }
             cikti_yolu = dm3.raporu_excel_olarak_kaydet(birlesik, yil, ay, okuma_raporu, hedef_klasor, islenen_dosyalar)
 
-            # --- YENİ: İŞLEMİ BİTEN DOSYALARI ARŞİVLE ---
-            final_message = f"İŞlem Tamamlandı!\nSonuçlar ekrana yansıtıldı.\n(Yedek Excel: {cikti_yolu})"
+            # --- YENÄ°: Ä°ÅLEMÄ° BÄ°TEN DOSYALARI ARÅÄ°VLE ---
+            final_message = f"Ä°Ålem TamamlandÄ±!\nSonuÃ§lar ekrana yansÄ±tÄ±ldÄ±.\n(Yedek Excel: {cikti_yolu})"
             try:
                 arsiv_klasoru = os.path.join(hedef_klasor, "Arsiv")
                 if not os.path.exists(arsiv_klasoru):
@@ -2707,7 +2708,7 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                     os.makedirs(aylik_arsiv_klasoru)
 
                 print(f"\n{Colors.HEADER}{'='*60}{Colors.ENDC}")
-                print(f"{Colors.OKBLUE}Oluşturulan rapor '{os.path.basename(aylik_arsiv_klasoru)}' klasörüne arşivleniyor...{Colors.ENDC}")
+                print(f"{Colors.OKBLUE}OluÅŸturulan rapor '{os.path.basename(aylik_arsiv_klasoru)}' klasÃ¶rÃ¼ne arÅŸivleniyor...{Colors.ENDC}")
                 for f_path in [cikti_yolu]:
                     if os.path.exists(f_path):
                         base_name = os.path.basename(f_path)
@@ -2719,35 +2720,35 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
                             dest_path = os.path.join(aylik_arsiv_klasoru, f"{name}_{timestamp}{ext}")
                             
                         shutil.move(f_path, dest_path)
-                        print(f" - {Colors.OKGREEN}{os.path.basename(dest_path)} taİŞndü.{Colors.ENDC}")
-                final_message = f"İŞlem Tamamlandı!\nSonuçlar ekrana yansıtıldı.\n\nRapor dosyası '{os.path.basename(aylik_arsiv_klasoru)}' klasörüne arşivlendi."
+                        print(f" - {Colors.OKGREEN}{os.path.basename(dest_path)} taÄ°ÅndÃ¼.{Colors.ENDC}")
+                final_message = f"Ä°Ålem TamamlandÄ±!\nSonuÃ§lar ekrana yansÄ±tÄ±ldÄ±.\n\nRapor dosyasÄ± '{os.path.basename(aylik_arsiv_klasoru)}' klasÃ¶rÃ¼ne arÅŸivlendi."
             except Exception as e:
-                logging.error(f"Arşivleme hatası: {e}", exc_info=True)
-                logging_handler.flush()  # Arşivleme hatasınş disk'e yaz
-                print(f"{Colors.FAIL}ARŞİVLEME HATASI: {e}{Colors.ENDC}")
+                logging.error(f"ArÅŸivleme hatasÄ±: {e}", exc_info=True)
+                logging_handler.flush()  # ArÅŸivleme hatasÄ±nÅŸ disk'e yaz
+                print(f"{Colors.FAIL}ARÅÄ°VLEME HATASI: {e}{Colors.ENDC}")
                 traceback.print_exc()
-                final_message = f"İŞlem Tamamlandı!\n(Yedek Excel: {cikti_yolu})\n\nUYARI: Dosyalar arşivlenemedi!"
+                final_message = f"Ä°Ålem TamamlandÄ±!\n(Yedek Excel: {cikti_yolu})\n\nUYARI: Dosyalar arÅŸivlenemedi!"
 
-            safe_showinfo("Başarılı", final_message)
+            safe_showinfo("BaÅŸarÄ±lÄ±", final_message)
         except Exception as e:
             if isinstance(e, InterruptedError):
-                logging.info("İŞlem kullanıcı tarafündan iptal edildi.")
-                safe_showinfo("İptal", "İŞlem iptal edildi.")
-                print(f"\n{Colors.WARNING}İŞlem kullanıcı tarafündan iptal edildi!{Colors.ENDC}")
+                logging.info("Ä°Ålem kullanÄ±cÄ± tarafÃ¼ndan iptal edildi.")
+                safe_showinfo("Ä°ptal", "Ä°Ålem iptal edildi.")
+                print(f"\n{Colors.WARNING}Ä°Ålem kullanÄ±cÄ± tarafÃ¼ndan iptal edildi!{Colors.ENDC}")
             else:
-                logging.error("İŞlem sırasında hata oluştu", exc_info=True)
+                logging.error("Ä°Ålem sÄ±rasÄ±nda hata oluÅŸtu", exc_info=True)
                 logging_handler.flush()
                 print("\n--- DETAYLI HATA RAPORU ---")
                 traceback.print_exc()
-                safe_showerror("Hata", f"Bir hata oluştu:\n{e}")
+                safe_showerror("Hata", f"Bir hata oluÅŸtu:\n{e}")
         finally:
-            # --- UI Geri Bildirimini Sonlandır ---
+            # --- UI Geri Bildirimini SonlandÄ±r ---
             if not console_mode:
                 try:
                     def finalize_ui():
                         if btn_run: btn_run.config(state=tk.NORMAL, text=get_button_text())
                         if btn_cancel: btn_cancel.config(state=tk.DISABLED)
-                        if lbl_status: lbl_status.config(text="Hazür")
+                        if lbl_status: lbl_status.config(text="HazÃ¼r")
                         if root: root.config(cursor="")
                         try:
                             if 'progress_win' in globals() and progress_win and progress_win.winfo_exists():
@@ -2765,17 +2766,17 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
         islem_yurut(load_from_cache, df_sin_param, df_metar_param, override_yil, override_ay, custom_title)
 
 def arayuz_arka_plan_tetikleyici(df_sin, df_metar, yil, ay, ist_isim, baslik):
-    """Otomatik analizden (timer) gelen veriyi UI'da üalİŞtürmak için."""
+    """Otomatik analizden (timer) gelen veriyi UI'da Ã¼alÄ°ÅtÃ¼rmak iÃ§in."""
     if console_mode: return
-    # UI'yi sıfırlayüp işlemi baülat
-    btn_run.config(state=tk.DISABLED, text="Oto Analiz üalüüyor...")
+    # UI'yi sÄ±fÄ±rlayÃ¼p iÅŸlemi baÃ¼lat
+    btn_run.config(state=tk.DISABLED, text="Oto Analiz Ã¼alÃ¼Ã¼yor...")
     if btn_cancel: btn_cancel.config(state=tk.NORMAL)
     lbl_status.config(text=baslik)
     aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=df_sin, df_metar_param=df_metar, override_yil=yil, override_ay=ay, custom_title=baslik)
 
 def aylik_rapor_olustur_inject_mode():
     global INJECT_SIN, INJECT_MET, INJECT_Y, INJECT_A
-    aylik_rapor_olustur(run_async=False, load_from_cache=False, df_sin_param=INJECT_SIN, df_metar_param=INJECT_MET, override_yil=INJECT_Y, override_ay=INJECT_A, custom_title="GÜNCEL SİNOPTİK ANALİZ")
+    aylik_rapor_olustur(run_async=False, load_from_cache=False, df_sin_param=INJECT_SIN, df_metar_param=INJECT_MET, override_yil=INJECT_Y, override_ay=INJECT_A, custom_title="GÃœNCEL SÄ°NOPTÄ°K ANALÄ°Z")
 
 def aylik_rapor_olustur_html_icin(df_sin, df_metar, yil, ay, title):
     # Backward compatibility for earlier logic
@@ -2786,7 +2787,7 @@ def aylik_rapor_olustur_html_icin(df_sin, df_metar, yil, ay, title):
 
 if not console_mode:
     root = tk.Tk()
-    root.title("SİNOPTİK VERİ DENETLEME")
+    root.title("SÄ°NOPTÄ°K VERÄ° DENETLEME")
     root.geometry("500x360")
     root.geometry("500x420")
     root.geometry("500x500")
@@ -2807,7 +2808,7 @@ if not console_mode:
     main_frame = tk.Frame(root, padx=35, pady=30, bg="#F8F9FA")
     main_frame.pack(expand=True, fill="both")
     
-    lbl_title = tk.Label(main_frame, text="SİNOPTİK VERİ DENETLEME", font=("Segoe UI", 16, "bold"), bg="#F8F9FA", fg="#212529")
+    lbl_title = tk.Label(main_frame, text="SÄ°NOPTÄ°K VERÄ° DENETLEME", font=("Segoe UI", 16, "bold"), bg="#F8F9FA", fg="#212529")
     lbl_title.pack(pady=(0, 20))
 
     btn_run = tk.Button(main_frame, text=get_button_text(), command=aylik_rapor_olustur, font=("Segoe UI", 12, "bold"), bg="#0066CC", fg="white", activebackground="#0052A3", activeforeground="white", height=2, cursor="hand2", relief="flat", borderwidth=0)
@@ -2816,7 +2817,7 @@ if not console_mode:
     def iptal_et():
         global iptal_istendi
         iptal_istendi = True
-        if lbl_status: lbl_status.config(text="İŞlem durduruluyor, lütfen bekleyin...")
+        if lbl_status: lbl_status.config(text="Ä°Ålem durduruluyor, lÃ¼tfen bekleyin...")
         if btn_cancel: btn_cancel.config(state=tk.DISABLED)
 
     def guncel_canli_analiz_baslat():
@@ -2847,14 +2848,14 @@ if not console_mode:
                 def ui_cb(progress, msg):
                     def update_ui(p=progress, m=msg):
                         lbl_status.config(text=m)
-                        try: btn_live.config(text=f"ş %{int(p)} - {m}")
+                        try: btn_live.config(text=f"ÅŸ %{int(p)} - {m}")
                         except: pass
                     safe_after(0, update_ui)
                 
                 safe_after(0, lambda: btn_run.config(state=tk.DISABLED))
                 safe_after(0, lambda: btn_cancel.config(state=tk.NORMAL))
                 safe_after(0, lambda: btn_live.config(state=tk.DISABLED))
-                ui_cb(0, "Güncel Canlş Analiz Başlatülüyor...")
+                ui_cb(0, "GÃ¼ncel CanlÅŸ Analiz BaÅŸlatÃ¼lÃ¼yor...")
                 
                 import canli_analiz
                 df_sin, df_metar, y, a, isim = canli_analiz.manuel_analiz(ist_kodu, b, bt, ui_cb)
@@ -2866,31 +2867,31 @@ if not console_mode:
                 INJECT_Y = y
                 INJECT_A = a
                 
-                ui_cb(100, "HTML verileri iülendi, Excel oluşturuluyor...")
+                ui_cb(100, "HTML verileri iÃ¼lendi, Excel oluÅŸturuluyor...")
                 
                 import threading
                 threading.Thread(target=aylik_rapor_olustur_inject_mode, daemon=True).start()
                 
             except Exception as e:
-                safe_after(0, lambda err=str(e): messagebox.showerror("Hata", f"Canlş analiz hatası: {err}"))
-                safe_after(0, lambda: lbl_status.config(text="Hata oluştu."))
+                safe_after(0, lambda err=str(e): messagebox.showerror("Hata", f"CanlÅŸ analiz hatasÄ±: {err}"))
+                safe_after(0, lambda: lbl_status.config(text="Hata oluÅŸtu."))
             finally:
                 safe_after(0, lambda: btn_run.config(state=tk.NORMAL))
                 safe_after(0, lambda: btn_cancel.config(state=tk.DISABLED))
-                safe_after(0, lambda: btn_live.config(text="⚡ GÜNCEL SİNOPTİK ANALİZ YÜKLE", state=tk.NORMAL))
+                safe_after(0, lambda: btn_live.config(text="âš¡ GÃœNCEL SÄ°NOPTÄ°K ANALÄ°Z YÃœKLE", state=tk.NORMAL))
 
         import threading
         threading.Thread(target=arkaplan, daemon=True).start()
 
-    btn_cancel = tk.Button(main_frame, text="İŞLEMİ DURDUR / İPTAL ET", command=iptal_et, state=tk.DISABLED, font=("Segoe UI", 10, "bold"), bg="#D32F2F", fg="white", activebackground="#B71C1C", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_cancel = tk.Button(main_frame, text="Ä°ÅLEMÄ° DURDUR / Ä°PTAL ET", command=iptal_et, state=tk.DISABLED, font=("Segoe UI", 10, "bold"), bg="#D32F2F", fg="white", activebackground="#B71C1C", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_cancel.pack(fill="x", pady=(0, 8))
-    btn_load_cache = tk.Button(main_frame, text="⚡ SON ANALİZİ YÜKLE", command=lambda: aylik_rapor_olustur(run_async=True, load_from_cache=True), font=("Segoe UI", 10, "bold"), bg="#009688", fg="white", activebackground="#00796B", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_load_cache = tk.Button(main_frame, text="âš¡ SON ANALÄ°ZÄ° YÃœKLE", command=lambda: aylik_rapor_olustur(run_async=True, load_from_cache=True), font=("Segoe UI", 10, "bold"), bg="#009688", fg="white", activebackground="#00796B", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_load_cache.pack(fill="x", pady=(0, 8))
     
     live_frame = tk.Frame(main_frame, bg="#F8F9FA")
     live_frame.pack(fill="x", pady=(0, 8))
     
-    btn_live = tk.Button(live_frame, text="⚡ GÜNCEL SİNOPTİK ANALİZ YÜKLE", command=guncel_canli_analiz_baslat, font=("Segoe UI", 10, "bold"), bg="#1E88E5", fg="white", activebackground="#1565C0", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_live = tk.Button(live_frame, text="âš¡ GÃœNCEL SÄ°NOPTÄ°K ANALÄ°Z YÃœKLE", command=guncel_canli_analiz_baslat, font=("Segoe UI", 10, "bold"), bg="#1E88E5", fg="white", activebackground="#1565C0", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_live.pack(side="left", expand=True, fill="x")
     
     oto_var = tk.BooleanVar(value=False)
@@ -2899,21 +2900,21 @@ if not console_mode:
 
     def ayarlar_penceresi_ac():
         ayarlar_pop = tk.Toplevel(root)
-        ayarlar_pop.title("⚙ Ayarlar")
+        ayarlar_pop.title("âš™ Ayarlar")
         ayarlar_pop.geometry("400x300")
         ayarlar_pop.configure(bg="#F8F9FA")
         
         ayarlar = ayarlari_yukle()
         
-        tk.Label(ayarlar_pop, text="Otomatik Analiz Dakikası:", bg="#F8F9FA", font=("Segoe UI", 10)).pack(pady=(10,0))
+        tk.Label(ayarlar_pop, text="Otomatik Analiz DakikasÄ±:", bg="#F8F9FA", font=("Segoe UI", 10)).pack(pady=(10,0))
         dakika_var = tk.StringVar(value=str(ayarlar.get("oto_dakika", 55)))
         ttk.Entry(ayarlar_pop, textvariable=dakika_var, font=("Segoe UI", 10), justify="center").pack()
         
         alarm_var = tk.BooleanVar(value=ayarlar.get("alarm_aktif", False))
-        tk.Checkbutton(ayarlar_pop, text="Yeni hata İŞkarsa alarm üal", variable=alarm_var, font=("Segoe UI", 10), bg="#F8F9FA", activebackground="#F8F9FA").pack(pady=5)
+        tk.Checkbutton(ayarlar_pop, text="Yeni hata Ä°Åkarsa alarm Ã¼al", variable=alarm_var, font=("Segoe UI", 10), bg="#F8F9FA", activebackground="#F8F9FA").pack(pady=5)
         
         arkaplan_var = tk.BooleanVar(value=ayarlar.get("arka_planda_calis", False))
-        tk.Checkbutton(ayarlar_pop, text="Arka planda üalİŞ", variable=arkaplan_var, font=("Segoe UI", 10), bg="#F8F9FA", activebackground="#F8F9FA").pack(pady=5)
+        tk.Checkbutton(ayarlar_pop, text="Arka planda Ã¼alÄ°Å", variable=arkaplan_var, font=("Segoe UI", 10), bg="#F8F9FA", activebackground="#F8F9FA").pack(pady=5)
         
         web_var = tk.BooleanVar(value=ayarlar.get("web_server_aktif", False))
         tk.Checkbutton(ayarlar_pop, text="Web Server Aktif", variable=web_var, font=("Segoe UI", 10), bg="#F8F9FA", activebackground="#F8F9FA").pack(pady=5)
@@ -2928,7 +2929,7 @@ if not console_mode:
             
         tk.Button(ayarlar_pop, text="KAYDET", command=kaydet, bg="#28A745", fg="white", font=("Segoe UI", 10, "bold"), pady=5).pack(pady=20, fill="x", padx=40)
 
-    btn_ayarlar = tk.Button(main_frame, text="⚙ AYARLAR", command=ayarlar_penceresi_ac, font=("Segoe UI", 10, "bold"), bg="#6C757D", fg="white", activebackground="#5A6268", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_ayarlar = tk.Button(main_frame, text="âš™ AYARLAR", command=ayarlar_penceresi_ac, font=("Segoe UI", 10, "bold"), bg="#6C757D", fg="white", activebackground="#5A6268", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_ayarlar.pack(fill="x", pady=(0, 8))
 
     web_process = None
@@ -2946,7 +2947,7 @@ if not console_mode:
             try:
                 ayarlar = ayarlari_yukle()
                 
-                # Web Server Yünetimi
+                # Web Server YÃ¼netimi
                 web_aktif = ayarlar.get("web_server_aktif", False)
                 if web_aktif:
                     if web_process is None or web_process.poll() is not None:
@@ -2990,7 +2991,7 @@ if not console_mode:
 
     def kurallari_goster():
         kural_pop = tk.Toplevel(root)
-        kural_pop.title("Sinoptik Veri Denetleme Kuralları")
+        kural_pop.title("Sinoptik Veri Denetleme KurallarÄ±")
         kural_pop.geometry("950x650")
         kural_pop.configure(bg="#F8F9FA")
         
@@ -3000,18 +3001,18 @@ if not console_mode:
         search_frame = tk.Frame(kural_pop, bg="#F8F9FA")
         search_frame.pack(fill="x", padx=20, pady=(0, 10))
         
-        tk.Label(search_frame, text="⚡ Kural Ara:", font=("Segoe UI", 11, "bold"), bg="#F8F9FA", fg="#495057").pack(side="left", padx=(0, 10))
+        tk.Label(search_frame, text="âš¡ Kural Ara:", font=("Segoe UI", 11, "bold"), bg="#F8F9FA", fg="#495057").pack(side="left", padx=(0, 10))
         search_var = tk.StringVar()
         search_entry = ttk.Entry(search_frame, textvariable=search_var, font=("Segoe UI", 11), width=40)
         search_entry.pack(side="left")
         
-        columns = ("Kural Kodu", "AİŞklama")
+        columns = ("Kural Kodu", "AÄ°Åklama")
         tree = ttk.Treeview(kural_pop, columns=columns, show="headings", style="Treeview")
         tree.heading("Kural Kodu", text="Kural Kodu")
-        tree.heading("AİŞklama", text="Kural AİŞklamasü")
+        tree.heading("AÄ°Åklama", text="Kural AÄ°ÅklamasÃ¼")
         
         tree.column("Kural Kodu", width=150, anchor="center")
-        tree.column("AİŞklama", width=750, anchor="w")
+        tree.column("AÄ°Åklama", width=750, anchor="w")
         
         yscroll = ttk.Scrollbar(kural_pop, orient="vertical", command=tree.yview)
         yscroll.pack(side="right", fill="y")
@@ -3033,9 +3034,9 @@ if not console_mode:
                     tree.insert("", tk.END, values=(kod, acik))
                     
         search_var.trace_add("write", filter_kurallar)
-        filter_kurallar() # ülk yükleme için üaİŞr
+        filter_kurallar() # Ã¼lk yÃ¼kleme iÃ§in Ã¼aÄ°År
             
-    btn_kurallar = tk.Button(main_frame, text="KURALLARI GÖSTER", command=kurallari_goster, font=("Segoe UI", 10, "bold"), bg="#107C41", fg="white", activebackground="#0C5D31", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_kurallar = tk.Button(main_frame, text="KURALLARI GÃ–STER", command=kurallari_goster, font=("Segoe UI", 10, "bold"), bg="#107C41", fg="white", activebackground="#0C5D31", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_kurallar.pack(fill="x", pady=(0, 8))
 
     def dosyalari_indir_ac():
@@ -3044,16 +3045,16 @@ if not console_mode:
         v_ay = simdi.month
         v_yil = simdi.year
 
-        indirme_yili = simpledialog.askinteger('Dosya Adının Yılı', 'Kardelen\'den dosyaları indirirken kaydedeceüiniz dosyanün YILINI giriniz:\n(Örn: 2026)', initialvalue=v_yil, minvalue=2000, maxvalue=2050, parent=root)
+        indirme_yili = simpledialog.askinteger('Dosya AdÄ±nÄ±n YÄ±lÄ±', 'Kardelen\'den dosyalarÄ± indirirken kaydedeceÃ¼iniz dosyanÃ¼n YILINI giriniz:\n(Ã–rn: 2026)', initialvalue=v_yil, minvalue=2000, maxvalue=2050, parent=root)
         if not indirme_yili: return
-        indirme_ayi = simpledialog.askinteger('Dosya Adının Ayı', f'İndireceğiniz dosyaları {indirme_yili} yılı için kaydederken,\ndosya adında kullanacaİŞnüz AYI giriniz:\n(Örn: 1)', initialvalue=v_ay, minvalue=1, maxvalue=12, parent=root)
+        indirme_ayi = simpledialog.askinteger('Dosya AdÄ±nÄ±n AyÄ±', f'Ä°ndireceÄŸiniz dosyalarÄ± {indirme_yili} yÄ±lÄ± iÃ§in kaydederken,\ndosya adÄ±nda kullanacaÄ°ÅnÃ¼z AYI giriniz:\n(Ã–rn: 1)', initialvalue=v_ay, minvalue=1, maxvalue=12, parent=root)
         if not indirme_ayi: return
 
-        messagebox.showinfo('Dosya İsimlendirme', f'Kardelen aİŞldışında dosyaları tam olarak şu isimlerle indirmelisiniz:\n\nSİNOPTİK: {indirme_ayi:02d}{indirme_yili}-sinoptik.xls\nMETAR: {indirme_ayi:02d}{indirme_yili}-metar.xls', parent=root)
+        messagebox.showinfo('Dosya Ä°simlendirme', f'Kardelen aÄ°ÅldÄ±ÅŸÄ±nda dosyalarÄ± tam olarak ÅŸu isimlerle indirmelisiniz:\n\nSÄ°NOPTÄ°K: {indirme_ayi:02d}{indirme_yili}-sinoptik.xls\nMETAR: {indirme_ayi:02d}{indirme_yili}-metar.xls', parent=root)
 
         dosya_oneki = f"{indirme_ayi:02d}{indirme_yili}-"
 
-        btn_indir.config(state="disabled", text="⚡ TARAYICI AÇILIYOR...")
+        btn_indir.config(state="disabled", text="âš¡ TARAYICI AÃ‡ILIYOR...")
         if btn_cancel: btn_cancel.config(state=tk.NORMAL)
         root.update()
         
@@ -3066,7 +3067,7 @@ if not console_mode:
 
         def arkaplanda_tarayici_ac():
             try:
-                # DİNAMİK YOL: Programın her bilgisayarda üalİŞabilmesi için sabit yol yerine kullanıcınün masaÜstünş otomatik bul.
+                # DÄ°NAMÄ°K YOL: ProgramÄ±n her bilgisayarda Ã¼alÄ°Åabilmesi iÃ§in sabit yol yerine kullanÄ±cÄ±nÃ¼n masaÃœstÃ¼nÅŸ otomatik bul.
                 hedef_klasor = HEDEF_KLASOR
                 if not os.path.exists(hedef_klasor):
                     os.makedirs(hedef_klasor)
@@ -3075,11 +3076,11 @@ if not console_mode:
                 
                 url = "http://kardelen.mgm.gov.tr/BultenGenel/Default.aspx"
                 
-                # SİSTEMİN VARSAYILAN TARAYICISINI ANINDA AÇ (SELENIUM İPTAL EDİLDİ)
+                # SÄ°STEMÄ°N VARSAYILAN TARAYICISINI ANINDA AÃ‡ (SELENIUM Ä°PTAL EDÄ°LDÄ°)
                 import webbrowser
                 webbrowser.open(url)
                 
-                # Kullanıcı kolayca yapİŞtürabilsin diye istasyon kodunu panoya kopyala
+                # KullanÄ±cÄ± kolayca yapÄ°ÅtÃ¼rabilsin diye istasyon kodunu panoya kopyala
                 if ist_kodu_cache:
                     try:
                         root.clipboard_clear()
@@ -3087,21 +3088,21 @@ if not console_mode:
                         root.update()
                     except Exception: pass
                 
-                # Tarayıcı kendi varsayılan klasörüne (genelde Downloads) indireceği için o klasörş izliyoruz
+                # TarayÄ±cÄ± kendi varsayÄ±lan klasÃ¶rÃ¼ne (genelde Downloads) indireceÄŸi iÃ§in o klasÃ¶rÅŸ izliyoruz
                 indirilenler_klasoru = os.path.join(os.path.expanduser("~"), "Downloads")
                 
                 def oto_tasima_ve_bekle():
                     zaman_asimi = 600
                     baslangic_z = time.time()
                     
-                    safe_after(0, lambda: lbl_status.config(text="Tarayıcı aİŞldü. (Otomatik taİŞma devrede)..."))
-                    safe_after(0, lambda: btn_indir.config(text="İNDİRME BEKLENİYOR...", state="disabled"))
+                    safe_after(0, lambda: lbl_status.config(text="TarayÄ±cÄ± aÄ°ÅldÃ¼. (Otomatik taÄ°Åma devrede)..."))
+                    safe_after(0, lambda: btn_indir.config(text="Ä°NDÄ°RME BEKLENÄ°YOR...", state="disabled"))
                     
                     while time.time() - baslangic_z < zaman_asimi:
                         if iptal_istendi:
                             break
                             
-                        # 1. Kullanıcının İndirilenler klasörüne dİŞen yeni Kardelen dosyalarını otomatik 'check' klasörüne taİŞ
+                        # 1. KullanÄ±cÄ±nÄ±n Ä°ndirilenler klasÃ¶rÃ¼ne dÄ°Åen yeni Kardelen dosyalarÄ±nÄ± otomatik 'check' klasÃ¶rÃ¼ne taÄ°Å
                         try:
                             if os.path.exists(indirilenler_klasoru):
                                 for f in os.listdir(indirilenler_klasoru):
@@ -3109,7 +3110,7 @@ if not console_mode:
                                         continue
                                     tam_yol = os.path.join(indirilenler_klasoru, f)
                                     if os.path.isfile(tam_yol) and f.lower().endswith(('.xls', '.xlsx', '.csv', '.html')):
-                                        # Sadece butona basıldıktan sonra indirilen dosyaları taİŞ
+                                        # Sadece butona basÄ±ldÄ±ktan sonra indirilen dosyalarÄ± taÄ°Å
                                         try:
                                             if max(os.path.getmtime(tam_yol), os.path.getctime(tam_yol)) >= baslangic_z:
                                                 yeni_dosya_adi = f
@@ -3124,7 +3125,7 @@ if not console_mode:
                                         except Exception: pass
                         except Exception: pass
                         
-                        # 2. Check klasöründeki dosyaları kontrol et (SİNOPTİK ve METAR ikisi de geldi mi?)
+                        # 2. Check klasÃ¶rÃ¼ndeki dosyalarÄ± kontrol et (SÄ°NOPTÄ°K ve METAR ikisi de geldi mi?)
                         try:
                             dosyalar = os.listdir(hedef_klasor)
                             devam_eden_var = any(f.endswith('.crdownload') or f.endswith('.tmp') for f in dosyalar)
@@ -3142,16 +3143,16 @@ if not console_mode:
                                         
                                     if yeni_mi and f.lower().endswith(('.xls', '.xlsx', '.csv', '.html')):
                                         f_upper = f.upper()
-                                        if "SIN" in f_upper or "SİN" in f_upper: sin_yeni = True
+                                        if "SIN" in f_upper or "SÄ°N" in f_upper: sin_yeni = True
                                         elif "METAR" in f_upper: met_yeni = True
                                         
                                 if sin_yeni and met_yeni:
                                     time.sleep(1.5)
                                     def sor_ve_baslat():
-                                        btn_indir.config(state="normal", text="⚡ DOSYALARI İNDİR")
+                                        btn_indir.config(state="normal", text="âš¡ DOSYALARI Ä°NDÄ°R")
                                         if btn_cancel: btn_cancel.config(state=tk.DISABLED)
-                                        lbl_status.config(text="Hazür")
-                                        cevap = messagebox.askyesno("ündirme Tamamlandı", "SİNOPTİK ve METAR dosyaları başarıyla indirildi!\n\nRaporlama işlemi hemen başlatılsın mü", parent=root)
+                                        lbl_status.config(text="HazÃ¼r")
+                                        cevap = messagebox.askyesno("Ã¼ndirme TamamlandÄ±", "SÄ°NOPTÄ°K ve METAR dosyalarÄ± baÅŸarÄ±yla indirildi!\n\nRaporlama iÅŸlemi hemen baÅŸlatÄ±lsÄ±n mÃ¼", parent=root)
                                         if cevap:
                                             sadece_en_yeni_dosyalari_tut()
                                             aylik_rapor_olustur(run_async=True)
@@ -3161,11 +3162,11 @@ if not console_mode:
                         time.sleep(2)
                         
                     def reset_ui():
-                        btn_indir.config(state="normal", text="⚡ DOSYALARI İNDİR")
+                        btn_indir.config(state="normal", text="âš¡ DOSYALARI Ä°NDÄ°R")
                         if btn_cancel: btn_cancel.config(state=tk.DISABLED)
-                        lbl_status.config(text="Hazür")
+                        lbl_status.config(text="HazÃ¼r")
                         if not iptal_istendi:
-                            messagebox.showwarning("Zaman AİŞmş / Bilgi", "ündirme otomatik algılanamadı veya zaman aİŞmüna uğradı.\nDosyalar indiçinden eminseniz rapor oluşturmayı manuel başlatabilirsiniz.", parent=root)
+                            messagebox.showwarning("Zaman AÄ°ÅmÅŸ / Bilgi", "Ã¼ndirme otomatik algÄ±lanamadÄ± veya zaman aÄ°ÅmÃ¼na uÄŸradÄ±.\nDosyalar indiÃ§inden eminseniz rapor oluÅŸturmayÄ± manuel baÅŸlatabilirsiniz.", parent=root)
                     safe_after(0, reset_ui)
                 
                 threading.Thread(target=oto_tasima_ve_bekle, daemon=True).start()
@@ -3173,20 +3174,20 @@ if not console_mode:
             except Exception as e:
                 # Capture 'e' in closure by using default argument
                 def show_err(err_msg=str(e)):
-                    messagebox.showerror("Hata", f"İŞlem sırasında hata oluştu:\n{err_msg}")
-                    btn_indir.config(state="normal", text="⚡ DOSYALARI İNDİR")
+                    messagebox.showerror("Hata", f"Ä°Ålem sÄ±rasÄ±nda hata oluÅŸtu:\n{err_msg}")
+                    btn_indir.config(state="normal", text="âš¡ DOSYALARI Ä°NDÄ°R")
                     if btn_cancel: btn_cancel.config(state=tk.DISABLED)
                     safe_after(0, show_err)
 
-        # Selenium başlatma işlemini arka planda (ayrı thread) üalİŞtür
+        # Selenium baÅŸlatma iÅŸlemini arka planda (ayrÄ± thread) Ã¼alÄ°ÅtÃ¼r
         threading.Thread(target=arkaplanda_tarayici_ac, daemon=True).start()
 
-    btn_indir = tk.Button(main_frame, text="⚡ DOSYALARI İNDİR", command=dosyalari_indir_ac, font=("Segoe UI", 10, "bold"), bg="#673AB7", fg="white", activebackground="#512DA8", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_indir = tk.Button(main_frame, text="âš¡ DOSYALARI Ä°NDÄ°R", command=dosyalari_indir_ac, font=("Segoe UI", 10, "bold"), bg="#673AB7", fg="white", activebackground="#512DA8", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_indir.pack(fill="x", pady=(0, 8))
 
     def canli_analiz_penceresi_ac():
         canli_pop = tk.Toplevel(root)
-        canli_pop.title("Canlş HTML Veri Analizi")
+        canli_pop.title("CanlÅŸ HTML Veri Analizi")
         canli_pop.geometry("600x500")
         canli_pop.configure(bg="#F8F9FA")
         
@@ -3194,11 +3195,11 @@ if not console_mode:
         istasyonlar = cfg.get_enabled_stations()
         ist_listesi = [f"{s['id']} - {s['name']}" for s in istasyonlar]
         
-        lbl_ist = tk.Label(canli_pop, text="üstasyon (Manuel Seçim):", bg="#F8F9FA", font=("Segoe UI", 10, "bold"))
+        lbl_ist = tk.Label(canli_pop, text="Ã¼stasyon (Manuel SeÃ§im):", bg="#F8F9FA", font=("Segoe UI", 10, "bold"))
         lbl_ist.pack(pady=(15, 2))
         cmb_ist = ttk.Combobox(canli_pop, values=ist_listesi, font=("Segoe UI", 11), state="readonly")
         if ist_listesi:
-            # LTAN 17244 varsayılan seçilsin
+            # LTAN 17244 varsayÄ±lan seÃ§ilsin
             default_idx = next((i for i, v in enumerate(ist_listesi) if "17244" in v), 0)
             cmb_ist.current(default_idx)
         cmb_ist.pack()
@@ -3207,7 +3208,7 @@ if not console_mode:
         simdi = datetime.datetime.now()
         dun = simdi - datetime.timedelta(days=1)
         
-        lbl_tarih = tk.Label(canli_pop, text="Tarih Aral⚙ (Sadece Manuel Analiz İŞin):", bg="#F8F9FA", font=("Segoe UI", 10, "bold"))
+        lbl_tarih = tk.Label(canli_pop, text="Tarih Aralâš™ (Sadece Manuel Analiz Ä°Åin):", bg="#F8F9FA", font=("Segoe UI", 10, "bold"))
         lbl_tarih.pack(pady=(15, 2))
         
         frame_tarih = tk.Frame(canli_pop, bg="#F8F9FA")
@@ -3215,7 +3216,7 @@ if not console_mode:
         
         try:
             if DateEntry is None:
-                raise ImportError("tkcalendar kütüphanesi eksik!")
+                raise ImportError("tkcalendar kÃ¼tÃ¼phanesi eksik!")
             cal_bas = DateEntry(frame_tarih, width=12, background='darkblue', foreground='white', borderwidth=2, date_pattern='dd.mm.yyyy')
             cal_bas.set_date(dun)
             cal_bas.pack(side="left", padx=5)
@@ -3224,9 +3225,9 @@ if not console_mode:
             cal_bit.set_date(simdi)
             cal_bit.pack(side="left", padx=5)
         except Exception:
-            tk.Label(frame_tarih, text="tkcalendar eksik! Terminalde üalİŞtürün: python -m pip install tkcalendar", fg="red", bg="#F8F9FA").pack()
+            tk.Label(frame_tarih, text="tkcalendar eksik! Terminalde Ã¼alÄ°ÅtÃ¼rÃ¼n: python -m pip install tkcalendar", fg="red", bg="#F8F9FA").pack()
             
-            # Fallback olarak basit metin kutularş kullan
+            # Fallback olarak basit metin kutularÅŸ kullan
             cal_bas = tk.Entry(frame_tarih, width=12, font=("Segoe UI", 10))
             cal_bas.insert(0, dun.strftime("%d.%m.%Y"))
             cal_bas.pack(side="left", padx=5)
@@ -3235,7 +3236,7 @@ if not console_mode:
             cal_bit.insert(0, simdi.strftime("%d.%m.%Y"))
             cal_bit.pack(side="left", padx=5)
             
-            # Sahte get_date fonksiyonlarünş ekle ki aüaİŞdaki mantük bozulmasün
+            # Sahte get_date fonksiyonlarÃ¼nÅŸ ekle ki aÃ¼aÄ°Ådaki mantÃ¼k bozulmasÃ¼n
             def fake_get_date(entry_widget):
                 try:
                     return datetime.datetime.strptime(entry_widget.get(), "%d.%m.%Y").date()
@@ -3244,40 +3245,40 @@ if not console_mode:
             cal_bas.get_date = lambda: fake_get_date(cal_bas)
             cal_bit.get_date = lambda: fake_get_date(cal_bit)
             
-        lbl_durum = tk.Label(canli_pop, text="Hazür", bg="#E9ECEF", font=("Segoe UI", 9))
+        lbl_durum = tk.Label(canli_pop, text="HazÃ¼r", bg="#E9ECEF", font=("Segoe UI", 9))
         lbl_durum.pack(side="bottom", fill="x", pady=10)
         
         def update_cb(pct, msg):
             safe_after(0, lambda: lbl_durum.config(text=f"%{pct} - {msg}"))
             
         def islem_bitirici(df_sin, df_metar, y, a, isim, title=""):
-            # islem_yurut içindeki df_sin_param ve df_metar_param ile üalİŞmasünş sağlayan hook
-            safe_after(0, lambda: lbl_durum.config(text="UI'ye aktarülüyor..."))
+            # islem_yurut iÃ§indeki df_sin_param ve df_metar_param ile Ã¼alÄ°ÅmasÃ¼nÅŸ saÄŸlayan hook
+            safe_after(0, lambda: lbl_durum.config(text="UI'ye aktarÃ¼lÃ¼yor..."))
             
-            # ⚡ içe import sorunu ve scope kirliliçini önlemek için,
-            # main root üzerinden mevcut aylik_rapor_olustur yapısüna inject ediyoruz.
+            # âš¡ iÃ§e import sorunu ve scope kirliliÃ§ini Ã¶nlemek iÃ§in,
+            # main root Ã¼zerinden mevcut aylik_rapor_olustur yapÄ±sÃ¼na inject ediyoruz.
             global iptal_istendi
             iptal_istendi = False
             
-            if btn_run: btn_run.config(state=tk.DISABLED, text="Canlş Analiz...")
+            if btn_run: btn_run.config(state=tk.DISABLED, text="CanlÅŸ Analiz...")
             if btn_cancel: btn_cancel.config(state=tk.NORMAL)
-            if lbl_status: lbl_status.config(text="HTML verileri işleniyor...")
+            if lbl_status: lbl_status.config(text="HTML verileri iÅŸleniyor...")
             
-            # Aylük Rapor içindeki iş fonksiyon 'islem_yurut' parametre alacak şekilde deüiütirildi
-            # Bunu doğrudan üaİŞrmak için bir trick kullanüyoruz:
+            # AylÃ¼k Rapor iÃ§indeki iÅŸ fonksiyon 'islem_yurut' parametre alacak ÅŸekilde deÃ¼iÃ¼tirildi
+            # Bunu doÄŸrudan Ã¼aÄ°Årmak iÃ§in bir trick kullanÃ¼yoruz:
             def arka_plan_islem():
                 try:
-                    # Yeni bir üevre (scope) yaratüp inject etmek yerine, fonksiyonu override_yil ile üaİŞrüyoruz
-                    # Ancak `islem_yurut` iş içe (nested) bir fonksiyon.
-                    # Bu nedenle arayuz.py içerisine genel bir df_inject globali koyup oradan okutabiliriz.
-                    # YüNTEM 2: df_sin ve df_metar'ş global_inject deüiükenine yazüp aylik_rapor_olustur'u tetiklemek
+                    # Yeni bir Ã¼evre (scope) yaratÃ¼p inject etmek yerine, fonksiyonu override_yil ile Ã¼aÄ°ÅrÃ¼yoruz
+                    # Ancak `islem_yurut` iÅŸ iÃ§e (nested) bir fonksiyon.
+                    # Bu nedenle arayuz.py iÃ§erisine genel bir df_inject globali koyup oradan okutabiliriz.
+                    # YÃ¼NTEM 2: df_sin ve df_metar'ÅŸ global_inject deÃ¼iÃ¼kenine yazÃ¼p aylik_rapor_olustur'u tetiklemek
                     pass
                 except Exception as e:
                     print(e)
             
-            # Temiz İŞzüm: Dosyaya yazüp (geüici) mevcut sistemi hiç deüiütirmeden tetiklemek (Yedek Plan)
-            # AMA En iyisi: `islem_yurut`'ş dİŞarş İŞkarmaktür. Ancak dosya çok büyük.
-            # üimdilik global bir deüiüken (INJECT_SIND, INJECT_METD) ile aktaralüm.
+            # Temiz Ä°ÅzÃ¼m: Dosyaya yazÃ¼p (geÃ¼ici) mevcut sistemi hiÃ§ deÃ¼iÃ¼tirmeden tetiklemek (Yedek Plan)
+            # AMA En iyisi: `islem_yurut`'ÅŸ dÄ°ÅarÅŸ Ä°ÅkarmaktÃ¼r. Ancak dosya Ã§ok bÃ¼yÃ¼k.
+            # Ã¼imdilik global bir deÃ¼iÃ¼ken (INJECT_SIND, INJECT_METD) ile aktaralÃ¼m.
             global INJECT_SIN, INJECT_MET, INJECT_Y, INJECT_A
             INJECT_SIN = df_sin
             INJECT_MET = df_metar
@@ -3303,10 +3304,10 @@ if not console_mode:
                     islem_bitirici(df_sin, df_metar, y, a, isim)
                 except Exception as e:
                     safe_after(0, lambda err=str(e): messagebox.showerror("Hata", err, parent=canli_pop))
-                    update_cb(0, "Hata oluştu.")
+                    update_cb(0, "Hata oluÅŸtu.")
             threading.Thread(target=arkaplan, daemon=True).start()
             
-        btn_man = tk.Button(canli_pop, text="MANUEL ANALİZİ BAÇLAT", command=manuel_baslat, bg="#0066CC", fg="white", font=("Segoe UI", 11, "bold"), pady=8)
+        btn_man = tk.Button(canli_pop, text="MANUEL ANALÄ°ZÄ° BAÃ‡LAT", command=manuel_baslat, bg="#0066CC", fg="white", font=("Segoe UI", 11, "bold"), pady=8)
         btn_man.pack(fill="x", padx=20, pady=20)
         
         lbl_oto = tk.Label(canli_pop, text="Otomatik Analiz (LTAN 17244 | Her Saat :55):", bg="#F8F9FA", font=("Segoe UI", 10, "bold"))
@@ -3316,7 +3317,7 @@ if not console_mode:
             safe_after(0, lambda: lbl_durum.config(text=msg))
             
         def oto_baslat():
-            # LTAN 17244 için otomatik baülat
+            # LTAN 17244 iÃ§in otomatik baÃ¼lat
             canli_analiz.otomatik_analiz_baslat(17244, islem_bitirici, durum_cb)
             btn_oto_b.config(state="disabled")
             btn_oto_d.config(state="normal")
@@ -3328,7 +3329,7 @@ if not console_mode:
             
         f_oto = tk.Frame(canli_pop, bg="#F8F9FA")
         f_oto.pack(fill="x", padx=20)
-        btn_oto_b = tk.Button(f_oto, text="OTOMATİK BAÇLAT", command=oto_baslat, bg="#107C41", fg="white", font=("Segoe UI", 10, "bold"), pady=5)
+        btn_oto_b = tk.Button(f_oto, text="OTOMATÄ°K BAÃ‡LAT", command=oto_baslat, bg="#107C41", fg="white", font=("Segoe UI", 10, "bold"), pady=5)
         btn_oto_b.pack(side="left", expand=True, fill="x", padx=5)
         btn_oto_d = tk.Button(f_oto, text="DURDUR", command=oto_durdur, state="disabled", bg="#D32F2F", fg="white", font=("Segoe UI", 10, "bold"), pady=5)
         btn_oto_d.pack(side="left", expand=True, fill="x", padx=5)
@@ -3336,16 +3337,16 @@ if not console_mode:
         if canli_analiz._OTO_ANALIZ_CALISIYOR:
             btn_oto_b.config(state="disabled")
             btn_oto_d.config(state="normal")
-            lbl_durum.config(text="Oto Analiz üU AN AKTüF.")
+            lbl_durum.config(text="Oto Analiz Ã¼U AN AKTÃ¼F.")
 
-    btn_canli = tk.Button(main_frame, text="⚡ CANLI HTML ANALİZ", command=canli_analiz_penceresi_ac, font=("Segoe UI", 10, "bold"), bg="#009688", fg="white", activebackground="#00796B", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_canli = tk.Button(main_frame, text="âš¡ CANLI HTML ANALÄ°Z", command=canli_analiz_penceresi_ac, font=("Segoe UI", 10, "bold"), bg="#009688", fg="white", activebackground="#00796B", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_canli.pack(fill="x", pady=(0, 8))
 
-    # ARİŞV SÜTUNLARINI GÜNCELLE butonu kaldırıldı
+    # ARÄ°ÅV SÃœTUNLARINI GÃœNCELLE butonu kaldÄ±rÄ±ldÄ±
 
     def loglari_goster():
         log_pop = tk.Toplevel(root)
-        log_pop.title("Sistem Logları")
+        log_pop.title("Sistem LoglarÄ±")
         log_pop.geometry("850x600")
         log_pop.configure(bg="#F8F9FA")
         
@@ -3372,13 +3373,13 @@ if not console_mode:
                         lines = [l for l in lines if filter_text in l]
                     txt_log.insert(tk.END, "".join(lines))
             except Exception as e:
-                txt_log.insert(tk.END, f"Log dosyası okunamadı: {e}")
+                txt_log.insert(tk.END, f"Log dosyasÄ± okunamadÄ±: {e}")
             txt_log.see(tk.END)
             txt_log.config(state="disabled")
 
-        tk.Button(top_frame, text="Tüm Logları Güster", command=lambda: load_logs(), bg="#0066CC", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
-        tk.Button(top_frame, text="⚡ Sütun Eşleşmeleri", command=lambda: load_logs("Eşleşen Sütunlar"), bg="#107C41", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
-        tk.Button(top_frame, text="Hataları Filtrele", command=lambda: load_logs("ERROR"), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+        tk.Button(top_frame, text="TÃ¼m LoglarÄ± GÃ¼ster", command=lambda: load_logs(), bg="#0066CC", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+        tk.Button(top_frame, text="âš¡ SÃ¼tun EÅŸleÅŸmeleri", command=lambda: load_logs("EÅŸleÅŸen SÃ¼tunlar"), bg="#107C41", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+        tk.Button(top_frame, text="HatalarÄ± Filtrele", command=lambda: load_logs("ERROR"), bg="#D32F2F", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
         def loglari_temizle():
             try:
                 import logging
@@ -3391,23 +3392,23 @@ if not console_mode:
                 from tkinter import messagebox
                 messagebox.showerror("Hata", f"Loglar temizlenemedi: {e}", parent=log_win)
                 
-        tk.Button(top_frame, text="⚡ TEMİZLE", command=loglari_temizle, bg="#FF9800", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
+        tk.Button(top_frame, text="âš¡ TEMÄ°ZLE", command=loglari_temizle, bg="#FF9800", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10, pady=5).pack(side="left", padx=5)
         
         load_logs()
 
-    btn_loglar = tk.Button(main_frame, text="SİSTEM LOGLARINI GÖSTER", command=loglari_goster, font=("Segoe UI", 10, "bold"), bg="#607D8B", fg="white", activebackground="#455A64", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_loglar = tk.Button(main_frame, text="SÄ°STEM LOGLARINI GÃ–STER", command=loglari_goster, font=("Segoe UI", 10, "bold"), bg="#607D8B", fg="white", activebackground="#455A64", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_loglar.pack(fill="x", pady=(0, 8))
 
     def log_dosyasini_ac():
         try:
             if os.path.exists(log_dosyasi):
-                os.startfile(log_dosyasi) # Windows'un varsayılan uygulamasıyla (Örn: Not Defteri) açar
+                os.startfile(log_dosyasi) # Windows'un varsayÄ±lan uygulamasÄ±yla (Ã–rn: Not Defteri) aÃ§ar
             else:
-                messagebox.showwarning("Bulunamadı", "Log dosyası henüz oluşturulmamİŞ.", parent=root)
+                messagebox.showwarning("BulunamadÄ±", "Log dosyasÄ± henÃ¼z oluÅŸturulmamÄ°Å.", parent=root)
         except Exception as e:
-            messagebox.showerror("Hata", f"Log dosyası aİŞlamadü:\n{e}", parent=root)
+            messagebox.showerror("Hata", f"Log dosyasÄ± aÄ°ÅlamadÃ¼:\n{e}", parent=root)
             
-    btn_log_dosyasi = tk.Button(main_frame, text="⚡ LOG DOSYASINI AÇ (NOT DEFTERİ)", command=log_dosyasini_ac, font=("Segoe UI", 10, "bold"), bg="#546E7A", fg="white", activebackground="#37474F", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_log_dosyasi = tk.Button(main_frame, text="âš¡ LOG DOSYASINI AÃ‡ (NOT DEFTERÄ°)", command=log_dosyasini_ac, font=("Segoe UI", 10, "bold"), bg="#546E7A", fg="white", activebackground="#37474F", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_log_dosyasi.pack(fill="x", pady=(0, 8))
 
     def manuel_temizlik_yap():
@@ -3415,7 +3416,7 @@ if not console_mode:
         cleanup_old_temp_files()
         
         temizlenen_arsiv = 0
-        cevap = messagebox.askyesno("Arşiv Temizliçi", "Sistemin Önbellek ve logları temizlenecek.\n\nAyrıca 'check\\Arsiv' klasöründeki TÜM geçmiş Excel raporları da kalıcı olarak silinsin mi?", parent=root)
+        cevap = messagebox.askyesno("ArÅŸiv TemizliÃ§i", "Sistemin Ã–nbellek ve loglarÄ± temizlenecek.\n\nAyrÄ±ca 'check\\Arsiv' klasÃ¶rÃ¼ndeki TÃœM geÃ§miÅŸ Excel raporlarÄ± da kalÄ±cÄ± olarak silinsin mi?", parent=root)
         if cevap:
             arsiv_dir = ARSIV_KLASORU
             if os.path.exists(arsiv_dir):
@@ -3430,31 +3431,31 @@ if not console_mode:
                             try: os.rmdir(root_d)
                             except: pass
                 except Exception as e:
-                    logging.error(f"Arşiv temizleme hatası: {e}")
+                    logging.error(f"ArÅŸiv temizleme hatasÄ±: {e}")
         
-        mesaj = "Önbellek (Cache), eski loglar ve gereksiz geüici dosyalar başarıyla temizlendi."
+        mesaj = "Ã–nbellek (Cache), eski loglar ve gereksiz geÃ¼ici dosyalar baÅŸarÄ±yla temizlendi."
         if cevap:
-            mesaj += f"\n\nSilinen geçmiş arşiv dosyası: {temizlenen_arsiv} adet."
-        messagebox.showinfo("Temizlik Tamamlandı", mesaj, parent=root)
+            mesaj += f"\n\nSilinen geÃ§miÅŸ arÅŸiv dosyasÄ±: {temizlenen_arsiv} adet."
+        messagebox.showinfo("Temizlik TamamlandÄ±", mesaj, parent=root)
         
-    btn_temizle = tk.Button(main_frame, text="⚡ SİSTEMş TEMİZLE (ARİŞV/LOG)", command=manuel_temizlik_yap, font=("Segoe UI", 10, "bold"), bg="#795548", fg="white", activebackground="#5D4037", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_temizle = tk.Button(main_frame, text="âš¡ SÄ°STEMÅŸ TEMÄ°ZLE (ARÄ°ÅV/LOG)", command=manuel_temizlik_yap, font=("Segoe UI", 10, "bold"), bg="#795548", fg="white", activebackground="#5D4037", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_temizle.pack(fill="x", pady=(0, 8))
 
     def dosya_icerigi_incele():
         dosya_yolu = filedialog.askopenfilename(
-            title="İncelenecek Bozuk/Okunamayan Dosyayı Seçin",
-            filetypes=[("Tüm Dosyalar", "*.*"), ("Excel/Metin", "*.xls *.xlsx *.csv *.html *.txt")]
+            title="Ä°ncelenecek Bozuk/Okunamayan DosyayÄ± SeÃ§in",
+            filetypes=[("TÃ¼m Dosyalar", "*.*"), ("Excel/Metin", "*.xls *.xlsx *.csv *.html *.txt")]
         )
         if not dosya_yolu: return
         
         incele_pop = tk.Toplevel(root)
-        incele_pop.title(f"Ham Dosya İnceleme - {os.path.basename(dosya_yolu)}")
+        incele_pop.title(f"Ham Dosya Ä°nceleme - {os.path.basename(dosya_yolu)}")
         incele_pop.geometry("850x600")
         incele_pop.configure(bg="#F8F9FA")
         
         top_frame = tk.Frame(incele_pop, bg="#F8F9FA")
         top_frame.pack(fill="x", padx=10, pady=10)
-        tk.Label(top_frame, text=f"Dosya Ham (Raw) İŞeriçi:\n{dosya_yolu}", font=("Segoe UI", 10, "bold"), bg="#F8F9FA", fg="#D32F2F", justify="left").pack(side="left")
+        tk.Label(top_frame, text=f"Dosya Ham (Raw) Ä°ÅeriÃ§i:\n{dosya_yolu}", font=("Segoe UI", 10, "bold"), bg="#F8F9FA", fg="#D32F2F", justify="left").pack(side="left")
         
         txt_icerik = tk.Text(incele_pop, font=("Consolas", 10), bg="#1E1E1E", fg="#00FF00", wrap="none")
         v_scroll = tk.Scrollbar(incele_pop, orient="vertical", command=txt_icerik.yview)
@@ -3469,66 +3470,69 @@ if not console_mode:
             try:
                 dosya_boyutu = os.path.getsize(dosya_yolu)
                 if dosya_boyutu == 0:
-                    txt_icerik.insert(tk.END, "⚙ BU DOSYA TAMAMEN BOŞ (0 BYTE)!\n\nKardelen sistemi bu dosyayı üretirken hata vermiş veya dosya eksik inmiş. Yeniden indirmeyi deneyin.")
+                    txt_icerik.insert(tk.END, "âš™ BU DOSYA TAMAMEN BOÅ (0 BYTE)!\n\nKardelen sistemi bu dosyayÄ± Ã¼retirken hata vermiÅŸ veya dosya eksik inmiÅŸ. Yeniden indirmeyi deneyin.")
                 else:
                     txt_icerik.insert(tk.END, f"--- Dosya Boyutu: {dosya_boyutu / 1024:.2f} KB ---\n\n")
                     with open(dosya_yolu, 'r', encoding='utf-8', errors='ignore') as f:
                         satirlar = f.readlines()
                         if len(satirlar) > 1000:
-                            icerik = "".join(satirlar[:1000]) + "\n\n... (DOSYA üOK UZUN OLDUüU üüN SADECE İLK 1000 SATIR GÖSTERİLİYOR) ..."
+                            icerik = "".join(satirlar[:1000]) + "\n\n... (DOSYA Ã¼OK UZUN OLDUÃ¼U Ã¼Ã¼N SADECE Ä°LK 1000 SATIR GÃ–STERÄ°LÄ°YOR) ..."
                         else:
                             icerik = "".join(satirlar)
                         
                         if icerik.strip(): txt_icerik.insert(tk.END, icerik)
-                        else: txt_icerik.insert(tk.END, "Dosyada okunabilir metin verisi bulunamadı.")
+                        else: txt_icerik.insert(tk.END, "Dosyada okunabilir metin verisi bulunamadÄ±.")
             except Exception as e:
-                txt_icerik.insert(tk.END, f"Dosya okunurken hata oluştu:\n{e}")
+                txt_icerik.insert(tk.END, f"Dosya okunurken hata oluÅŸtu:\n{e}")
             txt_icerik.config(state="disabled")
             
         load_content()
 
-    btn_bozuk_incele = tk.Button(main_frame, text="OKUNMAYAN / BOZUK DOSYAYI İNCELE", command=dosya_icerigi_incele, font=("Segoe UI", 10, "bold"), bg="#8D6E63", fg="white", activebackground="#6D4C41", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
+    btn_bozuk_incele = tk.Button(main_frame, text="OKUNMAYAN / BOZUK DOSYAYI Ä°NCELE", command=dosya_icerigi_incele, font=("Segoe UI", 10, "bold"), bg="#8D6E63", fg="white", activebackground="#6D4C41", activeforeground="white", cursor="hand2", relief="flat", borderwidth=0, pady=8)
     btn_bozuk_incele.pack(fill="x", pady=(0, 8))
 
-    # --- İSTASYON KODU GüR⚙ ---
+    # --- Ä°STASYON KODU GÃ¼Râš™ ---
     frame_ist = tk.Frame(main_frame, bg="#F8F9FA")
     frame_ist.pack(fill="x", pady=(0, 8))
-    tk.Label(frame_ist, text="üstasyon Kodu:", font=("Segoe UI", 10, "bold"), bg="#F8F9FA", fg="#495057").pack(side="left")
+    tk.Label(frame_ist, text="Ã¼stasyon Kodu:", font=("Segoe UI", 10, "bold"), bg="#F8F9FA", fg="#495057").pack(side="left")
     ent_ist = ttk.Entry(frame_ist, font=("Segoe UI", 11), width=15)
     ent_ist.insert(0, "17244")
     ent_ist.pack(side="left", padx=(10, 0))
 
-    # --- YENİ: DURUM ÇUBUĞU ---
+    # --- YENÄ°: DURUM Ã‡UBUÄU ---
     status_frame = tk.Frame(root, bg="#E9ECEF")
     status_frame.pack(side="bottom", fill="x", padx=10, pady=(5, 0))
 
-    lbl_status = tk.Label(status_frame, text="Hazür", anchor="w", bg="#E9ECEF", font=("Segoe UI", 9))
+    lbl_status = tk.Label(status_frame, text="HazÃ¼r", anchor="w", bg="#E9ECEF", font=("Segoe UI", 9))
     lbl_status.pack(side="left", padx=5, pady=2)
 
     
     root.mainloop()
 else:
-    print("Terminal modunda üalİŞtürülüyor. GUI devre d⚙ bırakıldı.")
+    print("Terminal modunda Ã¼alÄ°ÅtÃ¼rÃ¼lÃ¼yor. GUI devre dâš™ bÄ±rakÄ±ldÄ±.")
     if __name__ == "__main__": aylik_rapor_olustur(run_async=False)
 
-# --- YENİ: LOG DOSYASINI OKUDAN ÖNCE HANDLER'LARI KAPAT VE FLUSH ET ---
-for handler in logging.root.handlers[:]:
-    handler.close()
-    logging.root.removeHandler(handler)
+# --- YENÄ°: LOG DOSYASINI OKUDAN Ã–NCE HANDLER'LARI KAPAT VE FLUSH ET ---
+if False:
+        handler.close()
+        logging.root.removeHandler(handler)
 
-# Eüer log dosyası varsa oku ve yazdır
+# EÃ¼er log dosyasÄ± varsa oku ve yazdÄ±r
 if os.path.exists(log_dosyasi):
     try:
         with open(log_dosyasi, 'r', encoding='utf-8') as f:
             print(f.read())
     except Exception as e:
-        print(f"{Colors.WARNING}Log dosyası okunamadı: {e}{Colors.ENDC}")
+        print(f"{Colors.WARNING}Log dosyasÄ± okunamadÄ±: {e}{Colors.ENDC}")
 else:
-    print(f"{Colors.WARNING}Log dosyası bulunamadı: {log_dosyasi}{Colors.ENDC}")
+    print(f"{Colors.WARNING}Log dosyasÄ± bulunamadÄ±: {log_dosyasi}{Colors.ENDC}")
 
 try:
     pass # input removed for headless
 except KeyboardInterrupt:
-    print("\nProgram kullanıcı tarafündan sonlandırıldı.")
-# Program başarıyla tamamlandı
+    print("\nProgram kullanÄ±cÄ± tarafÃ¼ndan sonlandÄ±rÄ±ldÄ±.")
+# Program baÅŸarÄ±yla tamamlandÄ±
     pass # sys.exit removed for headless
+
+
+
