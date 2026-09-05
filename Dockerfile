@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     chromium \
     chromium-driver \
+    python3-tk \
+    tk-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
