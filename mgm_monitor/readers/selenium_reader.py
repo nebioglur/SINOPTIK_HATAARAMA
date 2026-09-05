@@ -30,8 +30,8 @@ def fetch_and_parse_xls_with_selenium(ist_id, ist_isim, bas, bit, p_callback=Non
     from selenium.webdriver.support import expected_conditions as EC
     import glob
     
-    # Kendi 'check' klasörümüzü oluşturalım
-    temp_dir = r"C:\Users\nebio\Desktop\check"
+    # Kendi 'check' klasörümüzü sistemin temp klasöründe oluşturalım
+    temp_dir = os.path.join(tempfile.gettempdir(), "mgm_check")
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
         
