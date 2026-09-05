@@ -260,7 +260,7 @@ except ImportError:
     validator = None
     kurallar = None
 
-console_mode = False
+console_mode = os.environ.get("HEADLESS_MODE", "0") == "1"
 iptal_istendi = False
 btn_cancel = None
 
