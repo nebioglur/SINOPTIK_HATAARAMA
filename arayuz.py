@@ -2563,9 +2563,9 @@ def aylik_rapor_olustur(run_async=True, load_from_cache=False, df_sin_param=None
 <body>
     <div class='container-fluid'>
         <h2 class='mb-4 text-primary'>Güncel SİNOPTİK Analiz Sonuçları</h2>
-        <div class='mb-3 text-muted'>Son Güncellenme: {{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}}</div>
+        <div class='mb-3 text-muted'>Son Güncellenme: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}</div>
         <div class='table-responsive'>
-            {{html_str}}
+            {html_str}
         </div>
     </div>
 
