@@ -17,17 +17,20 @@ logging.basicConfig(level=logging.INFO)
 
 # Arayuz.py'deki islem_yurut'u cagiracak callback
 def oto_trigger(df_sin, df_metar, yil, ay, ist_isim, custom_title):
-    logging.info(f"[{ist_isim}] Otomatik analiz tetiklendi: {custom_title}")
-    # Arayuz'deki analiz mantigini konsol modunda cagir
-    arayuz.islem_yurut(
-        load_from_cache=False, 
-        df_sin_param=df_sin, 
-        df_metar_param=df_metar, 
-        override_yil=yil, 
-        override_ay=ay, 
-        custom_title=custom_title
-    )
-    logging.info(f"[{ist_isim}] Otomatik analiz tamamlandi, rapor uretildi.")
+    print(f"WEB_SERVER_LOG: [{ist_isim}] Otomatik analiz tetiklendi: {custom_title}")
+    try:
+        # Arayuz'deki analiz mantigini konsol modunda cagir
+        arayuz.islem_yurut(
+            load_from_cache=False, 
+            df_sin_param=df_sin, 
+            df_metar_param=df_metar, 
+            override_yil=yil, 
+            override_ay=ay, 
+            custom_title=custom_title
+        )
+        print(f"WEB_SERVER_LOG: [{ist_isim}] Otomatik analiz tamamlandi, rapor uretildi.")
+    except Exception as e:
+        print(f"WEB_SERVER_LOG: HATA - islem_yurut coktu: {e}")
 
 def baslat_arka_plan_gorevleri():
     """Gunicorn altinda birden cok kez tetiklenmemesi icin kontrol ekleyerek gorevleri baslatir."""
@@ -37,20 +40,20 @@ def baslat_arka_plan_gorevleri():
             return
         app._bg_started = True
         
-        logging.info("Arka plan otomatik analiz gorevleri baslatiliyor...")
+        print("WEB_SERVER_LOG: Arka plan otomatik analiz gorevleri baslatiliyor...")
         cfg = canli_analiz.get_config()
         istasyonlar = cfg.get_enabled_stations()
         if not istasyonlar:
-            logging.warning("stations.yaml icinde aktif istasyon bulunamadi! Varsayilan (17244) kullaniliyor.")
+            print("WEB_SERVER_LOG: UYARI - stations.yaml icinde aktif istasyon bulunamadi! Varsayilan (17244) kullaniliyor.")
             istasyonlar = [{'id': 17244, 'name': 'KONYA MEYDAN'}]
         
         for s in istasyonlar:
             ist_kodu = int(s.get('id', 17244))
             ist_isim = s.get('name', str(ist_kodu))
-            logging.info(f"Arka plan gorevi baslatildi: {ist_isim} ({ist_kodu})")
+            print(f"WEB_SERVER_LOG: Arka plan gorevi baslatildi: {ist_isim} ({ist_kodu})")
             t = threading.Thread(
                 target=canli_analiz.otomatik_dongu,
-                args=(ist_kodu, 1, oto_trigger, lambda msg: logging.info(f"[{ist_isim}] {msg}")),
+                args=(ist_kodu, 1, oto_trigger, lambda msg: print(f"WEB_SERVER_LOG: [{ist_isim}] {msg}")),
                 daemon=True
             )
             t.start()
